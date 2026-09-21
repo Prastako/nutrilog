@@ -1,0 +1,2440 @@
+{
+ "archive": "nutrilog-starter",
+ "schema": 1,
+ "generatedAt": "2026-09-21T15:00:00+02:00",
+ "recipes": [
+  {
+   "id": "rcp-starter-overnight-oats",
+   "type": "recipe",
+   "schema": 1,
+   "origin": "starter",
+   "lang": "cs",
+   "title": "Ovesná kaše přes noc s řeckým jogurtem a borůvkami",
+   "titleEn": "Overnight oats with Greek yogurt and blueberries",
+   "summary": "Snídaně, kterou připravíte večer za pět minut; ráno jen vytáhnete z lednice.",
+   "servings": 1,
+   "time": {
+    "prepMin": 5,
+    "cookMin": 0,
+    "totalMin": 5
+   },
+   "difficulty": "easy",
+   "ingredients": [
+    {
+     "group": null,
+     "item": "ovesné vločky",
+     "qty": 60,
+     "unit": "g",
+     "grams": 60,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:173904"
+    },
+    {
+     "group": null,
+     "item": "polotučné mléko",
+     "qty": 150,
+     "unit": "ml",
+     "grams": 155,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:171267"
+    },
+    {
+     "group": null,
+     "item": "řecký jogurt bílý, nízkotučný",
+     "qty": 100,
+     "unit": "g",
+     "grams": 100,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170903"
+    },
+    {
+     "group": null,
+     "item": "chia semínka",
+     "qty": 10,
+     "unit": "g",
+     "grams": 10,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170554"
+    },
+    {
+     "group": null,
+     "item": "borůvky, čerstvé nebo mražené",
+     "qty": 80,
+     "unit": "g",
+     "grams": 80,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:171711"
+    },
+    {
+     "group": null,
+     "item": "med",
+     "qty": 1,
+     "unit": "lžička",
+     "grams": 7,
+     "prep": null,
+     "optional": true,
+     "foodRef": "usda:169640"
+    },
+    {
+     "group": null,
+     "item": "skořice",
+     "qty": 1,
+     "unit": "špetka",
+     "grams": 0.3,
+     "prep": null,
+     "optional": true,
+     "foodRef": "usda:171320"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Ve sklenici nebo krabičce smíchejte vločky, chia, mléko a jogurt.",
+     "minutes": null
+    },
+    {
+     "text": "Přidejte skořici, zamíchejte a zavřete.",
+     "minutes": null
+    },
+    {
+     "text": "Nechte přes noc v lednici, aspoň 6 hodin.",
+     "minutes": null
+    },
+    {
+     "text": "Ráno navrch dejte borůvky a podle chuti med.",
+     "minutes": null
+    }
+   ],
+   "tips": [
+    {
+     "text": "Na tři rána udělejte tři sklenice najednou, vydrží 3 dny."
+    },
+    {
+     "text": "Mražené borůvky dejte rovnou večer, do rána povolí."
+    }
+   ],
+   "variations": [
+    {
+     "label": "Bez laktózy",
+     "text": "Mléko nahraďte ovesným nápojem a jogurt sójovým."
+    },
+    {
+     "label": "Víc bílkovin",
+     "text": "Přimíchejte 15 g syrovátkového proteinu a ubrat mléka nemusíte."
+    }
+   ],
+   "storage": {
+    "fridgeDays": 3,
+    "freezer": false,
+    "reheat": "Jí se studená."
+   },
+   "nutrition": {
+    "perServing": {
+     "kcal": 494,
+     "prot": 25.3,
+     "fat": 12.2,
+     "carb": 73.8,
+     "fib": 11.6,
+     "sug": 25.7,
+     "sfa": 4.2,
+     "mufa": 2.8,
+     "pufa": 4.1,
+     "trans": null,
+     "chol": 22.4,
+     "na": 113,
+     "k": 682,
+     "ca": 404,
+     "mg": 149,
+     "p": 622,
+     "fe": 3.7,
+     "zn": 4.1,
+     "cu": 0.406,
+     "mn": 2.8,
+     "se": 39.3,
+     "vita": 178,
+     "vitd": 1.9,
+     "vite": 0.851,
+     "vitk": 17.2,
+     "vitc": 9.1,
+     "b1": 0.472,
+     "b2": 0.665,
+     "b3": 2.2,
+     "b5": 1.8,
+     "b6": 0.218,
+     "fol": 43.9,
+     "b12": 1.3,
+     "choline": 69.8,
+     "ala": 1.9,
+     "epa": 0.0,
+     "dha": 0.0,
+     "alc": 0.0,
+     "caff": 0.0
+    },
+    "basis": "computed",
+    "confidence": "high",
+    "source": "USDA FoodData Central SR Legacy"
+   },
+   "tags": [
+    "meal:breakfast",
+    "prep:meal-prep",
+    "prep:no-cook",
+    "time:under-15",
+    "diet:vegetarian",
+    "diet:high-fibre",
+    "ing:oats",
+    "ing:yogurt",
+    "ing:blueberries",
+    "ing:chia",
+    "method:overnight",
+    "flavor:sweet",
+    "season:all-year"
+   ],
+   "sources": [
+    {
+     "platform": "claude",
+     "model": "claude-opus-5",
+     "note": "starter recipe written for NutriLog"
+    }
+   ],
+   "extraction": null,
+   "thumb": null,
+   "createdAt": "2026-09-21T15:00:00+02:00",
+   "updatedAt": "2026-09-21T15:00:00+02:00"
+  },
+  {
+   "id": "rcp-starter-spinach-omelette",
+   "type": "recipe",
+   "schema": 1,
+   "origin": "starter",
+   "lang": "cs",
+   "title": "Omeleta se špenátem a sýrem, celozrnný chléb",
+   "titleEn": "Spinach and cheese omelette with wholegrain bread",
+   "summary": "Rychlá teplá snídaně s hodně bílkovinami.",
+   "servings": 1,
+   "time": {
+    "prepMin": 3,
+    "cookMin": 7,
+    "totalMin": 10
+   },
+   "difficulty": "easy",
+   "ingredients": [
+    {
+     "group": null,
+     "item": "vejce",
+     "qty": 3,
+     "unit": "ks",
+     "grams": 150,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:171287"
+    },
+    {
+     "group": null,
+     "item": "baby špenát",
+     "qty": 60,
+     "unit": "g",
+     "grams": 60,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:168462"
+    },
+    {
+     "group": null,
+     "item": "eidam nebo čedar, strouhaný",
+     "qty": 25,
+     "unit": "g",
+     "grams": 25,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170899"
+    },
+    {
+     "group": null,
+     "item": "máslo",
+     "qty": 5,
+     "unit": "g",
+     "grams": 5,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:173410"
+    },
+    {
+     "group": null,
+     "item": "celozrnný chléb",
+     "qty": 2,
+     "unit": "krajíce",
+     "grams": 60,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:172688"
+    },
+    {
+     "group": null,
+     "item": "sůl a pepř",
+     "qty": null,
+     "unit": null,
+     "grams": null,
+     "prep": null,
+     "optional": false,
+     "foodRef": null
+    }
+   ],
+   "steps": [
+    {
+     "text": "Vejce rozšlehejte se špetkou soli a pepře.",
+     "minutes": null
+    },
+    {
+     "text": "Na pánvi rozpusťte máslo a nechte na něm 1 minutu povadnout špenát.",
+     "minutes": null
+    },
+    {
+     "text": "Zalijte vejci, na mírném ohni nechte 3 až 4 minuty stáhnout.",
+     "minutes": null
+    },
+    {
+     "text": "Posypte sýrem, přeložte napůl a ještě minutu dopečte.",
+     "minutes": null
+    },
+    {
+     "text": "Podávejte s chlebem.",
+     "minutes": null
+    }
+   ],
+   "tips": [
+    {
+     "text": "Pánev s poklicí: sýr se rozteče a vrch se dopeče bez obracení."
+    }
+   ],
+   "variations": [
+    {
+     "label": "Bez mléčných výrobků",
+     "text": "Sýr vynechte a přidejte rajčata a lžíci olivového oleje místo másla."
+    }
+   ],
+   "storage": null,
+   "nutrition": {
+    "perServing": {
+     "kcal": 518,
+     "prot": 34.1,
+     "fat": 29.1,
+     "carb": 29.4,
+     "fib": 4.9,
+     "sug": 3.5,
+     "sfa": 12.6,
+     "mufa": 9.0,
+     "pufa": 4.4,
+     "trans": 0.528,
+     "chol": 594,
+     "na": 727,
+     "k": 714,
+     "ca": 419,
+     "mg": 117,
+     "p": 570,
+     "fe": 5.8,
+     "zn": 4.3,
+     "cu": 0.331,
+     "mn": 1.9,
+     "se": 69.2,
+     "vita": 621,
+     "vitd": 3.2,
+     "vite": 4.7,
+     "vitk": 296,
+     "vitc": 16.9,
+     "b1": 0.35,
+     "b2": 1.0,
+     "b3": 3.2,
+     "b5": 2.8,
+     "b6": 0.52,
+     "fol": 219,
+     "b12": 1.6,
+     "choline": 474,
+     "ala": 0.264,
+     "epa": 0.003,
+     "dha": 0.087,
+     "alc": 0.0,
+     "caff": 0.0
+    },
+    "basis": "computed",
+    "confidence": "high",
+    "source": "USDA FoodData Central SR Legacy"
+   },
+   "tags": [
+    "meal:breakfast",
+    "time:under-15",
+    "diet:high-protein",
+    "diet:vegetarian",
+    "ing:egg",
+    "ing:spinach",
+    "ing:cheese",
+    "method:pan-fry",
+    "equip:hob",
+    "flavor:savory"
+   ],
+   "sources": [
+    {
+     "platform": "claude",
+     "model": "claude-opus-5",
+     "note": "starter recipe written for NutriLog"
+    }
+   ],
+   "extraction": null,
+   "thumb": null,
+   "createdAt": "2026-09-21T15:00:00+02:00",
+   "updatedAt": "2026-09-21T15:00:00+02:00"
+  },
+  {
+   "id": "rcp-starter-cottage-rye",
+   "type": "recipe",
+   "schema": 1,
+   "origin": "starter",
+   "lang": "cs",
+   "title": "Žitný chléb s cottage sýrem, ředkvičkami a okurkou",
+   "titleEn": "Rye bread with cottage cheese, radishes and cucumber",
+   "summary": "Studená snídaně nebo svačina bez vaření, lehká a sytá.",
+   "servings": 1,
+   "time": {
+    "prepMin": 5,
+    "cookMin": 0,
+    "totalMin": 5
+   },
+   "difficulty": "easy",
+   "ingredients": [
+    {
+     "group": null,
+     "item": "žitný chléb",
+     "qty": 2,
+     "unit": "krajíce",
+     "grams": 70,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:172684"
+    },
+    {
+     "group": null,
+     "item": "cottage sýr",
+     "qty": 125,
+     "unit": "g",
+     "grams": 125,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:173417"
+    },
+    {
+     "group": null,
+     "item": "ředkvičky",
+     "qty": 5,
+     "unit": "ks",
+     "grams": 50,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:169276"
+    },
+    {
+     "group": null,
+     "item": "okurka salátová",
+     "qty": 0.3,
+     "unit": "ks",
+     "grams": 80,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:169225"
+    },
+    {
+     "group": null,
+     "item": "pažitka",
+     "qty": 1,
+     "unit": "lžíce",
+     "grams": 3,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:169994"
+    },
+    {
+     "group": null,
+     "item": "pepř",
+     "qty": null,
+     "unit": null,
+     "grams": null,
+     "prep": null,
+     "optional": false,
+     "foodRef": null
+    }
+   ],
+   "steps": [
+    {
+     "text": "Cottage sýr smíchejte s nasekanou pažitkou a pepřem.",
+     "minutes": null
+    },
+    {
+     "text": "Namažte na chléb.",
+     "minutes": null
+    },
+    {
+     "text": "Navrch dejte plátky ředkviček a okurky.",
+     "minutes": null
+    }
+   ],
+   "tips": [
+    {
+     "text": "Místo cottage jde tvaroh rozmíchaný se lžící jogurtu."
+    }
+   ],
+   "variations": [],
+   "storage": null,
+   "nutrition": {
+    "perServing": {
+     "kcal": 288,
+     "prot": 22.4,
+     "fat": 3.8,
+     "carb": 40.8,
+     "fib": 5.5,
+     "sug": 8.2,
+     "sfa": 1.3,
+     "mufa": 1.3,
+     "pufa": 0.645,
+     "trans": null,
+     "chol": 5.0,
+     "na": 951,
+     "k": 458,
+     "ca": 154,
+     "mg": 50.1,
+     "p": 284,
+     "fe": 2.5,
+     "zn": 1.6,
+     "cu": 0.252,
+     "mn": 0.685,
+     "se": 33.3,
+     "vita": 23.5,
+     "vitd": 0.0,
+     "vite": 0.274,
+     "vitk": 13.8,
+     "vitc": 12.0,
+     "b1": 0.363,
+     "b2": 0.484,
+     "b3": 3.0,
+     "b5": 0.861,
+     "b6": 0.218,
+     "fol": 148,
+     "b12": 0.787,
+     "choline": 40.1,
+     "ala": 0.077,
+     "epa": 0.0,
+     "dha": 0.0,
+     "alc": 0.0,
+     "caff": 0.0
+    },
+    "basis": "computed",
+    "confidence": "high",
+    "source": "USDA FoodData Central SR Legacy"
+   },
+   "tags": [
+    "meal:breakfast",
+    "meal:snack",
+    "prep:no-cook",
+    "time:under-15",
+    "diet:vegetarian",
+    "diet:high-protein",
+    "ing:cottage-cheese",
+    "ing:rye-bread",
+    "ing:radish",
+    "cuisine:czech",
+    "flavor:fresh"
+   ],
+   "sources": [
+    {
+     "platform": "claude",
+     "model": "claude-opus-5",
+     "note": "starter recipe written for NutriLog"
+    }
+   ],
+   "extraction": null,
+   "thumb": null,
+   "createdAt": "2026-09-21T15:00:00+02:00",
+   "updatedAt": "2026-09-21T15:00:00+02:00"
+  },
+  {
+   "id": "rcp-starter-chicken-rice-bowl",
+   "type": "recipe",
+   "schema": 1,
+   "origin": "starter",
+   "lang": "cs",
+   "title": "Kuřecí miska s rýží, brokolicí a sezamem",
+   "titleEn": "Chicken rice bowl with broccoli and sesame",
+   "summary": "Klasický meal prep: čtyři krabičky na obědy, vydrží do čtvrtka.",
+   "servings": 4,
+   "time": {
+    "prepMin": 15,
+    "cookMin": 20,
+    "totalMin": 35
+   },
+   "difficulty": "easy",
+   "ingredients": [
+    {
+     "group": null,
+     "item": "kuřecí prsa",
+     "qty": 600,
+     "unit": "g",
+     "grams": 600,
+     "prep": "nakrájená na kostky",
+     "optional": false,
+     "foodRef": "usda:171077"
+    },
+    {
+     "group": null,
+     "item": "rýže jasmínová nebo dlouhozrnná",
+     "qty": 300,
+     "unit": "g",
+     "grams": 300,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:168877"
+    },
+    {
+     "group": null,
+     "item": "brokolice",
+     "qty": 1,
+     "unit": "ks",
+     "grams": 480,
+     "prep": "na růžičky",
+     "optional": false,
+     "foodRef": "usda:170379"
+    },
+    {
+     "group": "Omáčka",
+     "item": "sójová omáčka",
+     "qty": 4,
+     "unit": "lžíce",
+     "grams": 64,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:174277"
+    },
+    {
+     "group": "Omáčka",
+     "item": "sezamový olej",
+     "qty": 1,
+     "unit": "lžíce",
+     "grams": 14,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:171016"
+    },
+    {
+     "group": "Omáčka",
+     "item": "stroužky česneku",
+     "qty": 3,
+     "unit": "ks",
+     "grams": 9,
+     "prep": "prolisované",
+     "optional": false,
+     "foodRef": "usda:169230"
+    },
+    {
+     "group": "Omáčka",
+     "item": "zázvor",
+     "qty": 2,
+     "unit": "cm",
+     "grams": 10,
+     "prep": "nastrouhaný",
+     "optional": false,
+     "foodRef": "usda:169231"
+    },
+    {
+     "group": null,
+     "item": "řepkový olej",
+     "qty": 1,
+     "unit": "lžíce",
+     "grams": 14,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:172336"
+    },
+    {
+     "group": null,
+     "item": "sezam",
+     "qty": 2,
+     "unit": "lžíce",
+     "grams": 18,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170150"
+    },
+    {
+     "group": null,
+     "item": "limetková šťáva",
+     "qty": 1,
+     "unit": "lžíce",
+     "grams": 15,
+     "prep": null,
+     "optional": true,
+     "foodRef": "usda:168156"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Uvařte rýži podle návodu na obalu.",
+     "minutes": null
+    },
+    {
+     "text": "Smíchejte sójovou omáčku, sezamový olej, česnek, zázvor a limetku.",
+     "minutes": null
+    },
+    {
+     "text": "Kuře osolte jen lehce (omáčka je slaná) a na rozpáleném oleji opékejte 6 až 8 minut dozlatova.",
+     "minutes": null
+    },
+    {
+     "text": "Přilijte polovinu omáčky a 1 minutu provařte, ať kuře zglazuje.",
+     "minutes": null
+    },
+    {
+     "text": "Brokolici spařte nebo vařte v páře 4 minuty, ať zůstane křupavá.",
+     "minutes": null
+    },
+    {
+     "text": "Rozdělte do 4 krabiček: rýže, brokolice, kuře, zbytek omáčky a sezam.",
+     "minutes": null
+    }
+   ],
+   "tips": [
+    {
+     "text": "Brokolici vařte kratší dobu, při ohřívání v mikrovlnce ještě změkne."
+    },
+    {
+     "text": "Omáčku na poslední den dejte do zvláštní nádobky, rýže ji jinak vsákne."
+    }
+   ],
+   "variations": [
+    {
+     "label": "Bez lepku",
+     "text": "Sójovou omáčku nahraďte tamari."
+    },
+    {
+     "label": "Vegetariánsky",
+     "text": "Kuře nahraďte 600 g pevného tofu, opečte ho stejně."
+    }
+   ],
+   "storage": {
+    "fridgeDays": 4,
+    "freezer": true,
+    "reheat": "Mikrovlnka 2 až 3 minuty, rýži pokropte lžící vody."
+   },
+   "nutrition": {
+    "perServing": {
+     "kcal": 597,
+     "prot": 44.8,
+     "fat": 14.2,
+     "carb": 71.3,
+     "fib": 4.9,
+     "sug": 2.3,
+     "sfa": 2.2,
+     "mufa": 5.7,
+     "pufa": 4.4,
+     "trans": null,
+     "chol": 110,
+     "na": 991,
+     "k": 1081,
+     "ca": 139,
+     "mg": 116,
+     "p": 545,
+     "fe": 5.6,
+     "zn": 2.9,
+     "cu": 0.483,
+     "mn": 1.4,
+     "se": 50.5,
+     "vita": 50.8,
+     "vitd": 0.0,
+     "vite": 2.5,
+     "vitk": 126,
+     "vitc": 109,
+     "b1": 0.705,
+     "b2": 0.484,
+     "b3": 18.9,
+     "b5": 3.8,
+     "b6": 1.6,
+     "fol": 387,
+     "b12": 0.315,
+     "choline": 155,
+     "ala": 0.472,
+     "epa": 0.005,
+     "dha": 0.006,
+     "alc": 0.0,
+     "caff": 0.0
+    },
+    "basis": "computed",
+    "confidence": "high",
+    "source": "USDA FoodData Central SR Legacy"
+   },
+   "tags": [
+    "meal:lunch",
+    "meal:dinner",
+    "prep:meal-prep",
+    "prep:freezer-friendly",
+    "time:under-60",
+    "diet:high-protein",
+    "ing:chicken",
+    "ing:rice",
+    "ing:broccoli",
+    "ing:sesame",
+    "cuisine:asian",
+    "method:stir-fry",
+    "equip:hob",
+    "flavor:umami"
+   ],
+   "sources": [
+    {
+     "platform": "claude",
+     "model": "claude-opus-5",
+     "note": "starter recipe written for NutriLog"
+    }
+   ],
+   "extraction": null,
+   "thumb": null,
+   "createdAt": "2026-09-21T15:00:00+02:00",
+   "updatedAt": "2026-09-21T15:00:00+02:00"
+  },
+  {
+   "id": "rcp-starter-red-lentil-dal",
+   "type": "recipe",
+   "schema": 1,
+   "origin": "starter",
+   "lang": "cs",
+   "title": "Dál z červené čočky se špenátem a rýží",
+   "titleEn": "Red lentil dal with spinach and rice",
+   "summary": "Levný, sytý a hřejivý oběd na čtyři dny; hodně vlákniny a železa.",
+   "servings": 4,
+   "time": {
+    "prepMin": 10,
+    "cookMin": 30,
+    "totalMin": 40
+   },
+   "difficulty": "easy",
+   "ingredients": [
+    {
+     "group": null,
+     "item": "červená čočka",
+     "qty": 280,
+     "unit": "g",
+     "grams": 280,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:174284"
+    },
+    {
+     "group": null,
+     "item": "rajčata z konzervy",
+     "qty": 1,
+     "unit": "plechovka",
+     "grams": 400,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170051"
+    },
+    {
+     "group": null,
+     "item": "cibule",
+     "qty": 1,
+     "unit": "ks",
+     "grams": 120,
+     "prep": "nadrobno",
+     "optional": false,
+     "foodRef": "usda:170000"
+    },
+    {
+     "group": null,
+     "item": "stroužky česneku",
+     "qty": 3,
+     "unit": "ks",
+     "grams": 9,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:169230"
+    },
+    {
+     "group": null,
+     "item": "zázvor",
+     "qty": 3,
+     "unit": "cm",
+     "grams": 15,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:169231"
+    },
+    {
+     "group": null,
+     "item": "kokosové mléko",
+     "qty": 200,
+     "unit": "ml",
+     "grams": 200,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170173"
+    },
+    {
+     "group": null,
+     "item": "baby špenát",
+     "qty": 150,
+     "unit": "g",
+     "grams": 150,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:168462"
+    },
+    {
+     "group": null,
+     "item": "řepkový olej",
+     "qty": 1,
+     "unit": "lžíce",
+     "grams": 14,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:172336"
+    },
+    {
+     "group": "Koření",
+     "item": "kurkuma",
+     "qty": 1,
+     "unit": "lžička",
+     "grams": 3,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:172231"
+    },
+    {
+     "group": "Koření",
+     "item": "mletý kmín římský",
+     "qty": 1,
+     "unit": "lžička",
+     "grams": 2,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170923"
+    },
+    {
+     "group": "Koření",
+     "item": "chilli",
+     "qty": 0.5,
+     "unit": "lžičky",
+     "grams": 1,
+     "prep": null,
+     "optional": true,
+     "foodRef": "usda:171319"
+    },
+    {
+     "group": null,
+     "item": "rýže basmati",
+     "qty": 240,
+     "unit": "g",
+     "grams": 240,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:168877"
+    },
+    {
+     "group": null,
+     "item": "voda",
+     "qty": 700,
+     "unit": "ml",
+     "grams": null,
+     "prep": null,
+     "optional": false,
+     "foodRef": null
+    },
+    {
+     "group": null,
+     "item": "sůl",
+     "qty": 1,
+     "unit": "lžička",
+     "grams": 6,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:173468"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Na oleji 5 minut sklovatějte cibuli, přidejte česnek, zázvor a koření a 1 minutu opékejte.",
+     "minutes": null
+    },
+    {
+     "text": "Přidejte propláchnutou čočku, rajčata a vodu.",
+     "minutes": null
+    },
+    {
+     "text": "Vařte 20 minut, občas zamíchejte, čočka se rozvaří.",
+     "minutes": null
+    },
+    {
+     "text": "Vmíchejte kokosové mléko a špenát, 2 minuty prohřejte a osolte.",
+     "minutes": null
+    },
+    {
+     "text": "Mezitím uvařte rýži.",
+     "minutes": null
+    },
+    {
+     "text": "Rozdělte do 4 krabiček.",
+     "minutes": null
+    }
+   ],
+   "tips": [
+    {
+     "text": "Dál po odležení zhoustne, při ohřívání přilijte trochu vody."
+    },
+    {
+     "text": "Na závěr vymačkaná citronová šťáva zvedne chuť."
+    }
+   ],
+   "variations": [
+    {
+     "label": "Víc bílkovin",
+     "text": "Podávejte s 150 g řeckého jogurtu navrch nebo přidejte cizrnu."
+    }
+   ],
+   "storage": {
+    "fridgeDays": 4,
+    "freezer": true,
+    "reheat": "Hrnec nebo mikrovlnka, přilít trochu vody."
+   },
+   "nutrition": {
+    "perServing": {
+     "kcal": 647,
+     "prot": 24.6,
+     "fat": 16.7,
+     "carb": 103,
+     "fib": 12.0,
+     "sug": null,
+     "sfa": 10.2,
+     "mufa": 3.3,
+     "pufa": 2.2,
+     "trans": null,
+     "chol": 0.0,
+     "na": 751,
+     "k": 1145,
+     "ca": 148,
+     "mg": 128,
+     "p": 377,
+     "fe": 11.9,
+     "zn": 3.9,
+     "cu": 1.3,
+     "mn": 2.9,
+     "se": 10.8,
+     "vita": 202,
+     "vitd": 0.0,
+     "vite": null,
+     "vitk": null,
+     "vitc": 28.0,
+     "b1": 1.3,
+     "b2": 0.246,
+     "b3": 5.0,
+     "b5": 1.1,
+     "b6": 0.657,
+     "fol": 469,
+     "b12": 0.0,
+     "choline": null,
+     "ala": 0.574,
+     "epa": null,
+     "dha": null,
+     "alc": null,
+     "caff": null
+    },
+    "basis": "computed",
+    "confidence": "high",
+    "source": "USDA FoodData Central SR Legacy"
+   },
+   "tags": [
+    "meal:lunch",
+    "meal:dinner",
+    "prep:meal-prep",
+    "prep:freezer-friendly",
+    "prep:one-pot",
+    "time:under-60",
+    "diet:vegan",
+    "diet:vegetarian",
+    "diet:high-fibre",
+    "ing:lentils",
+    "ing:spinach",
+    "ing:rice",
+    "ing:coconut-milk",
+    "cuisine:indian",
+    "method:simmer",
+    "equip:hob",
+    "flavor:spicy",
+    "budget:cheap"
+   ],
+   "sources": [
+    {
+     "platform": "claude",
+     "model": "claude-opus-5",
+     "note": "starter recipe written for NutriLog"
+    }
+   ],
+   "extraction": null,
+   "thumb": null,
+   "createdAt": "2026-09-21T15:00:00+02:00",
+   "updatedAt": "2026-09-21T15:00:00+02:00"
+  },
+  {
+   "id": "rcp-starter-turkey-chilli",
+   "type": "recipe",
+   "schema": 1,
+   "origin": "starter",
+   "lang": "cs",
+   "title": "Krůtí chilli s fazolemi a kukuřicí",
+   "titleEn": "Turkey chilli with beans and corn",
+   "summary": "Libové chilli do krabiček, hodně bílkovin i vlákniny; zamrazit jde bez problému.",
+   "servings": 4,
+   "time": {
+    "prepMin": 10,
+    "cookMin": 30,
+    "totalMin": 40
+   },
+   "difficulty": "easy",
+   "ingredients": [
+    {
+     "group": null,
+     "item": "mleté krůtí maso",
+     "qty": 500,
+     "unit": "g",
+     "grams": 500,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:171505"
+    },
+    {
+     "group": null,
+     "item": "červené fazole z konzervy, scezené",
+     "qty": 1,
+     "unit": "plechovka",
+     "grams": 240,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:174285"
+    },
+    {
+     "group": null,
+     "item": "rajčata z konzervy",
+     "qty": 1,
+     "unit": "plechovka",
+     "grams": 400,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170051"
+    },
+    {
+     "group": null,
+     "item": "kukuřice z konzervy, scezená",
+     "qty": 150,
+     "unit": "g",
+     "grams": 150,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:169216"
+    },
+    {
+     "group": null,
+     "item": "cibule",
+     "qty": 1,
+     "unit": "ks",
+     "grams": 120,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170000"
+    },
+    {
+     "group": null,
+     "item": "červená paprika",
+     "qty": 1,
+     "unit": "ks",
+     "grams": 150,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170108"
+    },
+    {
+     "group": null,
+     "item": "stroužky česneku",
+     "qty": 2,
+     "unit": "ks",
+     "grams": 6,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:169230"
+    },
+    {
+     "group": null,
+     "item": "řepkový olej",
+     "qty": 1,
+     "unit": "lžíce",
+     "grams": 14,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:172336"
+    },
+    {
+     "group": "Koření",
+     "item": "mletý kmín římský",
+     "qty": 1,
+     "unit": "lžička",
+     "grams": 2,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170923"
+    },
+    {
+     "group": "Koření",
+     "item": "chilli koření",
+     "qty": 2,
+     "unit": "lžičky",
+     "grams": 5,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:171319"
+    },
+    {
+     "group": "Koření",
+     "item": "sladká paprika",
+     "qty": 1,
+     "unit": "lžička",
+     "grams": 2,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:171329"
+    },
+    {
+     "group": null,
+     "item": "sůl",
+     "qty": 1,
+     "unit": "lžička",
+     "grams": 6,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:173468"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Na oleji orestujte cibuli a papriku 5 minut.",
+     "minutes": null
+    },
+    {
+     "text": "Přidejte maso, rozdrobte a opékejte, dokud nezbělá.",
+     "minutes": null
+    },
+    {
+     "text": "Vmíchejte česnek a koření, minutu opékejte.",
+     "minutes": null
+    },
+    {
+     "text": "Přidejte rajčata, fazole a kukuřici, osolte a 20 minut duste pod pokličkou.",
+     "minutes": null
+    },
+    {
+     "text": "Rozdělte do 4 krabiček.",
+     "minutes": null
+    }
+   ],
+   "tips": [
+    {
+     "text": "Podávejte s jogurtem místo zakysané smetany, nebo s rýží pro víc energie."
+    }
+   ],
+   "variations": [
+    {
+     "label": "Vegansky",
+     "text": "Maso nahraďte další plechovkou fazolí a 150 g červené čočky (přilijte 300 ml vody)."
+    }
+   ],
+   "storage": {
+    "fridgeDays": 4,
+    "freezer": true,
+    "reheat": "Mikrovlnka nebo hrnec."
+   },
+   "nutrition": {
+    "perServing": {
+     "kcal": 367,
+     "prot": 32.2,
+     "fat": 14.6,
+     "carb": 30.3,
+     "fib": 7.9,
+     "sug": 9.9,
+     "sfa": 3.0,
+     "mufa": 5.7,
+     "pufa": 4.3,
+     "trans": 0.143,
+     "chol": 86.2,
+     "na": 1049,
+     "k": 897,
+     "ca": 115,
+     "mg": 77.8,
+     "p": 392,
+     "fe": 3.9,
+     "zn": 3.9,
+     "cu": 0.397,
+     "mn": 0.487,
+     "se": 30.0,
+     "vita": 137,
+     "vitd": 0.5,
+     "vite": 2.6,
+     "vitk": 8.8,
+     "vitc": 66.5,
+     "b1": 0.758,
+     "b2": 0.348,
+     "b3": 10.5,
+     "b5": 1.8,
+     "b6": 1.0,
+     "fol": 75.6,
+     "b12": 1.2,
+     "choline": 83.8,
+     "ala": 0.531,
+     "epa": 0.007,
+     "dha": 0.01,
+     "alc": 0.0,
+     "caff": 0.0
+    },
+    "basis": "computed",
+    "confidence": "high",
+    "source": "USDA FoodData Central SR Legacy"
+   },
+   "tags": [
+    "meal:lunch",
+    "meal:dinner",
+    "prep:meal-prep",
+    "prep:freezer-friendly",
+    "prep:one-pot",
+    "time:under-60",
+    "diet:high-protein",
+    "diet:high-fibre",
+    "ing:turkey",
+    "ing:beans",
+    "ing:corn",
+    "ing:bell-pepper",
+    "cuisine:mexican",
+    "method:simmer",
+    "equip:hob",
+    "flavor:spicy"
+   ],
+   "sources": [
+    {
+     "platform": "claude",
+     "model": "claude-opus-5",
+     "note": "starter recipe written for NutriLog"
+    }
+   ],
+   "extraction": null,
+   "thumb": null,
+   "createdAt": "2026-09-21T15:00:00+02:00",
+   "updatedAt": "2026-09-21T15:00:00+02:00"
+  },
+  {
+   "id": "rcp-starter-yogurt-walnut-apple",
+   "type": "recipe",
+   "schema": 1,
+   "origin": "starter",
+   "lang": "cs",
+   "title": "Řecký jogurt s jablkem, vlašskými ořechy a skořicí",
+   "titleEn": "Greek yogurt with apple, walnuts and cinnamon",
+   "summary": "Svačina za dvě minuty, bílkoviny a zdravé tuky.",
+   "servings": 1,
+   "time": {
+    "prepMin": 3,
+    "cookMin": 0,
+    "totalMin": 3
+   },
+   "difficulty": "easy",
+   "ingredients": [
+    {
+     "group": null,
+     "item": "řecký jogurt bílý, nízkotučný",
+     "qty": 170,
+     "unit": "g",
+     "grams": 170,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170903"
+    },
+    {
+     "group": null,
+     "item": "jablko",
+     "qty": 1,
+     "unit": "ks",
+     "grams": 150,
+     "prep": "na kostičky",
+     "optional": false,
+     "foodRef": "usda:168202"
+    },
+    {
+     "group": null,
+     "item": "vlašské ořechy",
+     "qty": 15,
+     "unit": "g",
+     "grams": 15,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170187"
+    },
+    {
+     "group": null,
+     "item": "skořice",
+     "qty": 1,
+     "unit": "špetka",
+     "grams": 0.3,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:171320"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Jogurt dejte do misky.",
+     "minutes": null
+    },
+    {
+     "text": "Přidejte jablko a nalámané ořechy.",
+     "minutes": null
+    },
+    {
+     "text": "Posypte skořicí.",
+     "minutes": null
+    }
+   ],
+   "tips": [
+    {
+     "text": "Do práce: jablko nakrájejte až ráno, nebo ho pokapejte citronem, ať nezhnědne."
+    }
+   ],
+   "variations": [],
+   "storage": null,
+   "nutrition": {
+    "perServing": {
+     "kcal": 308,
+     "prot": 19.6,
+     "fat": 13.3,
+     "carb": 29.4,
+     "fib": 4.8,
+     "sug": 21.5,
+     "sfa": null,
+     "mufa": null,
+     "pufa": null,
+     "trans": null,
+     "chol": null,
+     "na": 61.1,
+     "k": 457,
+     "ca": 222,
+     "mg": 50.1,
+     "p": 300,
+     "fe": 0.724,
+     "zn": 1.5,
+     "cu": 0.32,
+     "mn": 0.628,
+     "se": 21.8,
+     "vita": 158,
+     "vitd": null,
+     "vite": 0.45,
+     "vitk": 3.5,
+     "vitc": null,
+     "b1": 0.153,
+     "b2": 0.458,
+     "b3": 0.648,
+     "b5": 0.997,
+     "b6": 0.251,
+     "fol": null,
+     "b12": null,
+     "choline": 39.4,
+     "ala": null,
+     "epa": null,
+     "dha": null,
+     "alc": null,
+     "caff": null
+    },
+    "basis": "computed",
+    "confidence": "high",
+    "source": "USDA FoodData Central SR Legacy"
+   },
+   "tags": [
+    "meal:snack",
+    "meal:breakfast",
+    "prep:no-cook",
+    "time:under-15",
+    "diet:vegetarian",
+    "diet:high-protein",
+    "ing:yogurt",
+    "ing:apple",
+    "ing:walnuts",
+    "flavor:sweet"
+   ],
+   "sources": [
+    {
+     "platform": "claude",
+     "model": "claude-opus-5",
+     "note": "starter recipe written for NutriLog"
+    }
+   ],
+   "extraction": null,
+   "thumb": null,
+   "createdAt": "2026-09-21T15:00:00+02:00",
+   "updatedAt": "2026-09-21T15:00:00+02:00"
+  },
+  {
+   "id": "rcp-starter-hummus-veg",
+   "type": "recipe",
+   "schema": 1,
+   "origin": "starter",
+   "lang": "cs",
+   "title": "Hummus se zeleninovými tyčinkami",
+   "titleEn": "Hummus with vegetable sticks",
+   "summary": "Křupavá svačina do práce, hodně vlákniny.",
+   "servings": 1,
+   "time": {
+    "prepMin": 5,
+    "cookMin": 0,
+    "totalMin": 5
+   },
+   "difficulty": "easy",
+   "ingredients": [
+    {
+     "group": null,
+     "item": "hummus",
+     "qty": 70,
+     "unit": "g",
+     "grams": 70,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:174289"
+    },
+    {
+     "group": null,
+     "item": "mrkev",
+     "qty": 1,
+     "unit": "ks",
+     "grams": 80,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170393"
+    },
+    {
+     "group": null,
+     "item": "okurka salátová",
+     "qty": 0.3,
+     "unit": "ks",
+     "grams": 80,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:169225"
+    },
+    {
+     "group": null,
+     "item": "červená paprika",
+     "qty": 0.5,
+     "unit": "ks",
+     "grams": 70,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170108"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Zeleninu nakrájejte na tyčinky.",
+     "minutes": null
+    },
+    {
+     "text": "Hummus dejte do malé krabičky a namáčejte.",
+     "minutes": null
+    }
+   ],
+   "tips": [
+    {
+     "text": "Tyčinky vydrží nakrájené 3 dny v krabičce s mokrým ubrouskem."
+    }
+   ],
+   "variations": [],
+   "storage": {
+    "fridgeDays": 3,
+    "freezer": false,
+    "reheat": null
+   },
+   "nutrition": {
+    "perServing": {
+     "kcal": 225,
+     "prot": 7.4,
+     "fat": 13.0,
+     "carb": 24.1,
+     "fib": 8.1,
+     "sug": 8.3,
+     "sfa": 1.9,
+     "mufa": 3.8,
+     "pufa": 6.4,
+     "trans": 0.013,
+     "chol": 0.0,
+     "na": 358,
+     "k": 731,
+     "ca": 75.4,
+     "mg": 80.1,
+     "p": 190,
+     "fe": 2.5,
+     "zn": 1.5,
+     "cu": 0.369,
+     "mn": 1.1,
+     "se": 3.5,
+     "vita": 782,
+     "vitd": 0.0,
+     "vite": 2.7,
+     "vitk": 35.7,
+     "vitc": 96.9,
+     "b1": 0.227,
+     "b2": 0.215,
+     "b3": 2.2,
+     "b5": 0.875,
+     "b6": 0.457,
+     "fol": 92.2,
+     "b12": 0.0,
+     "choline": null,
+     "ala": 0.546,
+     "epa": 0.0,
+     "dha": 0.0,
+     "alc": 0.0,
+     "caff": 0.0
+    },
+    "basis": "computed",
+    "confidence": "high",
+    "source": "USDA FoodData Central SR Legacy"
+   },
+   "tags": [
+    "meal:snack",
+    "prep:no-cook",
+    "prep:meal-prep",
+    "time:under-15",
+    "diet:vegan",
+    "diet:high-fibre",
+    "ing:hummus",
+    "ing:carrot",
+    "ing:cucumber",
+    "ing:bell-pepper",
+    "cuisine:middle-eastern",
+    "flavor:fresh"
+   ],
+   "sources": [
+    {
+     "platform": "claude",
+     "model": "claude-opus-5",
+     "note": "starter recipe written for NutriLog"
+    }
+   ],
+   "extraction": null,
+   "thumb": null,
+   "createdAt": "2026-09-21T15:00:00+02:00",
+   "updatedAt": "2026-09-21T15:00:00+02:00"
+  },
+  {
+   "id": "rcp-starter-energy-balls",
+   "type": "recipe",
+   "schema": 1,
+   "origin": "starter",
+   "lang": "cs",
+   "title": "Ovesné kuličky s arašídovým máslem a datlemi",
+   "titleEn": "Oat, peanut butter and date energy balls",
+   "summary": "12 kuliček bez pečení na celý týden; dvě jsou svačina.",
+   "servings": 6,
+   "time": {
+    "prepMin": 15,
+    "cookMin": 0,
+    "totalMin": 15
+   },
+   "difficulty": "easy",
+   "ingredients": [
+    {
+     "group": null,
+     "item": "ovesné vločky",
+     "qty": 120,
+     "unit": "g",
+     "grams": 120,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:173904"
+    },
+    {
+     "group": null,
+     "item": "arašídové máslo bez soli",
+     "qty": 100,
+     "unit": "g",
+     "grams": 100,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:172470"
+    },
+    {
+     "group": null,
+     "item": "datle medjool, vypeckované",
+     "qty": 8,
+     "unit": "ks",
+     "grams": 160,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:168191"
+    },
+    {
+     "group": null,
+     "item": "kakao neslazené",
+     "qty": 2,
+     "unit": "lžíce",
+     "grams": 12,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:169593"
+    },
+    {
+     "group": null,
+     "item": "chia semínka",
+     "qty": 1,
+     "unit": "lžíce",
+     "grams": 12,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170554"
+    },
+    {
+     "group": null,
+     "item": "voda",
+     "qty": 2,
+     "unit": "lžíce",
+     "grams": null,
+     "prep": null,
+     "optional": false,
+     "foodRef": null
+    }
+   ],
+   "steps": [
+    {
+     "text": "Datle v mixéru rozmixujte na pastu.",
+     "minutes": null
+    },
+    {
+     "text": "Přidejte ostatní suroviny a promixujte, směs má držet pohromadě; když je suchá, přidejte lžíci vody.",
+     "minutes": null
+    },
+    {
+     "text": "Mokrýma rukama vytvarujte 12 kuliček.",
+     "minutes": null
+    },
+    {
+     "text": "Uložte do lednice.",
+     "minutes": null
+    }
+   ],
+   "tips": [
+    {
+     "text": "Bez mixéru: datle nasekejte nadrobno a hmotu propracujte rukama."
+    }
+   ],
+   "variations": [
+    {
+     "label": "Bez arašídů",
+     "text": "Použijte mandlové nebo slunečnicové máslo."
+    }
+   ],
+   "storage": {
+    "fridgeDays": 7,
+    "freezer": true,
+    "reheat": null
+   },
+   "nutrition": {
+    "perServing": {
+     "kcal": 264,
+     "prot": 7.5,
+     "fat": 10.8,
+     "carb": 39.3,
+     "fib": 6.1,
+     "sug": 19.7,
+     "sfa": null,
+     "mufa": null,
+     "pufa": null,
+     "trans": null,
+     "chol": null,
+     "na": 5.0,
+     "k": 390,
+     "ca": 50.8,
+     "mg": 86.7,
+     "p": 186,
+     "fe": 1.8,
+     "zn": 1.5,
+     "cu": 0.339,
+     "mn": 1.2,
+     "se": null,
+     "vita": 1.9,
+     "vitd": 0.0,
+     "vite": null,
+     "vitk": 1.2,
+     "vitc": 0.032,
+     "b1": 0.144,
+     "b2": 0.087,
+     "b3": 3.1,
+     "b5": 0.634,
+     "b6": 0.162,
+     "fol": 25.5,
+     "b12": null,
+     "choline": 21.5,
+     "ala": null,
+     "epa": null,
+     "dha": null,
+     "alc": null,
+     "caff": null
+    },
+    "basis": "computed",
+    "confidence": "high",
+    "source": "USDA FoodData Central SR Legacy"
+   },
+   "tags": [
+    "meal:snack",
+    "prep:meal-prep",
+    "prep:no-cook",
+    "prep:freezer-friendly",
+    "time:under-30",
+    "diet:vegan",
+    "ing:oats",
+    "ing:peanut-butter",
+    "ing:dates",
+    "ing:cocoa",
+    "equip:blender",
+    "flavor:sweet"
+   ],
+   "sources": [
+    {
+     "platform": "claude",
+     "model": "claude-opus-5",
+     "note": "starter recipe written for NutriLog"
+    }
+   ],
+   "extraction": null,
+   "thumb": null,
+   "createdAt": "2026-09-21T15:00:00+02:00",
+   "updatedAt": "2026-09-21T15:00:00+02:00"
+  },
+  {
+   "id": "rcp-starter-salmon-potatoes",
+   "type": "recipe",
+   "schema": 1,
+   "origin": "starter",
+   "lang": "cs",
+   "title": "Pečený losos s bramborami a fazolkami",
+   "titleEn": "Baked salmon with potatoes and green beans",
+   "summary": "Večeře na jeden plech, omega 3 a vitamin D.",
+   "servings": 2,
+   "time": {
+    "prepMin": 10,
+    "cookMin": 30,
+    "totalMin": 40
+   },
+   "difficulty": "easy",
+   "ingredients": [
+    {
+     "group": null,
+     "item": "filety lososa",
+     "qty": 2,
+     "unit": "ks",
+     "grams": 280,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:175167"
+    },
+    {
+     "group": null,
+     "item": "brambory",
+     "qty": 500,
+     "unit": "g",
+     "grams": 500,
+     "prep": "na měsíčky",
+     "optional": false,
+     "foodRef": "usda:170026"
+    },
+    {
+     "group": null,
+     "item": "zelené fazolky",
+     "qty": 300,
+     "unit": "g",
+     "grams": 300,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:169961"
+    },
+    {
+     "group": null,
+     "item": "olivový olej",
+     "qty": 1.5,
+     "unit": "lžíce",
+     "grams": 20,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:171413"
+    },
+    {
+     "group": null,
+     "item": "citronová šťáva",
+     "qty": 1,
+     "unit": "lžíce",
+     "grams": 15,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:167747"
+    },
+    {
+     "group": null,
+     "item": "stroužek česneku",
+     "qty": 1,
+     "unit": "ks",
+     "grams": 3,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:169230"
+    },
+    {
+     "group": null,
+     "item": "sůl, pepř, kopr",
+     "qty": null,
+     "unit": null,
+     "grams": null,
+     "prep": null,
+     "optional": false,
+     "foodRef": null
+    }
+   ],
+   "steps": [
+    {
+     "text": "Troubu rozehřejte na 200 °C.",
+     "minutes": null
+    },
+    {
+     "text": "Brambory promíchejte s polovinou oleje a solí, pečte 15 minut.",
+     "minutes": null
+    },
+    {
+     "text": "Přidejte na plech fazolky a lososa, pokapejte zbytkem oleje, citronem a česnekem, osolte a opepřete.",
+     "minutes": null
+    },
+    {
+     "text": "Pečte dalších 12 až 15 minut, dokud losos nejde snadno rozdělit vidličkou.",
+     "minutes": null
+    },
+    {
+     "text": "Posypte koprem.",
+     "minutes": null
+    }
+   ],
+   "tips": [
+    {
+     "text": "Mražený losos rozmrazte přes noc v lednici."
+    }
+   ],
+   "variations": [
+    {
+     "label": "Levněji",
+     "text": "Místo lososa makrela nebo pstruh."
+    }
+   ],
+   "storage": {
+    "fridgeDays": 2,
+    "freezer": false,
+    "reheat": "Losos je lepší studený do salátu než ohřívaný."
+   },
+   "nutrition": {
+    "perServing": {
+     "kcal": 622,
+     "prot": 36.6,
+     "fat": 29.3,
+     "carb": 55.2,
+     "fib": 9.4,
+     "sug": 7.1,
+     "sfa": 5.8,
+     "mufa": 12.6,
+     "pufa": 6.8,
+     "trans": null,
+     "chol": 77.0,
+     "na": 107,
+     "k": 1901,
+     "ca": 101,
+     "mg": 134,
+     "p": 538,
+     "fe": 4.1,
+     "zn": 1.6,
+     "cu": 0.447,
+     "mn": 0.748,
+     "se": 35.7,
+     "vita": 134,
+     "vitd": 15.4,
+     "vite": 7.1,
+     "vitk": 76.2,
+     "vitc": 76.4,
+     "b1": 0.62,
+     "b2": 0.456,
+     "b3": 15.9,
+     "b5": 3.3,
+     "b6": 1.9,
+     "fol": 125,
+     "b12": 4.5,
+     "choline": 164,
+     "ala": 0.413,
+     "epa": 1.2,
+     "dha": 1.5,
+     "alc": 0.0,
+     "caff": 0.0
+    },
+    "basis": "computed",
+    "confidence": "high",
+    "source": "USDA FoodData Central SR Legacy"
+   },
+   "tags": [
+    "meal:dinner",
+    "meal:lunch",
+    "time:under-60",
+    "diet:high-protein",
+    "ing:salmon",
+    "ing:potatoes",
+    "ing:green-beans",
+    "nutri:omega-3",
+    "nutri:vitamin-d",
+    "method:roast",
+    "equip:oven",
+    "prep:one-pan"
+   ],
+   "sources": [
+    {
+     "platform": "claude",
+     "model": "claude-opus-5",
+     "note": "starter recipe written for NutriLog"
+    }
+   ],
+   "extraction": null,
+   "thumb": null,
+   "createdAt": "2026-09-21T15:00:00+02:00",
+   "updatedAt": "2026-09-21T15:00:00+02:00"
+  },
+  {
+   "id": "rcp-starter-tofu-noodles",
+   "type": "recipe",
+   "schema": 1,
+   "origin": "starter",
+   "lang": "cs",
+   "title": "Tofu se zeleninou a nudlemi z pánve",
+   "titleEn": "Tofu vegetable noodle stir-fry",
+   "summary": "Rychlá večeře z wok pánve, rostlinné bílkoviny.",
+   "servings": 2,
+   "time": {
+    "prepMin": 10,
+    "cookMin": 12,
+    "totalMin": 22
+   },
+   "difficulty": "easy",
+   "ingredients": [
+    {
+     "group": null,
+     "item": "pevné tofu",
+     "qty": 300,
+     "unit": "g",
+     "grams": 300,
+     "prep": "na kostky",
+     "optional": false,
+     "foodRef": "usda:172475"
+    },
+    {
+     "group": null,
+     "item": "vaječné nudle",
+     "qty": 140,
+     "unit": "g",
+     "grams": 140,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:169731"
+    },
+    {
+     "group": null,
+     "item": "mrkev",
+     "qty": 1,
+     "unit": "ks",
+     "grams": 80,
+     "prep": "na nudličky",
+     "optional": false,
+     "foodRef": "usda:170393"
+    },
+    {
+     "group": null,
+     "item": "červená paprika",
+     "qty": 1,
+     "unit": "ks",
+     "grams": 150,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170108"
+    },
+    {
+     "group": null,
+     "item": "zelí nebo pak choi",
+     "qty": 150,
+     "unit": "g",
+     "grams": 150,
+     "prep": "nakrouhané",
+     "optional": false,
+     "foodRef": "usda:169975"
+    },
+    {
+     "group": null,
+     "item": "sójová omáčka",
+     "qty": 3,
+     "unit": "lžíce",
+     "grams": 48,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:174277"
+    },
+    {
+     "group": null,
+     "item": "sezamový olej",
+     "qty": 1,
+     "unit": "lžička",
+     "grams": 5,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:171016"
+    },
+    {
+     "group": null,
+     "item": "řepkový olej",
+     "qty": 1,
+     "unit": "lžíce",
+     "grams": 14,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:172336"
+    },
+    {
+     "group": null,
+     "item": "zázvor",
+     "qty": 2,
+     "unit": "cm",
+     "grams": 10,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:169231"
+    },
+    {
+     "group": null,
+     "item": "stroužky česneku",
+     "qty": 2,
+     "unit": "ks",
+     "grams": 6,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:169230"
+    }
+   ],
+   "steps": [
+    {
+     "text": "Nudle uvařte podle obalu a sceďte.",
+     "minutes": null
+    },
+    {
+     "text": "Tofu osušte a na oleji opékejte 6 minut dokřupava, dejte stranou.",
+     "minutes": null
+    },
+    {
+     "text": "Na stejné pánvi 3 minuty restujte zeleninu se zázvorem a česnekem.",
+     "minutes": null
+    },
+    {
+     "text": "Přidejte nudle, tofu, sójovou omáčku a sezamový olej a 1 minutu promíchejte na plném ohni.",
+     "minutes": null
+    }
+   ],
+   "tips": [
+    {
+     "text": "Tofu před opékáním zabalte do utěrky a zatižte 10 minut, bude křupavější."
+    }
+   ],
+   "variations": [
+    {
+     "label": "Bez vajec",
+     "text": "Rýžové nudle místo vaječných."
+    },
+    {
+     "label": "Bez lepku",
+     "text": "Rýžové nudle a tamari."
+    }
+   ],
+   "storage": {
+    "fridgeDays": 3,
+    "freezer": false,
+    "reheat": "Na pánvi s lžící vody."
+   },
+   "nutrition": {
+    "perServing": {
+     "kcal": 645,
+     "prot": 40.2,
+     "fat": 26.3,
+     "carb": 69.9,
+     "fib": 10.7,
+     "sug": null,
+     "sfa": 3.7,
+     "mufa": 9.2,
+     "pufa": 11.6,
+     "trans": 0.07,
+     "chol": 58.8,
+     "na": 1399,
+     "k": 1077,
+     "ca": 1112,
+     "mg": 171,
+     "p": 553,
+     "fe": 8.0,
+     "zn": 4.4,
+     "cu": 0.85,
+     "mn": 2.9,
+     "se": 82.2,
+     "vita": null,
+     "vitd": 0.21,
+     "vite": null,
+     "vitk": null,
+     "vitc": 127,
+     "b1": 1.2,
+     "b2": 0.613,
+     "b3": 8.3,
+     "b5": 1.4,
+     "b6": 0.736,
+     "fol": 381,
+     "b12": 0.203,
+     "choline": null,
+     "ala": 1.6,
+     "epa": null,
+     "dha": null,
+     "alc": null,
+     "caff": null
+    },
+    "basis": "computed",
+    "confidence": "high",
+    "source": "USDA FoodData Central SR Legacy"
+   },
+   "tags": [
+    "meal:dinner",
+    "meal:lunch",
+    "time:under-30",
+    "diet:vegetarian",
+    "diet:high-protein",
+    "ing:tofu",
+    "ing:noodles",
+    "ing:cabbage",
+    "ing:carrot",
+    "cuisine:asian",
+    "method:stir-fry",
+    "equip:hob",
+    "flavor:umami"
+   ],
+   "sources": [
+    {
+     "platform": "claude",
+     "model": "claude-opus-5",
+     "note": "starter recipe written for NutriLog"
+    }
+   ],
+   "extraction": null,
+   "thumb": null,
+   "createdAt": "2026-09-21T15:00:00+02:00",
+   "updatedAt": "2026-09-21T15:00:00+02:00"
+  },
+  {
+   "id": "rcp-starter-chicken-thigh-traybake",
+   "type": "recipe",
+   "schema": 1,
+   "origin": "starter",
+   "lang": "cs",
+   "title": "Kuřecí stehna z trouby s batáty a cuketou",
+   "titleEn": "Chicken thigh tray bake with sweet potato and courgette",
+   "summary": "Všechno na jeden plech, hodí se na dva dny.",
+   "servings": 2,
+   "time": {
+    "prepMin": 10,
+    "cookMin": 35,
+    "totalMin": 45
+   },
+   "difficulty": "easy",
+   "ingredients": [
+    {
+     "group": null,
+     "item": "kuřecí stehna bez kosti a kůže",
+     "qty": 360,
+     "unit": "g",
+     "grams": 360,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:173627"
+    },
+    {
+     "group": null,
+     "item": "batáty",
+     "qty": 400,
+     "unit": "g",
+     "grams": 400,
+     "prep": "na kostky",
+     "optional": false,
+     "foodRef": "usda:168482"
+    },
+    {
+     "group": null,
+     "item": "cuketa",
+     "qty": 1,
+     "unit": "ks",
+     "grams": 240,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:169291"
+    },
+    {
+     "group": null,
+     "item": "červená cibule",
+     "qty": 1,
+     "unit": "ks",
+     "grams": 110,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:170000"
+    },
+    {
+     "group": null,
+     "item": "olivový olej",
+     "qty": 1.5,
+     "unit": "lžíce",
+     "grams": 20,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:171413"
+    },
+    {
+     "group": null,
+     "item": "sladká paprika",
+     "qty": 1,
+     "unit": "lžička",
+     "grams": 2,
+     "prep": null,
+     "optional": false,
+     "foodRef": "usda:171329"
+    },
+    {
+     "group": null,
+     "item": "sůl, pepř, tymián",
+     "qty": null,
+     "unit": null,
+     "grams": null,
+     "prep": null,
+     "optional": false,
+     "foodRef": null
+    }
+   ],
+   "steps": [
+    {
+     "text": "Troubu rozehřejte na 210 °C.",
+     "minutes": null
+    },
+    {
+     "text": "Zeleninu a kuře promíchejte na plechu s olejem, paprikou, solí, pepřem a tymiánem.",
+     "minutes": null
+    },
+    {
+     "text": "Pečte 35 minut, v polovině promíchejte.",
+     "minutes": null
+    },
+    {
+     "text": "Kuře je hotové, když šťáva vytéká čirá.",
+     "minutes": null
+    }
+   ],
+   "tips": [
+    {
+     "text": "Stehna jsou šťavnatější než prsa a při ohřívání nevysychají."
+    }
+   ],
+   "variations": [
+    {
+     "label": "Bez batátů",
+     "text": "Obyčejné brambory, pečte o 5 minut déle."
+    }
+   ],
+   "storage": {
+    "fridgeDays": 3,
+    "freezer": true,
+    "reheat": "Trouba nebo mikrovlnka."
+   },
+   "nutrition": {
+    "perServing": {
+     "kcal": 523,
+     "prot": 40.8,
+     "fat": 18.1,
+     "carb": 49.6,
+     "fib": 8.5,
+     "sug": 13.8,
+     "sfa": 3.5,
+     "mufa": 10.0,
+     "pufa": 3.0,
+     "trans": 0.036,
+     "chol": 169,
+     "na": 294,
+     "k": 1526,
+     "ca": 107,
+     "mg": 120,
+     "p": 492,
+     "fe": 3.5,
+     "zn": 4.0,
+     "cu": 0.506,
+     "mn": 0.839,
+     "se": 43.0,
+     "vita": 1467,
+     "vitd": 0.0,
+     "vite": 2.7,
+     "vitk": 21.0,
+     "vitc": 30.4,
+     "b1": 0.397,
+     "b2": 0.615,
+     "b3": 11.8,
+     "b5": null,
+     "b6": 1.5,
+     "fol": 68.9,
+     "b12": 1.1,
+     "choline": 136,
+     "ala": 0.212,
+     "epa": 0.004,
+     "dha": 0.013,
+     "alc": 0.0,
+     "caff": 0.0
+    },
+    "basis": "computed",
+    "confidence": "high",
+    "source": "USDA FoodData Central SR Legacy"
+   },
+   "tags": [
+    "meal:dinner",
+    "meal:lunch",
+    "prep:meal-prep",
+    "prep:one-pan",
+    "time:under-60",
+    "diet:high-protein",
+    "ing:chicken",
+    "ing:sweet-potato",
+    "ing:zucchini",
+    "method:roast",
+    "equip:oven",
+    "flavor:savory"
+   ],
+   "sources": [
+    {
+     "platform": "claude",
+     "model": "claude-opus-5",
+     "note": "starter recipe written for NutriLog"
+    }
+   ],
+   "extraction": null,
+   "thumb": null,
+   "createdAt": "2026-09-21T15:00:00+02:00",
+   "updatedAt": "2026-09-21T15:00:00+02:00"
+  }
+ ]
+}

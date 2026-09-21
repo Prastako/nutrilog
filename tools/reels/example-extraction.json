@@ -1,0 +1,221 @@
+{
+ "reel": "EXAMPLE00000",
+ "isRecipe": true,
+ "dedupeKey": "chicken rice bowl | chicken breast, rice, broccoli, soy sauce, sesame",
+ "recipe": {
+  "title": "Kuřecí miska s rýží, brokolicí a sezamem",
+  "titleEn": "Chicken rice bowl with broccoli and sesame",
+  "lang": "cs",
+  "summary": "Klasický meal prep: čtyři krabičky na obědy, vydrží do čtvrtka.",
+  "servings": 4,
+  "time": {
+   "prepMin": 15,
+   "cookMin": 20,
+   "totalMin": 35
+  },
+  "difficulty": "easy",
+  "ingredients": [
+   {
+    "group": null,
+    "item": "kuřecí prsa",
+    "qty": 600,
+    "unit": "g",
+    "grams": 600,
+    "prep": "nakrájená na kostky",
+    "optional": false,
+    "en": "chicken breast skinless boneless raw"
+   },
+   {
+    "group": null,
+    "item": "rýže jasmínová nebo dlouhozrnná",
+    "qty": 300,
+    "unit": "g",
+    "grams": 300,
+    "prep": null,
+    "optional": false,
+    "en": "rice white long-grain raw"
+   },
+   {
+    "group": null,
+    "item": "brokolice",
+    "qty": 1,
+    "unit": "ks",
+    "grams": 480,
+    "prep": "na růžičky",
+    "optional": false,
+    "en": "broccoli raw"
+   },
+   {
+    "group": "Omáčka",
+    "item": "sójová omáčka",
+    "qty": 4,
+    "unit": "lžíce",
+    "grams": 64,
+    "prep": null,
+    "optional": false,
+    "en": "soy sauce shoyu"
+   },
+   {
+    "group": "Omáčka",
+    "item": "sezamový olej",
+    "qty": 1,
+    "unit": "lžíce",
+    "grams": 14,
+    "prep": null,
+    "optional": false,
+    "en": "oil sesame"
+   },
+   {
+    "group": "Omáčka",
+    "item": "stroužky česneku",
+    "qty": 3,
+    "unit": "ks",
+    "grams": 9,
+    "prep": "prolisované",
+    "optional": false,
+    "en": "garlic raw"
+   },
+   {
+    "group": "Omáčka",
+    "item": "zázvor",
+    "qty": 2,
+    "unit": "cm",
+    "grams": 10,
+    "prep": "nastrouhaný",
+    "optional": false,
+    "en": "ginger root raw"
+   },
+   {
+    "group": null,
+    "item": "řepkový olej",
+    "qty": 1,
+    "unit": "lžíce",
+    "grams": 14,
+    "prep": null,
+    "optional": false,
+    "en": "oil canola"
+   },
+   {
+    "group": null,
+    "item": "sezam",
+    "qty": 2,
+    "unit": "lžíce",
+    "grams": 18,
+    "prep": null,
+    "optional": false,
+    "en": "sesame seeds whole dried"
+   },
+   {
+    "group": null,
+    "item": "limetková šťáva",
+    "qty": 1,
+    "unit": "lžíce",
+    "grams": 15,
+    "prep": null,
+    "optional": true,
+    "en": "lime juice raw"
+   }
+  ],
+  "steps": [
+   {
+    "text": "Uvařte rýži podle návodu na obalu.",
+    "minutes": null
+   },
+   {
+    "text": "Smíchejte sójovou omáčku, sezamový olej, česnek, zázvor a limetku.",
+    "minutes": null
+   },
+   {
+    "text": "Kuře osolte jen lehce (omáčka je slaná) a na rozpáleném oleji opékejte 6 až 8 minut dozlatova.",
+    "minutes": null
+   },
+   {
+    "text": "Přilijte polovinu omáčky a 1 minutu provařte, ať kuře zglazuje.",
+    "minutes": null
+   },
+   {
+    "text": "Brokolici spařte nebo vařte v páře 4 minuty, ať zůstane křupavá.",
+    "minutes": null
+   },
+   {
+    "text": "Rozdělte do 4 krabiček: rýže, brokolice, kuře, zbytek omáčky a sezam.",
+    "minutes": null
+   }
+  ],
+  "tips": [
+   {
+    "text": "Brokolici vařte kratší dobu, při ohřívání v mikrovlnce ještě změkne.",
+    "from": [
+     "ig:EXAMPLE00000"
+    ]
+   },
+   {
+    "text": "Omáčku na poslední den dejte do zvláštní nádobky, rýže ji jinak vsákne.",
+    "from": [
+     "ig:EXAMPLE00000"
+    ]
+   }
+  ],
+  "variations": [
+   {
+    "label": "Bez lepku",
+    "text": "Sójovou omáčku nahraďte tamari.",
+    "from": [
+     "ig:EXAMPLE00000"
+    ]
+   },
+   {
+    "label": "Vegetariánsky",
+    "text": "Kuře nahraďte 600 g pevného tofu, opečte ho stejně.",
+    "from": [
+     "ig:EXAMPLE00000"
+    ]
+   }
+  ],
+  "storage": {
+   "fridgeDays": 4,
+   "freezer": true,
+   "reheat": "Mikrovlnka 2 až 3 minuty, rýži pokropte lžící vody."
+  },
+  "nutrition": {
+   "stated": {
+    "perServing": {
+     "kcal": 590,
+     "prot": 45,
+     "carb": 70,
+     "fat": 14
+    },
+    "includes": "with rice"
+   }
+  },
+  "tags": [
+   "meal:lunch",
+   "meal:dinner",
+   "prep:meal-prep",
+   "prep:freezer-friendly",
+   "time:under-60",
+   "diet:high-protein",
+   "ing:chicken",
+   "ing:rice",
+   "ing:broccoli",
+   "ing:sesame",
+   "cuisine:asian",
+   "method:stir-fry",
+   "equip:hob",
+   "flavor:umami"
+  ]
+ },
+ "extraction": {
+  "inputs": [
+   "caption",
+   "transcript",
+   "frames"
+  ],
+  "confidence": "high",
+  "gaps": [
+   "Quantities of garlic and ginger estimated from the video."
+  ],
+  "notesForMerge": ""
+ },
+ "_note": "Format example only. The content is a NutriLog starter recipe, not a real reel."
+}

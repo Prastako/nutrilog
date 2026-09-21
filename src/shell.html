@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="cs" data-theme="device">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NutriLog</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F2EADC" id="metaThemeColor">
+<script>
+const VERSION = '@@VERSION@@';
+const SCHEMA = 2;
+</script>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+@@CSS@@
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+@@ICONS@@
+</defs></svg>
+
+<div id="app">
+  <header class="topbar">
+    <button id="btnBack" class="iconbtn hide" type="button" aria-label="Back"><svg><use href="#i-back"/></svg></button>
+    <div class="brand"><span class="brandmark" aria-hidden="true"></span><h1 id="screenTitle">NutriLog</h1></div>
+    <button id="btnSettings" class="iconbtn" type="button" aria-label="Settings"><svg><use href="#i-gear"/></svg></button>
+  </header>
+
+  <div id="backupBar" class="bar hide"></div>
+
+  <main>
+    <section id="s-today"    class="screen"></section>
+    <section id="s-log"      class="screen"></section>
+    <section id="s-recipes"  class="screen"></section>
+    <section id="s-recipe"   class="screen"></section>
+    <section id="s-chat"     class="screen"></section>
+    <section id="s-review"   class="screen"></section>
+    <section id="s-profile"  class="screen"></section>
+    <section id="s-settings" class="screen"></section>
+  </main>
+
+  <button id="fab" class="fab hide" type="button" aria-label="Add">+</button>
+  <nav id="tabbar"></nav>
+</div>
+
+<div id="sheetRoot"></div>
+<div id="toast" class="hide" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   NutriLog @@VERSION@@. Built from src/ by tools/build.py.
+   Edit the files in src/, then run the build; do not edit this
+   generated block by hand.
+   ============================================================ */
+@@JS@@
+</script>
+</body>
+</html>
