@@ -511,6 +511,7 @@ en: {
 
 /* ---------- v0.2 additions ---------- */
 Object.assign(STR.cs, {
+  mac_p:'B', mac_f:'T', mac_c:'S',
   today:'Dnes', db_blocked:'Aplikace je otevřená ještě v jiné kartě. Zavřete ji, aby se mohla aktualizovat.',
   slot_breakfast:'Snídaně', slot_lunch:'Oběd', slot_snack:'Svačina', slot_dinner:'Večeře', slot_other:'Ostatní',
   nut_fib:'Vláknina',
@@ -640,6 +641,7 @@ Object.assign(STR.cs, {
   ai_working:'Pracuji…', ai_working_long:'Claude píše recepty, trvá to obvykle 20 až 60 sekund.', ai_bad_reply:'Claude odpověděl v nečekaném tvaru. Zkuste to znovu.'
 });
 Object.assign(STR.en, {
+  mac_p:'P', mac_f:'F', mac_c:'C',
   today:'Today', db_blocked:'The app is open in another tab. Close it so this one can update.',
   slot_breakfast:'Breakfast', slot_lunch:'Lunch', slot_snack:'Snack', slot_dinner:'Dinner', slot_other:'Other',
   nut_fib:'Fibre',

@@ -6,7 +6,7 @@
    fallback. Data files are requested with ?v=<version> and served from the
    cache first, so the 1 MB food database downloads once per version. */
 
-const CACHE = 'nutrilog-shell-0.2.2';
+const CACHE = 'nutrilog-shell-0.2.3';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {

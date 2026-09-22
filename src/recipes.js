@@ -210,7 +210,7 @@ function recipeCard(r, extra){
   return '<button class="rcard" type="button" data-act="open-recipe" data-id="'+esc(r.id)+'">' +
     '<span class="rthumb" data-thumb="'+esc(r.id)+'"><span>'+initial+'</span></span>' +
     '<span class="rbody"><span class="rtitle">'+esc(r.title)+(note && note.favorite ? ' <span class="star">★</span>' : '')+'</span>' +
-    '<span class="rmeta num">'+[tm ? tm+' min' : null, k != null ? fmtNum(k)+' kcal' : null, prot != null ? 'B '+fmtNum(prot)+' g' : null].filter(Boolean).map(esc).join(' · ')+'</span>' +
+    '<span class="rmeta num">'+[tm ? tm+' min' : null, k != null ? fmtNum(k)+' kcal' : null, prot != null ? t('mac_p')+' '+fmtNum(prot)+' g' : null].filter(Boolean).map(esc).join(' · ')+'</span>' +
     (extra ? '<span class="rextra">'+extra+'</span>' : '') +
     '<span class="rtags">' + (ex.length ? '<span class="pill err">'+esc(t('rc_excluded'))+'</span>' : '') +
       tags.map(x => '<span class="pill">'+esc(tagLabel(x))+'</span>').join('') +
@@ -323,7 +323,7 @@ function renderRecipe(){
   h += '<div class="kvgrid">' +
     '<div><span class="k">'+esc(t('rc_time'))+'</span><span class="v num">'+(tm ? esc(tm)+' min' : '–')+'</span>' +
       (r.time && (r.time.prepMin || r.time.cookMin) ? '<span class="tiny">'+esc(t('rc_prep_cook',{p:r.time.prepMin||0,c:r.time.cookMin||0}))+'</span>' : '')+'</div>' +
-    '<div><span class="k">'+esc(t('rc_kcal_serv'))+'</span><span class="v num">'+esc(fmtNum(ps.kcal))+'</span><span class="tiny">B '+esc(fmtNum(ps.prot))+' · T '+esc(fmtNum(ps.fat))+' · S '+esc(fmtNum(ps.carb))+' g</span></div>' +
+    '<div><span class="k">'+esc(t('rc_kcal_serv'))+'</span><span class="v num">'+esc(fmtNum(ps.kcal))+'</span><span class="tiny">'+esc(t('mac_p'))+' '+esc(fmtNum(ps.prot))+' · '+esc(t('mac_f'))+' '+esc(fmtNum(ps.fat))+' · '+esc(t('mac_c'))+' '+esc(fmtNum(ps.carb))+' g</span></div>' +
     '<div><span class="k">'+esc(t('rc_difficulty'))+'</span><span class="v">'+esc(r.difficulty ? t('diff_'+r.difficulty) : '–')+'</span></div>' +
     '</div>';
   h += '<div class="btnrow" style="margin:12px 0">' +
@@ -424,7 +424,7 @@ async function recipeLogSheet(id){
     '<p class="tiny" id="rl-prev"></p>';
   if (ps.kcal == null) b += '<div class="notice warn">'+esc(t('rc_no_nutrition'))+'</div>';
   const sheet = openSheet(esc(t('rc_log')), b, '<button class="btn" type="button" id="rl-save">'+esc(t('save'))+'</button>');
-  const upd = () => { const n = Number($('#rl-serv').value) || 0; $('#rl-prev').textContent = fmtNum((ps.kcal||0)*n) + ' kcal · B ' + fmtNum((ps.prot||0)*n) + ' g'; };
+  const upd = () => { const n = Number($('#rl-serv').value) || 0; $('#rl-prev').textContent = fmtNum((ps.kcal||0)*n) + ' kcal · ' + t('mac_p') + ' ' + fmtNum((ps.prot||0)*n) + ' g'; };
   upd();
   $('#rl-serv').addEventListener('input', upd);
   bindSlotChips(sheet, v => slot = v);

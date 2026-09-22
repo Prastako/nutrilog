@@ -88,7 +88,7 @@ function renderProfile(){
     F.exclusions.forEach((x, i) => {
       h += '<div class="notice" style="margin-bottom:8px">' +
         '<div style="display:flex;gap:8px;align-items:center">' +
-        '<b style="flex:1">'+esc(x.label)+'</b>' +
+        '<b style="flex:1">'+esc(exclLabel(x))+'</b>' +
         '<span class="pill '+(x.type==='allergy'?'err':'')+'">'+esc(t(x.type==='allergy'?'p_type_allergy':'p_type_refuse'))+'</span>' +
         '<button class="iconbtn sm" type="button" data-act="excl-del" data-i="'+i+'" aria-label="'+esc(t('p_remove'))+'">'+icon('trash')+'</button></div>' +
         '<div class="field" style="margin:8px 0 0"><span class="flabel">'+esc(t('p_synonyms'))+'</span>' +

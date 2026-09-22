@@ -30,6 +30,13 @@ function L(obj){
   return obj[S.lang] || obj.en || obj.cs || '';
 }
 
+/* Names that follow the app language even for records saved while the
+   app was in the other language (v0.2.3). The stored text is not changed. */
+function exclLabel(x){
+  const k = x && x.id ? ALLERGENS.find(a => a.id === x.id) : null;
+  return k ? L(k) : ((x && x.label) || '');
+}
+
 function icon(name, cls){
   return '<svg class="'+(cls||'')+'" aria-hidden="true"><use href="#i-'+name+'"/></svg>';
 }
@@ -318,7 +325,7 @@ async function recDelete(id){
 /* ---------- 4. Application state ---------- */
 
 const DEFAULT_PREFS = {
-  lang: 'cs',
+  lang: 'en',
   theme: 'device',
   models: { chat:'claude-sonnet-5', vision:'claude-sonnet-5', analysis:'claude-opus-5' },
   prices: {
@@ -337,6 +344,7 @@ const DEFAULT_META = {
   installedAt: null,
   persistGranted: null,
   migratedFromSchema1: null,
+  englishDefaultAppliedAt: null,  /* v0.2.3: the app switched to English once */
   dataChangedAt: null,
   backup: {
     state: 'idle',
@@ -352,7 +360,7 @@ const DEFAULT_META = {
 };
 
 const S = {
-  lang: 'cs',
+  lang: 'en',
   theme: 'device',
   screen: 'today',
   profile: null,          /* the profile record (schema 2) */
@@ -389,6 +397,14 @@ async function loadState(){
   /* Sonnet 5 stayed at 2 and 10 USD after August 2026; fix the old default. */
   if (S.prefs.prices['claude-sonnet-5'] && Number(S.prefs.prices['claude-sonnet-5'].in) === 3 && Number(S.prefs.prices['claude-sonnet-5'].out) === 15)
     S.prefs.prices['claude-sonnet-5'] = {in:2, out:10};
+  /* v0.2.3: English became the app language. Switch an existing install
+     over once; after that, the language chosen in Settings sticks. */
+  if (!S.meta.englishDefaultAppliedAt){
+    S.prefs.lang = 'en';
+    S.meta.englishDefaultAppliedAt = nowIso();
+    await kvSet('prefs', S.prefs);
+    await saveMeta();
+  }
   S.lang    = S.prefs.lang;
   S.theme   = S.prefs.theme;
   S.secrets.anthropic = await secretGet('anthropic');
@@ -767,7 +783,7 @@ function exclusionTerms(){
     const words = [x.label].concat(x.syn || [], known ? known.syn.concat([known.cs, known.en]) : []).map(fold)
       .map(w => w.replace(/[^a-z0-9]+/g,' ').trim()).filter(w => w.length >= 3)
       .map(w => (w.length >= 5 && w.indexOf(' ') < 0) ? w.slice(0, -1) : w);
-    out.push({id: x.id || null, label: x.label, type: x.type, words});
+    out.push({id: x.id || null, label: exclLabel(x), type: x.type, words});
   });
   return out;
 }

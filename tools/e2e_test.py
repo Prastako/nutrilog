@@ -124,6 +124,11 @@ with sync_playwright() as p:
     page.evaluate("async () => { const regs = await navigator.serviceWorker.getRegistrations(); for (const r of regs) await r.unregister(); }")
     page.goto(BASE + '#today'); page.wait_for_timeout(1500)
     page.reload(); page.wait_for_timeout(1500)
+    # v0.2.3: an existing install switches to English once; this test then checks Czech mode
+    print('language after update:', page.evaluate('S.lang'))
+    page.evaluate("async () => { S.lang = 'cs'; await savePrefs(); applyLang(); }"); page.wait_for_timeout(300)
+    page.reload(); page.wait_for_timeout(1200)
+    print('language after choosing Czech and reloading:', page.evaluate('S.lang'))
     shot(page, '01_today_migrated')
     prof = page.evaluate("async () => { const r = await recGet('profile'); return r; }")
     assert prof and prof['person']['weightKg'] == 76 and prof['food']['exclusions'][0]['label'] == 'Mléko', prof

@@ -85,7 +85,7 @@ function bindSlotChips(root, cb){
 
 function macroLine(n){
   if (!n) return '';
-  return 'B ' + fmtNum(n.prot) + ' · T ' + fmtNum(n.fat) + ' · S ' + fmtNum(n.carb) + ' g';
+  return t('mac_p') + ' ' + fmtNum(n.prot) + ' · ' + t('mac_f') + ' ' + fmtNum(n.fat) + ' · ' + t('mac_c') + ' ' + fmtNum(n.carb) + ' g';
 }
 
 /* A compact table of all known nutrients, grouped. */

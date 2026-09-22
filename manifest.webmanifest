@@ -1,7 +1,7 @@
 {
   "name": "NutriLog",
   "short_name": "NutriLog",
-  "description": "Osobní deník jídla a živin. A personal food and nutrient diary.",
+  "description": "A personal food and nutrient diary.",
   "start_url": "./",
   "scope": "./",
   "id": "nutrilog",
@@ -9,7 +9,7 @@
   "orientation": "portrait",
   "background_color": "#F2EADC",
   "theme_color": "#F2EADC",
-  "lang": "cs",
+  "lang": "en",
   "dir": "ltr",
   "categories": ["health", "food", "lifestyle"],
   "icons": [

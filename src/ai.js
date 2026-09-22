@@ -181,7 +181,7 @@ function recipeLangInstruction(){
 function exclusionText(){
   const ex = (S.profile && S.profile.food && S.profile.food.exclusions) || [];
   if (!ex.length) return 'none';
-  return ex.map(x => x.label + ' (' + (x.type === 'allergy' ? 'ALLERGY' : 'does not eat') + (x.syn && x.syn.length ? '; also: ' + x.syn.slice(0,14).join(', ') : '') + ')').join('; ');
+  return ex.map(x => exclLabel(x) + ' (' + (x.type === 'allergy' ? 'ALLERGY' : 'does not eat') + (x.syn && x.syn.length ? '; also: ' + x.syn.slice(0,14).join(', ') : '') + ')').join('; ');
 }
 
 async function dayTotals(dateKey){

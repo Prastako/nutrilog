@@ -84,13 +84,14 @@ function contributors(P, k, limit){
     const n = e.nutrients || {};
     const v = k === 'o3ld' ? ((n.epa||0)+(n.dha||0))*1000 : n[k];
     if (!v) return;
-    by[e.name] = (by[e.name] || 0) + v;
+    by[entryName(e)] = (by[entryName(e)] || 0) + v;
   });
   return Object.keys(by).map(name => ({name, v: by[name]})).sort((a,b) => b.v - a.v).slice(0, limit || 5);
 }
 
 async function renderReview(){
   const host = $('#s-review');
+  await foodDbForNames();
   const mode = S.reviewMode;
   const P = await periodData(mode, S.reviewAnchor);
   const ref = referenceValues();
@@ -224,7 +225,7 @@ async function reviewWithClaude(){
     lines.push('- ' + name + ': ' + (r.avg == null ? '?' : fmtAmt(r.avg)) + ' ' + nutUnit(r.k) + ' / ' + (R ? (R.v || R.low || '-') : '-') + ' / ' + r.st + ' / ' + Math.round((r.cov||0)*100) + '%');
   });
   const top = {};
-  P.entries.forEach(e => { top[e.name] = (top[e.name] || 0) + 1; });
+  P.entries.forEach(e => { const n = entryName(e); top[n] = (top[n] || 0) + 1; });
   lines.push('Most logged items: ' + Object.keys(top).sort((a,b) => top[b] - top[a]).slice(0, 15).map(n => n + ' (' + top[n] + 'x)').join(', '));
   const supp = Object.keys(P.suppSum).length ? 'Supplement contribution per period: ' + Object.keys(P.suppSum).map(k => nutLabel(k) + ' ' + fmtAmt(P.suppSum[k])).join(', ') : 'No supplements logged.';
   lines.push(supp);

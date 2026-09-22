@@ -99,8 +99,18 @@ function showWhyRange(){
 
 /* ---------- Diary ---------- */
 
+/* A diary entry from the food database shows the database name in the
+   current language; everything else shows the name it was saved with. */
+function entryName(e){
+  const ref = e && e.source && e.source.ref;
+  if (ref && ref.indexOf('usda:') === 0 && FOODDB.ready && FOODDB.byId[ref]) return foodName(FOODDB.byId[ref]);
+  return (e && e.name) || '';
+}
+async function foodDbForNames(){ try { await loadFoodDb(); } catch(e){ /* offline: saved names */ } }
+
 async function renderLog(){
   const host = $('#s-log');
+  await foodDbForNames();
   const day = S.logDate || localDateKey();
   const d = await dayTotals(day);
   const g = computeTargets(S.profile);
@@ -120,7 +130,7 @@ async function renderLog(){
     if (!list.length) h += '<p class="tiny">'+esc(t('lg_empty_slot'))+'</p>';
     list.forEach(e => {
       h += '<button class="entry" type="button" data-act="edit-entry" data-id="'+esc(e.id)+'">' +
-        '<span class="en">'+esc(e.name)+(e.basis === 'estimate' ? ' <span class="pill">'+esc(t('lg_est'))+'</span>' : '')+'</span>' +
+        '<span class="en">'+esc(entryName(e))+(e.basis === 'estimate' ? ' <span class="pill">'+esc(t('lg_est'))+'</span>' : '')+'</span>' +
         '<span class="ek num">'+esc(fmtNum((e.nutrients||{}).kcal))+' <span class="tiny">kcal</span></span>' +
         '<span class="em tiny num">'+esc([(e.amount && e.amount.label) || '', macroLine(e.nutrients)].filter(Boolean).join(' · '))+'</span></button>';
     });
@@ -426,7 +436,7 @@ async function editEntry(id){
   const hasGrams = e.amount && e.amount.grams;
   const food = e.source && e.source.ref ? await getFoodByRef(e.source.ref) : null;
   const isRecipe = e.source && e.source.kind === 'recipe';
-  let b = '<p class="muted">'+esc(e.name)+'</p>';
+  let b = '<p class="muted">'+esc(entryName(e))+'</p>';
   if (hasGrams) b += '<div class="field"><label for="eg">'+esc(t('am_grams'))+'</label><input id="eg" type="number" inputmode="decimal" value="'+esc(e.amount.grams)+'"></div>';
   else if (isRecipe) b += '<div class="field"><label for="es">'+esc(t('rc_servings_eaten'))+'</label><input id="es" type="number" inputmode="decimal" step="0.25" value="'+esc(e.amount.qty)+'"></div>';
   b += '<div class="field"><label for="ed">'+esc(t('lg_date'))+'</label><input id="ed" type="date" value="'+esc(e.date)+'"></div>';
@@ -478,6 +488,16 @@ const SUPP_PRESETS = [
   {key:'crea', name:{cs:'Kreatin monohydrát', en:'Creatine monohydrate'}, form:'powder', unit:{cs:'odměrka 5 g', en:'5 g scoop'}, per:{}, extra:[{name:'Creatine', amount:5, unit:'g'}]},
   {key:'whey', name:{cs:'Syrovátkový protein', en:'Whey protein'}, form:'powder', unit:{cs:'odměrka 30 g', en:'30 g scoop'}, per:{kcal:120, prot:24, fat:1.5, carb:2.5}}
 ];
+
+/* A supplement added from a preset and not renamed shows the preset name
+   in the current language. */
+function suppPreset(s){ return SUPP_PRESETS.find(p => p.name && (p.name.cs === s.name || p.name.en === s.name)) || null; }
+function suppName(s){ const p = suppPreset(s); return p ? L(p.name) : s.name; }
+function suppUnitLabel(s){
+  const p = suppPreset(s);
+  if (p && p.unit && (s.unitLabel === p.unit.cs || s.unitLabel === p.unit.en)) return L(p.unit);
+  return s.unitLabel;
+}
 const SUPP_NUT_CHOICES = ['vitd','epa','dha','mg','b12','zn','vitc','fe','iod','ca','k','se','vita','vite','vitk','b1','b2','b3','b5','b6','biot','fol','cu','mn','kcal','prot','fat','carb','fib'];
 
 function suppScheduledOn(s, dateKey){
@@ -498,7 +518,7 @@ async function renderSuppChecklist(el, dateKey, showManage){
     const sched = suppScheduledOn(s, dateKey);
     if (!sched && !taken.length) return;
     h += '<label class="ing supp"><input type="checkbox" data-supp="'+esc(s.id)+'" data-date="'+esc(dateKey)+'" '+(taken.length ? 'checked' : '')+'>' +
-      '<span class="it">'+esc(s.name)+' <span class="tiny">'+esc(fmtQty(s.defaultUnits||1))+' × '+esc(s.unitLabel || t('sp_form_'+(s.form||'capsule')))+
+      '<span class="it">'+esc(suppName(s))+' <span class="tiny">'+esc(fmtQty(s.defaultUnits||1))+' × '+esc(suppUnitLabel(s) || t('sp_form_'+(s.form||'capsule')))+
       ((s.schedule && s.schedule.time) ? ' · '+esc(t('sp_time_'+s.schedule.time)) : '')+'</span></span></label>';
   });
   h += '</div>';
@@ -525,7 +545,7 @@ async function openSuppManager(){
   supps.forEach(s => {
     const per = Object.keys(s.perUnit||{}).filter(k => s.perUnit[k] != null).map(k => nutLabel(k) + ' ' + fmtAmt(k==='epa'||k==='dha' ? s.perUnit[k]*1000 : s.perUnit[k]) + ' ' + (k==='epa'||k==='dha' ? 'mg' : nutUnit(k)));
     (s.extra||[]).forEach(x => per.push(x.name + ' ' + fmtAmt(x.amount) + ' ' + x.unit));
-    b += '<button class="frow" type="button" data-sedit="'+esc(s.id)+'"><span class="fn">'+esc(s.name)+(s.active === false ? ' <span class="pill">'+esc(t('sp_paused'))+'</span>' : '')+'</span>' +
+    b += '<button class="frow" type="button" data-sedit="'+esc(s.id)+'"><span class="fn">'+esc(suppName(s))+(s.active === false ? ' <span class="pill">'+esc(t('sp_paused'))+'</span>' : '')+'</span>' +
       '<span class="fm tiny">'+esc(per.join(', ') || '–')+'</span></button>';
   });
   b += '<p class="eyebrow" style="margin-top:16px">'+esc(t('sp_presets'))+'</p><div class="chips">' +
