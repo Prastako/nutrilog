@@ -1,6 +1,6 @@
 # NutriLog handoff (read this first in a new chat)
 
-Last updated: 2026-09-22 (session 3, Claude Code at claude.ai/code with the repo selected). v0.2.3 is live on main (6a832e0): live index.html and sw.js show 0.2.3. Recipe archive (16 recipes) is on Drive (Jan uploaded the zip). Testing whether this session can push to main (deploy test).
+Last updated: 2026-09-22 (session 3, Claude Code at claude.ai/code with the repo selected). v0.2.3 is live on main (6a832e0): live index.html and sw.js show 0.2.3. Recipe archive (16 recipes) is on Drive (Jan uploaded the zip). Push route verified: this session pushes straight to main and GitHub Pages serves the change about 50 s later (deploy test commit db7c944).
 
 ## The brief (Jan's original request, condensed)
 Personal nutrition app on Android: log meals and supplements; profile with diet goals driving meal suggestions (breakfast, lunch, snack, dinner, several options, full recipe each); recipe ideas and meal prep from an archive extracted from his saved Instagram reels (each recipe one record, same dish from several reels merged with variations and tips, generous tags, archive backed up and hosted on his Google Drive, structured to sit next to his workout reel archive); photo of food or label evaluated against the diet; in-app Claude chat about ingredients he has or misses; saved data; weekly and monthly summaries flagging lacking nutrients. No monetisation yet. Data designed so a later workout app and a shared platform can read it without a rewrite. Long jobs run 23:00 to 07:00 Prague time (schedule them as scheduled tasks); daytime is for checkpoints. Stop at hard to change decisions with a testable version. When asking Jan to do something manually, give exact steps and exact text to paste. No em dashes anywhere. Jan cannot read code; describe behaviour.
@@ -48,13 +48,14 @@ Personal nutrition app on Android: log meals and supplements; profile with diet 
 - Reel Movement Atlas: 1mVtzpcPnL0ugfUjjlFjmYf02GzfjNPdf
 - Trashing Drive folders was partly blocked by the permission classifier ("Cloud Storage Mass Delete"); do not trash Drive items without asking Jan.
 
-## Push route (Jan, 2026-09-22 21:12: manual uploads per version are not acceptable)
-- Plan: continue in a Claude Code session at https://claude.ai/code?repositories=Prastako/nutrilog so the session can push itself. This handoff is also in the repo as docs/HANDOFF.md, so that session can read it without the Project.
-- Not verified yet: whether that session pushes to main or only to its own branch (GitHub Pages serves main), and whether Google Drive and the Project docs are available there.
-- Rejected: a personal access token pasted into chat (the proxy policy says not to route around it); driving GitHub's upload page with Claude in Chrome (the files are in the cloud workspace, not on Jan's computer).
+## Push route (verified 2026-09-22, session 3)
+- Work happens in a Claude Code session at https://claude.ai/code?repositories=Prastako/nutrilog. It commits on its own branch and also pushes to main (`git push origin <branch>:main`); Pages rebuilds in about 50 s (Actions run "pages build and deployment"). No manual uploads needed.
+- Available there: Google Drive connector (Reel Recipe Atlas readable), GitHub tools, Chromium. Not available: the Project docs (source bundle, extractions JSON); Drive records/index.json has the built archive.
+- Tests there: `pip install playwright==1.56.0` first (matches the preinstalled Chromium; newer versions look for a browser that is not there).
+- Rejected earlier: a personal access token pasted into chat; driving GitHub's upload page with Claude in Chrome.
 
 ## Open questions for Jan
-- Private backup repo name (app: Settings, API keys, Backup repository, format user/name). Needed for the archive upload and for any automation.
+- Private backup repo name (app: Settings, API keys, Backup repository, format user/name). Needed for the archive upload and for any automation. Jan's account has a private repo `Prastako/nutrilog-data` (last push 2026-08-10); likely the backup repo, not confirmed.
 - Did Jan load the recipe archive into the app (backup repo or from file)?
 
 ## Decisions (checkpoint 1, answered)
@@ -73,8 +74,7 @@ Link collecting snippet (version 2, current):
 ```
 
 ## Next steps
-- Confirm Jan's uploads landed: live site shows 0.2.1; Drive has originals/extracted/records; archive in the backup repo (or loaded from file).
-- Confirm v0.2.3 is live after Jan's upload: gear icon, About, Check for an update; Version shows 0.2.3 and the app is in English.
+- Done 2026-09-22: live site serves 0.2.3; Drive has originals/, extracted/, records/ (index.json, report.json, thumbs/). Still open: archive in the backup repo (or loaded from file).
 - Fix what Jan's PC test of v0.2.1 finds.
 - Later: technique notes as a record type (for reels like DKHvNpth-eC); optional ingredients (e.g. the dessert in DDxAjM-RKWg) are currently counted in per-serving nutrition.
 
