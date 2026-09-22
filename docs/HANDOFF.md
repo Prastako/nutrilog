@@ -58,7 +58,8 @@ Personal nutrition app on Android: log meals and supplements; profile with diet 
 ## Open questions for Jan
 - Private backup repo name (app: Settings, API keys, Backup repository, format user/name). Needed for the archive upload and for any automation. Not `Prastako/nutrilog-data`: Jan deleted it (old version), ignore it.
 - Did Jan load the recipe archive into the app (backup repo or from file)?
-- Next step on the ideas below: research session (when, one or two) and what to build first.
+- Research run scheduled for 2026-09-23 01:15 Prague (after Jan's usage plan resets at 01:00): trigger trig_019gb6Ag3Qg7N4YjyTn1Z9A5 wakes the Claude Code session session_018yyUtT1MZnkJyPkvsja6P7. Output: docs/research/2026-09-23-research.md with a roadmap to going public. If that file is missing in the morning, the run did not happen.
+- What to build first: open until the roadmap is in.
 
 ## Ideas from Jan (2026-09-22, not started; several need research first)
 Each item: Jan's idea, then "Now:" what the app does today.
@@ -83,6 +84,7 @@ Each item: Jan's idea, then "Now:" what the app does today.
 6. Reel source: a Saved collection on his Instagram. Link collecting snippet (version 2) below; the fallback is Instagram's "Download your information" (Saved only, JSON).
 7. Claude GitHub App: installed and connected (did not grant push to this chat).
 8. Archive originals: still images only, no videos (2026-09-21).
+9. Going public is the final goal (2026-09-22): a public service, free tier plus paid premium. Everything else leads toward it and is scheduled accordingly.
 
 Link collecting snippet (version 2, current):
 ```
