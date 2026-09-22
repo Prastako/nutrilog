@@ -1,6 +1,6 @@
 # NutriLog handoff (read this first in a new chat)
 
-Last updated: 2026-09-22 (session 3, Claude Code at claude.ai/code with the repo selected). v0.2.3 is live on main (6a832e0): live index.html and sw.js show 0.2.3. Recipe archive (16 recipes) is on Drive (Jan uploaded the zip). Push route verified: this session pushes straight to main and GitHub Pages serves the change about 50 s later (deploy test commit db7c944).
+Last updated: 2026-09-22 (session 3, Claude Code at claude.ai/code with the repo selected). v0.2.3 is live on main (6a832e0): live index.html and sw.js show 0.2.3. Recipe archive (16 recipes) is on Drive (Jan uploaded the zip). Push route verified: this session pushes straight to main and GitHub Pages serves the change about 50 s later (deploy test commit db7c944). Standing working rules are now in CLAUDE.md (repo root), written for changes that reach main through a PR.
 
 ## The brief (Jan's original request, condensed)
 Personal nutrition app on Android: log meals and supplements; profile with diet goals driving meal suggestions (breakfast, lunch, snack, dinner, several options, full recipe each); recipe ideas and meal prep from an archive extracted from his saved Instagram reels (each recipe one record, same dish from several reels merged with variations and tips, generous tags, archive backed up and hosted on his Google Drive, structured to sit next to his workout reel archive); photo of food or label evaluated against the diet; in-app Claude chat about ingredients he has or misses; saved data; weekly and monthly summaries flagging lacking nutrients. No monetisation yet. Data designed so a later workout app and a shared platform can read it without a rewrite. Long jobs run 23:00 to 07:00 Prague time (schedule them as scheduled tasks); daytime is for checkpoints. Stop at hard to change decisions with a testable version. When asking Jan to do something manually, give exact steps and exact text to paste. No em dashes anywhere. Jan cannot read code; describe behaviour.
@@ -51,12 +51,15 @@ Personal nutrition app on Android: log meals and supplements; profile with diet 
 ## Push route (verified 2026-09-22, session 3)
 - Work happens in a Claude Code session at https://claude.ai/code?repositories=Prastako/nutrilog. It commits on its own branch and also pushes to main (`git push origin <branch>:main`); Pages rebuilds in about 50 s (Actions run "pages build and deployment"). No manual uploads needed.
 - Available there: Google Drive connector (Reel Recipe Atlas readable), GitHub tools, Chromium. Not available: the Project docs (source bundle, extractions JSON); Drive records/index.json has the built archive.
+- CLAUDE.md (added 2026-09-22 at Jan's request) holds the standing rules: build with tools/build.py, both tests before every PR with results in the PR description, update this file before every PR, no em dashes, describe changes by what Jan sees, exact steps for manual tasks, ask before hard to change decisions.
 - Tests there: `pip install playwright==1.56.0` first (matches the preinstalled Chromium; newer versions look for a browser that is not there).
 - Rejected earlier: a personal access token pasted into chat; driving GitHub's upload page with Claude in Chrome.
 
 ## Open questions for Jan
-- Private backup repo name (app: Settings, API keys, Backup repository, format user/name). Needed for the archive upload and for any automation. Jan's account has a private repo `Prastako/nutrilog-data` (last push 2026-08-10); likely the backup repo, not confirmed.
+- Private backup repo name (app: Settings, API keys, Backup repository, format user/name). Needed for the archive upload and for any automation. Not `Prastako/nutrilog-data`: Jan deleted it (old version), ignore it.
 - Did Jan load the recipe archive into the app (backup repo or from file)?
+- Who merges PRs: Jan on GitHub, or Claude after Jan says so in chat?
+- Jan has research questions and additions for the project (not yet listed here).
 
 ## Decisions (checkpoint 1, answered)
 1. Storage: approved. Phone or browser first (IndexedDB), automatic backup to his private GitHub repo as in v0.1; recipe archive master on Google Drive `Reel Recipe Atlas/` (originals, extracted, records) next to `Reel Movement Atlas/`; app copy in the private backup repo under `archive/recipes/`.
