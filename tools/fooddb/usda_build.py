@@ -46,6 +46,12 @@ for f in kept:
     # epa/dha are g in usda; keep g
     ps=[[l,g] for _,l,g in sorted(por.get(f['id'],[]))][:5]
     foods.append({'i':int(f['id']),'c':int(f['cat']),'en':f['d'],'n':row,'p':ps})
+# Czech names (tools/fooddb/names_cs.json, {fdc id: name}) for display and search
+cs_path=os.path.join(os.path.dirname(os.path.abspath(__file__)),'names_cs.json')
+if os.path.exists(cs_path):
+    cs=json.load(open(cs_path,encoding='utf-8'))
+    for f in foods:
+        if str(f['i']) in cs: f['cs']=cs[str(f['i'])]
 cats={int(r['id']):r['description'] for r in csv.DictReader(open(D+'food_category.csv'))}
 out={'source':'USDA FoodData Central, SR Legacy (April 2018), public domain. Values per 100 g edible portion.',
      'nutrients':[c for c,_ in NUT],'categories':cats,'foods':foods}

@@ -7,7 +7,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F2EADC" id="metaThemeColor">
 <script>
-const VERSION = '0.2.1';
+const VERSION = '0.2.2';
 const SCHEMA = 2;
 </script>
 <meta name="mobile-web-app-capable" content="yes">
@@ -499,7 +499,7 @@ input[type=search],input[type=date]{width:100%;min-height:var(--tap);padding:11p
 
 <script>
 /* ============================================================
-   NutriLog 0.2.1. Built from src/ by tools/build.py.
+   NutriLog 0.2.2. Built from src/ by tools/build.py.
    Edit the files in src/, then run the build; do not edit this
    generated block by hand.
    ============================================================ */
@@ -2107,7 +2107,7 @@ function tokensOf(s){
 
 /* Czech search words (folded, as prefixes) to English words in the database.
    The database itself is in English; this lets you type in Czech.
-   A full Czech name for every food is planned as an overnight batch job. */
+   Every database food also carries a Czech name (field cs), searched too. */
 const CS_EN = [
   ['kurec','chicken'],['kure','chicken'],['kurat','chicken'],['kuret','chicken'],['krut','turkey'],['hovez','beef'],['hovad','beef'],
   ['vepr','pork'],['jehne','lamb'],['jehnec','lamb'],['telec','veal'],['tele','veal'],['kachn','duck'],['husa','goose'],['husi','goose'],

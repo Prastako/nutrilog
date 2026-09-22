@@ -94,8 +94,8 @@ def source_of(reel):
             'url': b.get('url') or 'https://www.instagram.com/reel/%s/' % reel,
             'author': b.get('author'), 'authorName': b.get('authorName'), 'postedAt': b.get('postedAt'),
             'durationSec': b.get('durationSec'), 'caption': b.get('caption'),
-            'files': {'video': 'originals/%s.mp4' % reel, 'info': 'originals/%s.info.json' % reel,
-                      'thumb': 'originals/%s.jpg' % reel, 'extraction': 'extracted/%s.json' % reel}}
+            'files': {'info': 'originals/%s.info.json' % reel, 'thumb': 'originals/%s.jpg' % reel,
+                      'frames': 'originals/%s.frames.jpg' % reel, 'extraction': 'extracted/%s.json' % reel}}
 
 def main():
     os.makedirs(os.path.join(OUT, 'thumbs'), exist_ok=True)

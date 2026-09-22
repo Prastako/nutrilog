@@ -109,8 +109,10 @@ Check `report.json` for ingredients with weak database matches and fix their
   `archive/recipes/index.json` and `archive/recipes/thumbs/`. The app syncs
   from there once a day or with Settings, Recipe archive, Synchronise.
 - Google Drive `Reel Recipe Atlas/records/index.json` (the master copy).
-- Videos: `Reel Recipe Atlas/originals/` holds the `.mp4`, `.info.json` and
-  `.jpg` for every reel, same layout as `Reel Movement Atlas/originals/`.
+- Stills only, no videos (Jan's decision): `Reel Recipe Atlas/originals/`
+  holds `<code>.info.json` (trimmed to caption, author, date, duration),
+  `<code>.jpg` (cover) and `<code>.frames.jpg` (the 8 frame sheet). The
+  `.mp4` files are deleted after preparing.
 
 ## 7. Report
 

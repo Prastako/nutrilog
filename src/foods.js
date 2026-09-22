@@ -40,7 +40,7 @@ function tokensOf(s){
 
 /* Czech search words (folded, as prefixes) to English words in the database.
    The database itself is in English; this lets you type in Czech.
-   A full Czech name for every food is planned as an overnight batch job. */
+   Every database food also carries a Czech name (field cs), searched too. */
 const CS_EN = [
   ['kurec','chicken'],['kure','chicken'],['kurat','chicken'],['kuret','chicken'],['krut','turkey'],['hovez','beef'],['hovad','beef'],
   ['vepr','pork'],['jehne','lamb'],['jehnec','lamb'],['telec','veal'],['tele','veal'],['kachn','duck'],['husa','goose'],['husi','goose'],

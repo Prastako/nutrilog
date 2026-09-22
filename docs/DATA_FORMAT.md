@@ -140,8 +140,8 @@ the backup; archive recipes are not (they live in the archive).
     "url": "https://www.instagram.com/reel/CsohRnHoFvl/",
     "author": "jalalsamfit", "postedAt": "2023-05-24", "durationSec": 36.7,
     "caption": "original caption",
-    "files": {"video": "originals/CsohRnHoFvl.mp4", "info": "originals/CsohRnHoFvl.info.json",
-              "thumb": "originals/CsohRnHoFvl.jpg", "extraction": "extracted/CsohRnHoFvl.json"}
+    "files": {"info": "originals/CsohRnHoFvl.info.json", "thumb": "originals/CsohRnHoFvl.jpg",
+              "frames": "originals/CsohRnHoFvl.frames.jpg", "extraction": "extracted/CsohRnHoFvl.json"}
   }],
   "extraction": {"at": "…", "by": "claude", "inputs": ["caption", "transcript", "frames"],
                  "confidence": "high", "gaps": ["…"], "pipeline": "reels/1"},
@@ -181,7 +181,7 @@ Drive layout, one folder per archive, same inside:
 
 ```
 Reel Movement Atlas/        Reel Recipe Atlas/
-  originals/                  originals/      <code>.mp4, .info.json, .jpg (yt-dlp)
+  originals/                  originals/      <code>.info.json, .jpg, .frames.jpg (stills only, no video)
                               extracted/      <code>.json, one extraction per reel
                               records/        index.json (all recipe records), README.md
 ```
