@@ -121,7 +121,8 @@ def main():
         stated = nut.get('stated')
         rec = {
             'id': rid, 'type': 'recipe', 'schema': 1, 'origin': 'archive', 'archive': 'reel-recipe-atlas',
-            'lang': r.get('lang', 'cs'), 'title': r['title'], 'titleEn': r.get('titleEn', ''), 'summary': r.get('summary', ''),
+            'lang': r.get('lang', 'en'), 'title': r['title'], 'titleEn': r.get('titleEn') or r['title'], 'titleCs': r.get('titleCs', ''),
+            'summary': r.get('summary', ''),
             'servings': servings, 'yield': r.get('yield'), 'time': r.get('time', {}), 'difficulty': r.get('difficulty'),
             'ingredients': r.get('ingredients', []), 'steps': r.get('steps', []),
             'tips': r.get('tips', []), 'variations': r.get('variations', []), 'storage': r.get('storage'),

@@ -50,14 +50,15 @@ For each prepared reel without `EXTRACTED/<code>.json`:
    `tools/reels/example-extraction.json`):
    - `reel`, `isRecipe`, `dedupeKey` (English dish name, then the main
      ingredients: used to find the same dish in other reels)
-   - `recipe`: `title` in Czech, `titleEn`, `lang: "cs"`, `summary` (Czech),
-     `servings`, `time` {prepMin, cookMin, totalMin}, `difficulty`,
-     `ingredients[]` {group, item (Czech, as a Czech cook would write it),
-     `en` (a plain English food name for the USDA lookup, e.g. "cheese
-     parmesan grated", "rice white long-grain cooked"), qty, unit (metric
-     where the reel gives metric; keep lžíce, lžička, hrnek, ks otherwise),
-     `grams` (always estimate grams, including for cups and pieces), prep,
-     optional, note}, `steps[]` {text in Czech, minutes}, `tips[]` {text,
+   - `recipe`: all recipe text in English (Jan's decision): `title`,
+     `titleCs` (Czech title, only for search in the Czech app), `lang: "en"`,
+     `summary`, `servings`, `time` {prepMin, cookMin, totalMin}, `difficulty`,
+     `ingredients[]` {group, item (as the recipe says it), `en` (a plain
+     English food name for the USDA lookup, e.g. "cheese parmesan grated",
+     "rice white long-grain cooked"), qty, unit (metric where the reel gives
+     metric; keep tbsp, tsp, cup, pcs otherwise), `grams` (always estimate
+     grams, including for cups and pieces), prep, optional, note},
+     `steps[]` {text, minutes}, `tips[]` {text,
      from: ["ig:<code>"]}, `variations[]` {label, text, from}, `storage`
      {fridgeDays, freezer, reheat}, `nutrition.stated` (only if the reel
      states calories or macros: {perServing: {...}, includes}), `tags[]`

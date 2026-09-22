@@ -7,7 +7,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F2EADC" id="metaThemeColor">
 <script>
-const VERSION = '0.2.0';
+const VERSION = '0.2.1';
 const SCHEMA = 2;
 </script>
 <meta name="mobile-web-app-capable" content="yes">
@@ -428,6 +428,11 @@ details summary{cursor:pointer}
 .chatin .btn{flex:none;width:46px;padding:0}
 #chatQuick{margin:4px 0}
 
+/* on a computer the tab bar keeps the app's width */
+@media (min-width: 660px){
+  #tabbar{left:50%;right:auto;width:var(--maxw);transform:translateX(-50%);border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0}
+}
+
 /* floating add button */
 .fab{position:fixed;right:max(16px, calc(50% - var(--maxw)/2 + 16px));bottom:calc(78px + env(safe-area-inset-bottom));z-index:45;width:58px;height:58px;border-radius:50%;border:0;background:var(--teal);color:var(--onaccent);box-shadow:var(--shadow-lift);font-size:30px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .fabgrid{display:flex;flex-direction:column;gap:8px}
@@ -494,7 +499,7 @@ input[type=search],input[type=date]{width:100%;min-height:var(--tap);padding:11p
 
 <script>
 /* ============================================================
-   NutriLog 0.2.0. Built from src/ by tools/build.py.
+   NutriLog 0.2.1. Built from src/ by tools/build.py.
    Edit the files in src/, then run the build; do not edit this
    generated block by hand.
    ============================================================ */
@@ -1132,7 +1137,7 @@ Object.assign(STR.cs, {
   arch_last:'Poslední synchronizace', arch_path:'Složka archivu v repozitáři', arch_sync:'Synchronizovat', arch_import:'Načíst ze souboru',
   arch_starter:'Ukazovat startovní recepty', arch_starter_d:'Tucet receptů od Clauda, aby návrhy fungovaly už před prvním archivem.',
   arch_need_repo:'Nejdřív vyplňte GitHub token a repozitář.', arch_none_yet:'Archiv v repozitáři zatím není.', arch_same:'Archiv je aktuální.',
-  arch_synced:'Archiv načten: {n} receptů.', arch_bad_file:'Tento soubor nevypadá jako archiv receptů.',
+  arch_synced:'Archiv načten, receptů: {n}.', arch_bad_file:'Tento soubor nevypadá jako archiv receptů.',
   b_format_note:'Formát zálohy je popsaný v souboru docs/DATA_FORMAT.md v repozitáři aplikace, aby ji mohly číst i další aplikace.',
   about_fooddb:'Databáze potravin',
   dg_fooddb:'Databáze potravin', dg_fooddb_ok:'načtena, {n} potravin', dg_fooddb_no:'zatím nenačtena',
@@ -2545,6 +2550,12 @@ function langInstruction(){
     ? 'Write every user facing text in Czech (natural, everyday Czech). Keep numbers with metric units.'
     : 'Write every user facing text in English. Use metric units.';
 }
+/* Recipes are always kept in English (Jan's decision at checkpoint 1),
+   whatever the app language. */
+const RECIPE_LANG = 'en';
+function recipeLangInstruction(){
+  return 'Write recipes (title, summary, ingredients, steps, tips, variations) in English, with metric units.';
+}
 
 /* ---------- Context about the person, sent with every request ---------- */
 
@@ -2648,8 +2659,8 @@ const NUTRIENT_SCHEMA = {
 const RECIPE_SCHEMA = {
   type:'object',
   properties:{
-    title:{type:'string', description:'Recipe name in the user language'},
-    titleEn:{type:'string', description:'Recipe name in English'},
+    title:{type:'string', description:'Recipe name in English'},
+    titleCs:{type:'string', description:'Recipe name in Czech, for search'},
     summary:{type:'string', description:'One sentence: what it is and why it fits'},
     servings:{type:'number'},
     time:{type:'object', properties:{prepMin:{type:'number'}, cookMin:{type:'number'}, totalMin:{type:'number'}}, required:['totalMin']},
@@ -2727,7 +2738,7 @@ async function aiRecipes(opts){
     description:'Propose complete recipes.',
     input_schema:{type:'object', properties:{ recipes:{type:'array', items: RECIPE_SCHEMA} }, required:['recipes']}
   };
-  const system = 'You are the recipe assistant inside NutriLog. ' + langInstruction() +
+  const system = 'You are the recipe assistant inside NutriLog. ' + recipeLangInstruction() +
     ' Write complete, cookable recipes: every ingredient with quantity and unit, clear numbered steps, realistic times, per serving nutrition estimates. Never use any hard exclusion. Prefer what is in the pantry. Use ingredients easy to buy in Czech supermarkets (Lidl, Albert, Billa, Tesco, Kaufland).\n\n' + ctx;
   const ask = 'Propose ' + (opts.count || 3) + ' different ' + (opts.slot ? opts.slot + ' ' : '') + 'recipes' +
     (opts.kcal ? ' of about ' + Math.round(opts.kcal) + ' kcal per serving' : '') +
@@ -2892,7 +2903,7 @@ async function loadRecipes(){
   const all = await dbAll('recipes');
   RECIPES.list = all.filter(r => !r.deleted);
   RECIPES.byId = {};
-  RECIPES.list.forEach(r => { RECIPES.byId[r.id] = r; r._search = fold([r.title, r.titleEn, (r.ingredients||[]).map(i => i.item).join(' '), (r.tags||[]).join(' ')].join(' ')); });
+  RECIPES.list.forEach(r => { RECIPES.byId[r.id] = r; r._search = fold([r.title, r.titleEn, r.titleCs, (r.ingredients||[]).map(i => i.item).join(' '), (r.tags||[]).join(' ')].join(' ')); });
   const notes = await recByType('recipe_note');
   RECIPES.notes = {};
   notes.forEach(n => { RECIPES.notes[n.recipeId] = n; });
@@ -2919,8 +2930,8 @@ function recipeFromAi(r, origin){
   const id = 'rcp-' + ulid();
   const tags = (r.tags || []).map(x => String(x).toLowerCase().trim()).filter(Boolean);
   return {
-    id, type: 'recipe', schema: 1, origin: origin || 'claude', lang: S.lang,
-    title: r.title || r.titleEn || '?', titleEn: r.titleEn || '', summary: r.summary || '',
+    id, type: 'recipe', schema: 1, origin: origin || 'claude', lang: RECIPE_LANG,
+    title: r.title || r.titleEn || '?', titleEn: r.title || r.titleEn || '', titleCs: r.titleCs || '', summary: r.summary || '',
     servings: Number(r.servings) || 1,
     time: {prepMin: (r.time||{}).prepMin || null, cookMin: (r.time||{}).cookMin || null, totalMin: (r.time||{}).totalMin || null},
     difficulty: r.difficulty || null,
@@ -3113,9 +3124,15 @@ function renderRecipes(){
   else renderRecipeList();
 }
 
+/* Recipes are in English; a Czech search word also matches its English
+   equivalents (kuře finds chicken). */
+function recipeTextMatch(r, q){
+  return fold(q).split(/[^a-z0-9]+/).filter(Boolean).every(w => expandToken(w).some(a => r._search.indexOf(a) >= 0));
+}
+
 function recipeMatchesFilter(r){
   const F = S.recipeFilter;
-  if (F.q && fold(F.q).split(/\s+/).filter(Boolean).some(w => r._search.indexOf(w) < 0)) return false;
+  if (F.q && !recipeTextMatch(r, F.q)) return false;
   for (const c of F.chips){
     if (c === 'fav'){ const n = recipeNote(r.id); if (!n || !n.favorite) return false; }
     else if (c === 'noexcl'){ if (recipeExclusions(r).length) return false; }
@@ -3190,7 +3207,8 @@ function renderRecipe(){
   let h = '';
   h += '<div class="rhero" data-thumb="'+esc(r.id)+'"><span>'+esc((r.title||'?').charAt(0).toUpperCase())+'</span></div>';
   h += '<h2 style="margin:12px 0 4px">'+esc(r.title)+'</h2>';
-  if (r.titleEn && r.titleEn !== r.title) h += '<p class="tiny" style="margin-bottom:6px">'+esc(r.titleEn)+'</p>';
+  const sub = S.lang === 'cs' ? (r.titleCs || (r.titleEn !== r.title ? r.titleEn : '')) : (r.titleEn !== r.title ? r.titleEn : '');
+  if (sub) h += '<p class="tiny" style="margin-bottom:6px">'+esc(sub)+'</p>';
   if (r.summary) h += '<p class="muted">'+esc(r.summary)+'</p>';
   if (ex.length) h += '<div class="notice bad" style="margin-top:10px"><b>'+esc(t('rc_excl_h'))+'</b> '+esc(ex.map(x => x.label).join(', '))+'</div>';
   const tm = recipeTime(r);
@@ -3906,8 +3924,8 @@ function addDescribeUI(body){
 function addRecipeUI(body){
   body.innerHTML = '<div class="field" style="margin-top:12px"><input type="search" id="rq2" placeholder="'+esc(t('rl_search_ph'))+'"></div><div id="rres" class="rlist"></div>';
   const run = () => {
-    const q = fold($('#rq2').value);
-    const list = visibleRecipes().filter(r => !q || q.split(/\s+/).every(w => r._search.indexOf(w) >= 0)).slice(0, 30);
+    const q = $('#rq2').value.trim();
+    const list = visibleRecipes().filter(r => !q || recipeTextMatch(r, q)).slice(0, 30);
     $('#rres').innerHTML = list.map(r => '<button class="frow" type="button" data-rid="'+esc(r.id)+'"><span class="fn">'+esc(r.title)+'</span>' +
       '<span class="fm tiny">'+esc(fmtNum(recipeKcal(r)))+' kcal / '+esc(t('rc_serv_short'))+'</span></button>').join('') || '<p class="tiny">'+esc(t('rl_empty'))+'</p>';
   };
@@ -4375,7 +4393,7 @@ async function sendChat(text){
   try {
     const ctx = await buildContext({today:true, pantry:true, recipes:true});
     const system = 'You are the kitchen and nutrition companion inside NutriLog, a personal food diary. ' + langInstruction() +
-      ' Help with what to cook from the ingredients at home, what is missing, substitutions, meal prep and nutrition questions. Prefer recipes from the person\'s archive (show them with show_recipe). Never suggest anything from the hard exclusions. Keep answers short and practical; use lists for ingredients and steps. When the person mentions having, buying or running out of ingredients, call update_pantry.\n\n' + ctx;
+      ' Help with what to cook from the ingredients at home, what is missing, substitutions, meal prep and nutrition questions. Prefer recipes from the person\'s archive (show them with show_recipe). Never suggest anything from the hard exclusions. ' + recipeLangInstruction().replace('Write recipes', 'When you save a recipe with save_recipe, write it') + ' Keep answers short and practical; use lists for ingredients and steps. When the person mentions having, buying or running out of ingredients, call update_pantry.\n\n' + ctx;
     const hist = (await chatHistory()).filter(m => m.role === 'user' || m.role === 'assistant').slice(-20);
     let messages = [];
     hist.forEach(m => {

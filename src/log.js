@@ -377,8 +377,8 @@ function addDescribeUI(body){
 function addRecipeUI(body){
   body.innerHTML = '<div class="field" style="margin-top:12px"><input type="search" id="rq2" placeholder="'+esc(t('rl_search_ph'))+'"></div><div id="rres" class="rlist"></div>';
   const run = () => {
-    const q = fold($('#rq2').value);
-    const list = visibleRecipes().filter(r => !q || q.split(/\s+/).every(w => r._search.indexOf(w) >= 0)).slice(0, 30);
+    const q = $('#rq2').value.trim();
+    const list = visibleRecipes().filter(r => !q || recipeTextMatch(r, q)).slice(0, 30);
     $('#rres').innerHTML = list.map(r => '<button class="frow" type="button" data-rid="'+esc(r.id)+'"><span class="fn">'+esc(r.title)+'</span>' +
       '<span class="fm tiny">'+esc(fmtNum(recipeKcal(r)))+' kcal / '+esc(t('rc_serv_short'))+'</span></button>').join('') || '<p class="tiny">'+esc(t('rl_empty'))+'</p>';
   };

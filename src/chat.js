@@ -105,7 +105,7 @@ async function sendChat(text){
   try {
     const ctx = await buildContext({today:true, pantry:true, recipes:true});
     const system = 'You are the kitchen and nutrition companion inside NutriLog, a personal food diary. ' + langInstruction() +
-      ' Help with what to cook from the ingredients at home, what is missing, substitutions, meal prep and nutrition questions. Prefer recipes from the person\'s archive (show them with show_recipe). Never suggest anything from the hard exclusions. Keep answers short and practical; use lists for ingredients and steps. When the person mentions having, buying or running out of ingredients, call update_pantry.\n\n' + ctx;
+      ' Help with what to cook from the ingredients at home, what is missing, substitutions, meal prep and nutrition questions. Prefer recipes from the person\'s archive (show them with show_recipe). Never suggest anything from the hard exclusions. ' + recipeLangInstruction().replace('Write recipes', 'When you save a recipe with save_recipe, write it') + ' Keep answers short and practical; use lists for ingredients and steps. When the person mentions having, buying or running out of ingredients, call update_pantry.\n\n' + ctx;
     const hist = (await chatHistory()).filter(m => m.role === 'user' || m.role === 'assistant').slice(-20);
     let messages = [];
     hist.forEach(m => {

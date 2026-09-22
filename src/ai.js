@@ -169,6 +169,12 @@ function langInstruction(){
     ? 'Write every user facing text in Czech (natural, everyday Czech). Keep numbers with metric units.'
     : 'Write every user facing text in English. Use metric units.';
 }
+/* Recipes are always kept in English (Jan's decision at checkpoint 1),
+   whatever the app language. */
+const RECIPE_LANG = 'en';
+function recipeLangInstruction(){
+  return 'Write recipes (title, summary, ingredients, steps, tips, variations) in English, with metric units.';
+}
 
 /* ---------- Context about the person, sent with every request ---------- */
 
@@ -272,8 +278,8 @@ const NUTRIENT_SCHEMA = {
 const RECIPE_SCHEMA = {
   type:'object',
   properties:{
-    title:{type:'string', description:'Recipe name in the user language'},
-    titleEn:{type:'string', description:'Recipe name in English'},
+    title:{type:'string', description:'Recipe name in English'},
+    titleCs:{type:'string', description:'Recipe name in Czech, for search'},
     summary:{type:'string', description:'One sentence: what it is and why it fits'},
     servings:{type:'number'},
     time:{type:'object', properties:{prepMin:{type:'number'}, cookMin:{type:'number'}, totalMin:{type:'number'}}, required:['totalMin']},
@@ -351,7 +357,7 @@ async function aiRecipes(opts){
     description:'Propose complete recipes.',
     input_schema:{type:'object', properties:{ recipes:{type:'array', items: RECIPE_SCHEMA} }, required:['recipes']}
   };
-  const system = 'You are the recipe assistant inside NutriLog. ' + langInstruction() +
+  const system = 'You are the recipe assistant inside NutriLog. ' + recipeLangInstruction() +
     ' Write complete, cookable recipes: every ingredient with quantity and unit, clear numbered steps, realistic times, per serving nutrition estimates. Never use any hard exclusion. Prefer what is in the pantry. Use ingredients easy to buy in Czech supermarkets (Lidl, Albert, Billa, Tesco, Kaufland).\n\n' + ctx;
   const ask = 'Propose ' + (opts.count || 3) + ' different ' + (opts.slot ? opts.slot + ' ' : '') + 'recipes' +
     (opts.kcal ? ' of about ' + Math.round(opts.kcal) + ' kcal per serving' : '') +

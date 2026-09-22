@@ -11,7 +11,7 @@ async function loadRecipes(){
   const all = await dbAll('recipes');
   RECIPES.list = all.filter(r => !r.deleted);
   RECIPES.byId = {};
-  RECIPES.list.forEach(r => { RECIPES.byId[r.id] = r; r._search = fold([r.title, r.titleEn, (r.ingredients||[]).map(i => i.item).join(' '), (r.tags||[]).join(' ')].join(' ')); });
+  RECIPES.list.forEach(r => { RECIPES.byId[r.id] = r; r._search = fold([r.title, r.titleEn, r.titleCs, (r.ingredients||[]).map(i => i.item).join(' '), (r.tags||[]).join(' ')].join(' ')); });
   const notes = await recByType('recipe_note');
   RECIPES.notes = {};
   notes.forEach(n => { RECIPES.notes[n.recipeId] = n; });
@@ -38,8 +38,8 @@ function recipeFromAi(r, origin){
   const id = 'rcp-' + ulid();
   const tags = (r.tags || []).map(x => String(x).toLowerCase().trim()).filter(Boolean);
   return {
-    id, type: 'recipe', schema: 1, origin: origin || 'claude', lang: S.lang,
-    title: r.title || r.titleEn || '?', titleEn: r.titleEn || '', summary: r.summary || '',
+    id, type: 'recipe', schema: 1, origin: origin || 'claude', lang: RECIPE_LANG,
+    title: r.title || r.titleEn || '?', titleEn: r.title || r.titleEn || '', titleCs: r.titleCs || '', summary: r.summary || '',
     servings: Number(r.servings) || 1,
     time: {prepMin: (r.time||{}).prepMin || null, cookMin: (r.time||{}).cookMin || null, totalMin: (r.time||{}).totalMin || null},
     difficulty: r.difficulty || null,
@@ -232,9 +232,15 @@ function renderRecipes(){
   else renderRecipeList();
 }
 
+/* Recipes are in English; a Czech search word also matches its English
+   equivalents (kuře finds chicken). */
+function recipeTextMatch(r, q){
+  return fold(q).split(/[^a-z0-9]+/).filter(Boolean).every(w => expandToken(w).some(a => r._search.indexOf(a) >= 0));
+}
+
 function recipeMatchesFilter(r){
   const F = S.recipeFilter;
-  if (F.q && fold(F.q).split(/\s+/).filter(Boolean).some(w => r._search.indexOf(w) < 0)) return false;
+  if (F.q && !recipeTextMatch(r, F.q)) return false;
   for (const c of F.chips){
     if (c === 'fav'){ const n = recipeNote(r.id); if (!n || !n.favorite) return false; }
     else if (c === 'noexcl'){ if (recipeExclusions(r).length) return false; }
@@ -309,7 +315,8 @@ function renderRecipe(){
   let h = '';
   h += '<div class="rhero" data-thumb="'+esc(r.id)+'"><span>'+esc((r.title||'?').charAt(0).toUpperCase())+'</span></div>';
   h += '<h2 style="margin:12px 0 4px">'+esc(r.title)+'</h2>';
-  if (r.titleEn && r.titleEn !== r.title) h += '<p class="tiny" style="margin-bottom:6px">'+esc(r.titleEn)+'</p>';
+  const sub = S.lang === 'cs' ? (r.titleCs || (r.titleEn !== r.title ? r.titleEn : '')) : (r.titleEn !== r.title ? r.titleEn : '');
+  if (sub) h += '<p class="tiny" style="margin-bottom:6px">'+esc(sub)+'</p>';
   if (r.summary) h += '<p class="muted">'+esc(r.summary)+'</p>';
   if (ex.length) h += '<div class="notice bad" style="margin-top:10px"><b>'+esc(t('rc_excl_h'))+'</b> '+esc(ex.map(x => x.label).join(', '))+'</div>';
   const tm = recipeTime(r);

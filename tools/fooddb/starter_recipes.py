@@ -1,10 +1,10 @@
-"""Starter recipes for NutriLog. Nutrition is computed from the USDA database
-by the grams of each ingredient, so these also exercise the same computation
-the archive pipeline uses. Run: python3 starter_recipes.py > recipes-starter.json"""
-import json, sys, datetime
+"""Starter recipes for NutriLog, in English (recipe language decided at checkpoint 1),
+with a Czech title for search. Nutrition is computed from the USDA database by the
+grams of each ingredient, the same computation the archive pipeline uses.
+Run from the repository root: FOODS=data/foods.json python3 tools/fooddb/starter_recipes.py > data/recipes-starter.json"""
+import json, sys, os
 
-import os
-db = json.load(open(os.environ.get('FOODS','../../data/foods.json')))
+db = json.load(open(os.environ.get('FOODS', 'data/foods.json')))
 keys = db['nutrients']
 by = {f['i']: f for f in db['foods']}
 
@@ -15,125 +15,125 @@ def I(item, qty, unit, grams, ref=None, prep=None, group=None, optional=False):
 SALT = 173468
 R = []
 
-R.append(dict(slug='overnight-oats', title='Ovesná kaše přes noc s řeckým jogurtem a borůvkami', titleEn='Overnight oats with Greek yogurt and blueberries',
-  summary='Snídaně, kterou připravíte večer za pět minut; ráno jen vytáhnete z lednice.', servings=1, time=dict(prepMin=5, cookMin=0, totalMin=5), difficulty='easy',
-  ingredients=[I('ovesné vločky',60,'g',60,173904), I('polotučné mléko',150,'ml',155,171267), I('řecký jogurt bílý, nízkotučný',100,'g',100,170903),
-    I('chia semínka',10,'g',10,170554), I('borůvky, čerstvé nebo mražené',80,'g',80,171711), I('med',1,'lžička',7,169640, optional=True), I('skořice',1,'špetka',0.3,171320, optional=True)],
-  steps=['Ve sklenici nebo krabičce smíchejte vločky, chia, mléko a jogurt.','Přidejte skořici, zamíchejte a zavřete.','Nechte přes noc v lednici, aspoň 6 hodin.','Ráno navrch dejte borůvky a podle chuti med.'],
-  tips=['Na tři rána udělejte tři sklenice najednou, vydrží 3 dny.','Mražené borůvky dejte rovnou večer, do rána povolí.'],
-  variations=[('Bez laktózy','Mléko nahraďte ovesným nápojem a jogurt sójovým.'),('Víc bílkovin','Přimíchejte 15 g syrovátkového proteinu a ubrat mléka nemusíte.')],
-  storage=dict(fridgeDays=3, freezer=False, reheat='Jí se studená.'),
+R.append(dict(slug='overnight-oats', title='Overnight oats with Greek yogurt and blueberries', titleCs='Ovesná kaše přes noc s jogurtem a borůvkami',
+  summary='A breakfast you make in five minutes the night before; in the morning you just take it out of the fridge.', servings=1, time=dict(prepMin=5, cookMin=0, totalMin=5), difficulty='easy',
+  ingredients=[I('rolled oats',60,'g',60,173904), I('semi-skimmed milk',150,'ml',155,171267), I('plain low-fat Greek yogurt',100,'g',100,170903),
+    I('chia seeds',10,'g',10,170554), I('blueberries, fresh or frozen',80,'g',80,171711), I('honey',1,'tsp',7,169640, optional=True), I('cinnamon',1,'pinch',0.3,171320, optional=True)],
+  steps=['In a jar or box, mix the oats, chia, milk and yogurt.','Add the cinnamon, stir and close.','Leave in the fridge overnight, at least 6 hours.','In the morning top with blueberries and honey to taste.'],
+  tips=['Make three jars at once for three mornings; they keep 3 days.','Add frozen blueberries the night before; they thaw by morning.'],
+  variations=[('Lactose free','Use oat drink instead of milk and soy yogurt instead of Greek yogurt.'),('More protein','Stir in 15 g of whey protein; no need to cut the milk.')],
+  storage=dict(fridgeDays=3, freezer=False, reheat='Eaten cold.'),
   tags=['meal:breakfast','prep:meal-prep','prep:no-cook','time:under-15','diet:vegetarian','diet:high-fibre','ing:oats','ing:yogurt','ing:blueberries','ing:chia','method:overnight','flavor:sweet','season:all-year']))
 
-R.append(dict(slug='spinach-omelette', title='Omeleta se špenátem a sýrem, celozrnný chléb', titleEn='Spinach and cheese omelette with wholegrain bread',
-  summary='Rychlá teplá snídaně s hodně bílkovinami.', servings=1, time=dict(prepMin=3, cookMin=7, totalMin=10), difficulty='easy',
-  ingredients=[I('vejce',3,'ks',150,171287), I('baby špenát',60,'g',60,168462), I('eidam nebo čedar, strouhaný',25,'g',25,170899), I('máslo',5,'g',5,173410),
-    I('celozrnný chléb',2,'krajíce',60,172688), I('sůl a pepř',None,None,None)],
-  steps=['Vejce rozšlehejte se špetkou soli a pepře.','Na pánvi rozpusťte máslo a nechte na něm 1 minutu povadnout špenát.','Zalijte vejci, na mírném ohni nechte 3 až 4 minuty stáhnout.','Posypte sýrem, přeložte napůl a ještě minutu dopečte.','Podávejte s chlebem.'],
-  tips=['Pánev s poklicí: sýr se rozteče a vrch se dopeče bez obracení.'],
-  variations=[('Bez mléčných výrobků','Sýr vynechte a přidejte rajčata a lžíci olivového oleje místo másla.')],
+R.append(dict(slug='spinach-omelette', title='Spinach and cheese omelette with wholegrain bread', titleCs='Omeleta se špenátem a sýrem',
+  summary='A quick hot breakfast with plenty of protein.', servings=1, time=dict(prepMin=3, cookMin=7, totalMin=10), difficulty='easy',
+  ingredients=[I('eggs',3,'pcs',150,171287), I('baby spinach',60,'g',60,168462), I('grated edam or cheddar',25,'g',25,170899), I('butter',5,'g',5,173410),
+    I('wholegrain bread',2,'slices',60,172688), I('salt and pepper',None,None,None)],
+  steps=['Beat the eggs with a pinch of salt and pepper.','Melt the butter in a pan and wilt the spinach in it for 1 minute.','Pour in the eggs and let them set over a gentle heat for 3 to 4 minutes.','Sprinkle with cheese, fold in half and cook one more minute.','Serve with the bread.'],
+  tips=['Cover the pan with a lid: the cheese melts and the top sets without flipping.'],
+  variations=[('Dairy free','Leave out the cheese, add tomatoes and use a spoon of olive oil instead of butter.')],
   storage=None,
   tags=['meal:breakfast','time:under-15','diet:high-protein','diet:vegetarian','ing:egg','ing:spinach','ing:cheese','method:pan-fry','equip:hob','flavor:savory']))
 
-R.append(dict(slug='cottage-rye', title='Žitný chléb s cottage sýrem, ředkvičkami a okurkou', titleEn='Rye bread with cottage cheese, radishes and cucumber',
-  summary='Studená snídaně nebo svačina bez vaření, lehká a sytá.', servings=1, time=dict(prepMin=5, cookMin=0, totalMin=5), difficulty='easy',
-  ingredients=[I('žitný chléb',2,'krajíce',70,172684), I('cottage sýr',125,'g',125,173417), I('ředkvičky',5,'ks',50,169276), I('okurka salátová',0.3,'ks',80,169225),
-    I('pažitka',1,'lžíce',3,169994), I('pepř',None,None,None)],
-  steps=['Cottage sýr smíchejte s nasekanou pažitkou a pepřem.','Namažte na chléb.','Navrch dejte plátky ředkviček a okurky.'],
-  tips=['Místo cottage jde tvaroh rozmíchaný se lžící jogurtu.'], variations=[], storage=None,
+R.append(dict(slug='cottage-rye', title='Rye bread with cottage cheese, radishes and cucumber', titleCs='Žitný chléb s cottage sýrem a ředkvičkami',
+  summary='A no-cook breakfast or snack, light and filling.', servings=1, time=dict(prepMin=5, cookMin=0, totalMin=5), difficulty='easy',
+  ingredients=[I('rye bread',2,'slices',70,172684), I('cottage cheese',125,'g',125,173417), I('radishes',5,'pcs',50,169276), I('cucumber',0.3,'pcs',80,169225),
+    I('chives',1,'tbsp',3,169994), I('black pepper',None,None,None)],
+  steps=['Mix the cottage cheese with chopped chives and pepper.','Spread it on the bread.','Top with sliced radishes and cucumber.'],
+  tips=['Tvaroh (quark) loosened with a spoon of yogurt works instead of cottage cheese.'], variations=[], storage=None,
   tags=['meal:breakfast','meal:snack','prep:no-cook','time:under-15','diet:vegetarian','diet:high-protein','ing:cottage-cheese','ing:rye-bread','ing:radish','cuisine:czech','flavor:fresh']))
 
-R.append(dict(slug='chicken-rice-bowl', title='Kuřecí miska s rýží, brokolicí a sezamem', titleEn='Chicken rice bowl with broccoli and sesame',
-  summary='Klasický meal prep: čtyři krabičky na obědy, vydrží do čtvrtka.', servings=4, time=dict(prepMin=15, cookMin=20, totalMin=35), difficulty='easy',
-  ingredients=[I('kuřecí prsa',600,'g',600,171077,prep='nakrájená na kostky'), I('rýže jasmínová nebo dlouhozrnná',300,'g',300,168877),
-    I('brokolice',1,'ks',480,170379,prep='na růžičky'), I('sójová omáčka',4,'lžíce',64,174277,group='Omáčka'), I('sezamový olej',1,'lžíce',14,171016,group='Omáčka'),
-    I('stroužky česneku',3,'ks',9,169230,prep='prolisované',group='Omáčka'), I('zázvor',2,'cm',10,169231,prep='nastrouhaný',group='Omáčka'),
-    I('řepkový olej',1,'lžíce',14,172336), I('sezam',2,'lžíce',18,170150), I('limetková šťáva',1,'lžíce',15,168156, optional=True)],
-  steps=['Uvařte rýži podle návodu na obalu.','Smíchejte sójovou omáčku, sezamový olej, česnek, zázvor a limetku.','Kuře osolte jen lehce (omáčka je slaná) a na rozpáleném oleji opékejte 6 až 8 minut dozlatova.',
-    'Přilijte polovinu omáčky a 1 minutu provařte, ať kuře zglazuje.','Brokolici spařte nebo vařte v páře 4 minuty, ať zůstane křupavá.','Rozdělte do 4 krabiček: rýže, brokolice, kuře, zbytek omáčky a sezam.'],
-  tips=['Brokolici vařte kratší dobu, při ohřívání v mikrovlnce ještě změkne.','Omáčku na poslední den dejte do zvláštní nádobky, rýže ji jinak vsákne.'],
-  variations=[('Bez lepku','Sójovou omáčku nahraďte tamari.'),('Vegetariánsky','Kuře nahraďte 600 g pevného tofu, opečte ho stejně.')],
-  storage=dict(fridgeDays=4, freezer=True, reheat='Mikrovlnka 2 až 3 minuty, rýži pokropte lžící vody.'),
+R.append(dict(slug='chicken-rice-bowl', title='Chicken rice bowl with broccoli and sesame', titleCs='Kuřecí miska s rýží, brokolicí a sezamem',
+  summary='Classic meal prep: four lunch boxes that last until Thursday.', servings=4, time=dict(prepMin=15, cookMin=20, totalMin=35), difficulty='easy',
+  ingredients=[I('chicken breast',600,'g',600,171077,prep='cubed'), I('jasmine or long-grain rice',300,'g',300,168877),
+    I('broccoli',1,'head',480,170379,prep='in florets'), I('soy sauce',4,'tbsp',64,174277,group='Sauce'), I('sesame oil',1,'tbsp',14,171016,group='Sauce'),
+    I('garlic cloves',3,'pcs',9,169230,prep='crushed',group='Sauce'), I('fresh ginger',2,'cm',10,169231,prep='grated',group='Sauce'),
+    I('rapeseed oil',1,'tbsp',14,172336), I('sesame seeds',2,'tbsp',18,170150), I('lime juice',1,'tbsp',15,168156, optional=True)],
+  steps=['Cook the rice according to the packet.','Mix the soy sauce, sesame oil, garlic, ginger and lime.','Salt the chicken only lightly (the sauce is salty) and fry it in hot oil for 6 to 8 minutes until golden.',
+    'Pour in half of the sauce and let it bubble for 1 minute to glaze the chicken.','Blanch or steam the broccoli for 4 minutes so it stays crisp.','Divide into 4 boxes: rice, broccoli, chicken, the rest of the sauce and sesame seeds.'],
+  tips=['Undercook the broccoli a little; it softens further when reheated in the microwave.','Keep the sauce for the last day in a separate pot, otherwise the rice soaks it up.'],
+  variations=[('Gluten free','Use tamari instead of soy sauce.'),('Vegetarian','Replace the chicken with 600 g of firm tofu, fried the same way.')],
+  storage=dict(fridgeDays=4, freezer=True, reheat='Microwave 2 to 3 minutes; sprinkle the rice with a spoon of water.'),
   tags=['meal:lunch','meal:dinner','prep:meal-prep','prep:freezer-friendly','time:under-60','diet:high-protein','ing:chicken','ing:rice','ing:broccoli','ing:sesame','cuisine:asian','method:stir-fry','equip:hob','flavor:umami']))
 
-R.append(dict(slug='red-lentil-dal', title='Dál z červené čočky se špenátem a rýží', titleEn='Red lentil dal with spinach and rice',
-  summary='Levný, sytý a hřejivý oběd na čtyři dny; hodně vlákniny a železa.', servings=4, time=dict(prepMin=10, cookMin=30, totalMin=40), difficulty='easy',
-  ingredients=[I('červená čočka',280,'g',280,174284), I('rajčata z konzervy',1,'plechovka',400,170051), I('cibule',1,'ks',120,170000,prep='nadrobno'),
-    I('stroužky česneku',3,'ks',9,169230), I('zázvor',3,'cm',15,169231), I('kokosové mléko',200,'ml',200,170173), I('baby špenát',150,'g',150,168462),
-    I('řepkový olej',1,'lžíce',14,172336), I('kurkuma',1,'lžička',3,172231,group='Koření'), I('mletý kmín římský',1,'lžička',2,170923,group='Koření'),
-    I('chilli',0.5,'lžičky',1,171319,group='Koření',optional=True), I('rýže basmati',240,'g',240,168877), I('voda',700,'ml',None), I('sůl',1,'lžička',6,SALT)],
-  steps=['Na oleji 5 minut sklovatějte cibuli, přidejte česnek, zázvor a koření a 1 minutu opékejte.','Přidejte propláchnutou čočku, rajčata a vodu.','Vařte 20 minut, občas zamíchejte, čočka se rozvaří.',
-    'Vmíchejte kokosové mléko a špenát, 2 minuty prohřejte a osolte.','Mezitím uvařte rýži.','Rozdělte do 4 krabiček.'],
-  tips=['Dál po odležení zhoustne, při ohřívání přilijte trochu vody.','Na závěr vymačkaná citronová šťáva zvedne chuť.'],
-  variations=[('Víc bílkovin','Podávejte s 150 g řeckého jogurtu navrch nebo přidejte cizrnu.')],
-  storage=dict(fridgeDays=4, freezer=True, reheat='Hrnec nebo mikrovlnka, přilít trochu vody.'),
+R.append(dict(slug='red-lentil-dal', title='Red lentil dal with spinach and rice', titleCs='Dál z červené čočky se špenátem',
+  summary='A cheap, filling, warming lunch for four days; lots of fibre and iron.', servings=4, time=dict(prepMin=10, cookMin=30, totalMin=40), difficulty='easy',
+  ingredients=[I('red lentils',280,'g',280,174284), I('canned chopped tomatoes',1,'can',400,170051), I('onion',1,'pcs',120,170000,prep='finely chopped'),
+    I('garlic cloves',3,'pcs',9,169230), I('fresh ginger',3,'cm',15,169231), I('coconut milk',200,'ml',200,170173), I('baby spinach',150,'g',150,168462),
+    I('rapeseed oil',1,'tbsp',14,172336), I('ground turmeric',1,'tsp',3,172231,group='Spices'), I('ground cumin',1,'tsp',2,170923,group='Spices'),
+    I('chilli',0.5,'tsp',1,171319,group='Spices',optional=True), I('basmati rice',240,'g',240,168877), I('water',700,'ml',None), I('salt',1,'tsp',6,SALT)],
+  steps=['Soften the onion in the oil for 5 minutes, add the garlic, ginger and spices and fry for 1 minute.','Add the rinsed lentils, the tomatoes and the water.','Simmer for 20 minutes, stirring now and then, until the lentils fall apart.',
+    'Stir in the coconut milk and spinach, heat through for 2 minutes and season with salt.','Meanwhile cook the rice.','Divide into 4 boxes.'],
+  tips=['Dal thickens as it stands; add a little water when reheating.','A squeeze of lemon at the end lifts the flavour.'],
+  variations=[('More protein','Serve topped with 150 g of Greek yogurt, or add chickpeas.')],
+  storage=dict(fridgeDays=4, freezer=True, reheat='Pot or microwave, with a little water.'),
   tags=['meal:lunch','meal:dinner','prep:meal-prep','prep:freezer-friendly','prep:one-pot','time:under-60','diet:vegan','diet:vegetarian','diet:high-fibre','ing:lentils','ing:spinach','ing:rice','ing:coconut-milk','cuisine:indian','method:simmer','equip:hob','flavor:spicy','budget:cheap']))
 
-R.append(dict(slug='turkey-chilli', title='Krůtí chilli s fazolemi a kukuřicí', titleEn='Turkey chilli with beans and corn',
-  summary='Libové chilli do krabiček, hodně bílkovin i vlákniny; zamrazit jde bez problému.', servings=4, time=dict(prepMin=10, cookMin=30, totalMin=40), difficulty='easy',
-  ingredients=[I('mleté krůtí maso',500,'g',500,171505), I('červené fazole z konzervy, scezené',1,'plechovka',240,174285), I('rajčata z konzervy',1,'plechovka',400,170051),
-    I('kukuřice z konzervy, scezená',150,'g',150,169216), I('cibule',1,'ks',120,170000), I('červená paprika',1,'ks',150,170108), I('stroužky česneku',2,'ks',6,169230),
-    I('řepkový olej',1,'lžíce',14,172336), I('mletý kmín římský',1,'lžička',2,170923,group='Koření'), I('chilli koření',2,'lžičky',5,171319,group='Koření'),
-    I('sladká paprika',1,'lžička',2,171329,group='Koření'), I('sůl',1,'lžička',6,SALT)],
-  steps=['Na oleji orestujte cibuli a papriku 5 minut.','Přidejte maso, rozdrobte a opékejte, dokud nezbělá.','Vmíchejte česnek a koření, minutu opékejte.',
-    'Přidejte rajčata, fazole a kukuřici, osolte a 20 minut duste pod pokličkou.','Rozdělte do 4 krabiček.'],
-  tips=['Podávejte s jogurtem místo zakysané smetany, nebo s rýží pro víc energie.'],
-  variations=[('Vegansky','Maso nahraďte další plechovkou fazolí a 150 g červené čočky (přilijte 300 ml vody).')],
-  storage=dict(fridgeDays=4, freezer=True, reheat='Mikrovlnka nebo hrnec.'),
+R.append(dict(slug='turkey-chilli', title='Turkey chilli with beans and corn', titleCs='Krůtí chilli s fazolemi a kukuřicí',
+  summary='A lean chilli for lunch boxes, high in protein and fibre; freezes without trouble.', servings=4, time=dict(prepMin=10, cookMin=30, totalMin=40), difficulty='easy',
+  ingredients=[I('turkey mince',500,'g',500,171505), I('canned red kidney beans, drained',1,'can',240,174285), I('canned chopped tomatoes',1,'can',400,170051),
+    I('canned sweetcorn, drained',150,'g',150,169216), I('onion',1,'pcs',120,170000), I('red pepper',1,'pcs',150,170108), I('garlic cloves',2,'pcs',6,169230),
+    I('rapeseed oil',1,'tbsp',14,172336), I('ground cumin',1,'tsp',2,170923,group='Spices'), I('chilli powder',2,'tsp',5,171319,group='Spices'),
+    I('sweet paprika',1,'tsp',2,171329,group='Spices'), I('salt',1,'tsp',6,SALT)],
+  steps=['Fry the onion and pepper in the oil for 5 minutes.','Add the mince, break it up and cook until it turns white.','Stir in the garlic and spices and fry for a minute.',
+    'Add the tomatoes, beans and corn, season with salt and simmer covered for 20 minutes.','Divide into 4 boxes.'],
+  tips=['Serve with yogurt instead of sour cream, or with rice for more energy.'],
+  variations=[('Vegan','Replace the meat with another can of beans and 150 g of red lentils (add 300 ml of water).')],
+  storage=dict(fridgeDays=4, freezer=True, reheat='Microwave or pot.'),
   tags=['meal:lunch','meal:dinner','prep:meal-prep','prep:freezer-friendly','prep:one-pot','time:under-60','diet:high-protein','diet:high-fibre','ing:turkey','ing:beans','ing:corn','ing:bell-pepper','cuisine:mexican','method:simmer','equip:hob','flavor:spicy']))
 
-R.append(dict(slug='yogurt-walnut-apple', title='Řecký jogurt s jablkem, vlašskými ořechy a skořicí', titleEn='Greek yogurt with apple, walnuts and cinnamon',
-  summary='Svačina za dvě minuty, bílkoviny a zdravé tuky.', servings=1, time=dict(prepMin=3, cookMin=0, totalMin=3), difficulty='easy',
-  ingredients=[I('řecký jogurt bílý, nízkotučný',170,'g',170,170903), I('jablko',1,'ks',150,168202,prep='na kostičky'), I('vlašské ořechy',15,'g',15,170187), I('skořice',1,'špetka',0.3,171320)],
-  steps=['Jogurt dejte do misky.','Přidejte jablko a nalámané ořechy.','Posypte skořicí.'],
-  tips=['Do práce: jablko nakrájejte až ráno, nebo ho pokapejte citronem, ať nezhnědne.'], variations=[], storage=None,
+R.append(dict(slug='yogurt-walnut-apple', title='Greek yogurt with apple, walnuts and cinnamon', titleCs='Řecký jogurt s jablkem a ořechy',
+  summary='A two-minute snack with protein and good fats.', servings=1, time=dict(prepMin=3, cookMin=0, totalMin=3), difficulty='easy',
+  ingredients=[I('plain low-fat Greek yogurt',170,'g',170,170903), I('apple',1,'pcs',150,168202,prep='diced'), I('walnuts',15,'g',15,170187), I('cinnamon',1,'pinch',0.3,171320)],
+  steps=['Put the yogurt in a bowl.','Add the apple and the broken walnuts.','Dust with cinnamon.'],
+  tips=['For work: cut the apple in the morning, or sprinkle it with lemon so it does not brown.'], variations=[], storage=None,
   tags=['meal:snack','meal:breakfast','prep:no-cook','time:under-15','diet:vegetarian','diet:high-protein','ing:yogurt','ing:apple','ing:walnuts','flavor:sweet']))
 
-R.append(dict(slug='hummus-veg', title='Hummus se zeleninovými tyčinkami', titleEn='Hummus with vegetable sticks',
-  summary='Křupavá svačina do práce, hodně vlákniny.', servings=1, time=dict(prepMin=5, cookMin=0, totalMin=5), difficulty='easy',
-  ingredients=[I('hummus',70,'g',70,174289), I('mrkev',1,'ks',80,170393), I('okurka salátová',0.3,'ks',80,169225), I('červená paprika',0.5,'ks',70,170108)],
-  steps=['Zeleninu nakrájejte na tyčinky.','Hummus dejte do malé krabičky a namáčejte.'],
-  tips=['Tyčinky vydrží nakrájené 3 dny v krabičce s mokrým ubrouskem.'], variations=[], storage=dict(fridgeDays=3, freezer=False, reheat=None),
+R.append(dict(slug='hummus-veg', title='Hummus with vegetable sticks', titleCs='Hummus se zeleninovými tyčinkami',
+  summary='A crunchy work snack with plenty of fibre.', servings=1, time=dict(prepMin=5, cookMin=0, totalMin=5), difficulty='easy',
+  ingredients=[I('hummus',70,'g',70,174289), I('carrot',1,'pcs',80,170393), I('cucumber',0.3,'pcs',80,169225), I('red pepper',0.5,'pcs',70,170108)],
+  steps=['Cut the vegetables into sticks.','Put the hummus in a small box and dip.'],
+  tips=['Cut sticks keep 3 days in a box with a damp paper towel.'], variations=[], storage=dict(fridgeDays=3, freezer=False, reheat=None),
   tags=['meal:snack','prep:no-cook','prep:meal-prep','time:under-15','diet:vegan','diet:high-fibre','ing:hummus','ing:carrot','ing:cucumber','ing:bell-pepper','cuisine:middle-eastern','flavor:fresh']))
 
-R.append(dict(slug='energy-balls', title='Ovesné kuličky s arašídovým máslem a datlemi', titleEn='Oat, peanut butter and date energy balls',
-  summary='12 kuliček bez pečení na celý týden; dvě jsou svačina.', servings=6, time=dict(prepMin=15, cookMin=0, totalMin=15), difficulty='easy',
-  ingredients=[I('ovesné vločky',120,'g',120,173904), I('arašídové máslo bez soli',100,'g',100,172470), I('datle medjool, vypeckované',8,'ks',160,168191),
-    I('kakao neslazené',2,'lžíce',12,169593), I('chia semínka',1,'lžíce',12,170554), I('voda',2,'lžíce',None)],
-  steps=['Datle v mixéru rozmixujte na pastu.','Přidejte ostatní suroviny a promixujte, směs má držet pohromadě; když je suchá, přidejte lžíci vody.','Mokrýma rukama vytvarujte 12 kuliček.','Uložte do lednice.'],
-  tips=['Bez mixéru: datle nasekejte nadrobno a hmotu propracujte rukama.'],
-  variations=[('Bez arašídů','Použijte mandlové nebo slunečnicové máslo.')],
+R.append(dict(slug='energy-balls', title='Oat, peanut butter and date energy balls', titleCs='Ovesné kuličky s arašídovým máslem a datlemi',
+  summary='12 no-bake balls for the whole week; two make a snack.', servings=6, time=dict(prepMin=15, cookMin=0, totalMin=15), difficulty='easy',
+  ingredients=[I('rolled oats',120,'g',120,173904), I('unsalted peanut butter',100,'g',100,172470), I('medjool dates, pitted',8,'pcs',160,168191),
+    I('unsweetened cocoa',2,'tbsp',12,169593), I('chia seeds',1,'tbsp',12,170554), I('water',2,'tbsp',None)],
+  steps=['Blend the dates to a paste.','Add everything else and blend; the mixture should hold together, add a spoon of water if it is dry.','With wet hands roll 12 balls.','Keep in the fridge.'],
+  tips=['Without a blender: chop the dates very finely and knead the mixture by hand.'],
+  variations=[('Peanut free','Use almond or sunflower seed butter.')],
   storage=dict(fridgeDays=7, freezer=True, reheat=None),
   tags=['meal:snack','prep:meal-prep','prep:no-cook','prep:freezer-friendly','time:under-30','diet:vegan','ing:oats','ing:peanut-butter','ing:dates','ing:cocoa','equip:blender','flavor:sweet']))
 
-R.append(dict(slug='salmon-potatoes', title='Pečený losos s bramborami a fazolkami', titleEn='Baked salmon with potatoes and green beans',
-  summary='Večeře na jeden plech, omega 3 a vitamin D.', servings=2, time=dict(prepMin=10, cookMin=30, totalMin=40), difficulty='easy',
-  ingredients=[I('filety lososa',2,'ks',280,175167), I('brambory',500,'g',500,170026,prep='na měsíčky'), I('zelené fazolky',300,'g',300,169961),
-    I('olivový olej',1.5,'lžíce',20,171413), I('citronová šťáva',1,'lžíce',15,167747), I('stroužek česneku',1,'ks',3,169230), I('sůl, pepř, kopr',None,None,None)],
-  steps=['Troubu rozehřejte na 200 °C.','Brambory promíchejte s polovinou oleje a solí, pečte 15 minut.','Přidejte na plech fazolky a lososa, pokapejte zbytkem oleje, citronem a česnekem, osolte a opepřete.','Pečte dalších 12 až 15 minut, dokud losos nejde snadno rozdělit vidličkou.','Posypte koprem.'],
-  tips=['Mražený losos rozmrazte přes noc v lednici.'],
-  variations=[('Levněji','Místo lososa makrela nebo pstruh.')],
-  storage=dict(fridgeDays=2, freezer=False, reheat='Losos je lepší studený do salátu než ohřívaný.'),
+R.append(dict(slug='salmon-potatoes', title='Baked salmon with potatoes and green beans', titleCs='Pečený losos s bramborami a fazolkami',
+  summary='A one-tray dinner with omega 3 and vitamin D.', servings=2, time=dict(prepMin=10, cookMin=30, totalMin=40), difficulty='easy',
+  ingredients=[I('salmon fillets',2,'pcs',280,175167), I('potatoes',500,'g',500,170026,prep='in wedges'), I('green beans',300,'g',300,169961),
+    I('olive oil',1.5,'tbsp',20,171413), I('lemon juice',1,'tbsp',15,167747), I('garlic clove',1,'pcs',3,169230), I('salt, pepper, dill',None,None,None)],
+  steps=['Heat the oven to 200 °C.','Toss the potatoes with half of the oil and some salt and roast for 15 minutes.','Add the beans and salmon to the tray, drizzle with the rest of the oil, the lemon and garlic, season.','Roast 12 to 15 more minutes, until the salmon flakes easily with a fork.','Sprinkle with dill.'],
+  tips=['Thaw frozen salmon overnight in the fridge.'],
+  variations=[('Cheaper','Mackerel or trout instead of salmon.')],
+  storage=dict(fridgeDays=2, freezer=False, reheat='Leftover salmon is better cold in a salad than reheated.'),
   tags=['meal:dinner','meal:lunch','time:under-60','diet:high-protein','ing:salmon','ing:potatoes','ing:green-beans','nutri:omega-3','nutri:vitamin-d','method:roast','equip:oven','prep:one-pan']))
 
-R.append(dict(slug='tofu-noodles', title='Tofu se zeleninou a nudlemi z pánve', titleEn='Tofu vegetable noodle stir-fry',
-  summary='Rychlá večeře z wok pánve, rostlinné bílkoviny.', servings=2, time=dict(prepMin=10, cookMin=12, totalMin=22), difficulty='easy',
-  ingredients=[I('pevné tofu',300,'g',300,172475,prep='na kostky'), I('vaječné nudle',140,'g',140,169731), I('mrkev',1,'ks',80,170393,prep='na nudličky'),
-    I('červená paprika',1,'ks',150,170108), I('zelí nebo pak choi',150,'g',150,169975,prep='nakrouhané'), I('sójová omáčka',3,'lžíce',48,174277),
-    I('sezamový olej',1,'lžička',5,171016), I('řepkový olej',1,'lžíce',14,172336), I('zázvor',2,'cm',10,169231), I('stroužky česneku',2,'ks',6,169230)],
-  steps=['Nudle uvařte podle obalu a sceďte.','Tofu osušte a na oleji opékejte 6 minut dokřupava, dejte stranou.','Na stejné pánvi 3 minuty restujte zeleninu se zázvorem a česnekem.','Přidejte nudle, tofu, sójovou omáčku a sezamový olej a 1 minutu promíchejte na plném ohni.'],
-  tips=['Tofu před opékáním zabalte do utěrky a zatižte 10 minut, bude křupavější.'],
-  variations=[('Bez vajec','Rýžové nudle místo vaječných.'),('Bez lepku','Rýžové nudle a tamari.')],
-  storage=dict(fridgeDays=3, freezer=False, reheat='Na pánvi s lžící vody.'),
+R.append(dict(slug='tofu-noodles', title='Tofu vegetable noodle stir-fry', titleCs='Tofu se zeleninou a nudlemi z pánve',
+  summary='A quick wok dinner with plant protein.', servings=2, time=dict(prepMin=10, cookMin=12, totalMin=22), difficulty='easy',
+  ingredients=[I('firm tofu',300,'g',300,172475,prep='cubed'), I('egg noodles',140,'g',140,169731), I('carrot',1,'pcs',80,170393,prep='in thin strips'),
+    I('red pepper',1,'pcs',150,170108), I('cabbage or pak choi',150,'g',150,169975,prep='shredded'), I('soy sauce',3,'tbsp',48,174277),
+    I('sesame oil',1,'tsp',5,171016), I('rapeseed oil',1,'tbsp',14,172336), I('fresh ginger',2,'cm',10,169231), I('garlic cloves',2,'pcs',6,169230)],
+  steps=['Cook the noodles according to the packet and drain.','Pat the tofu dry and fry in the oil for 6 minutes until crisp; set aside.','In the same pan stir-fry the vegetables with the ginger and garlic for 3 minutes.','Add the noodles, tofu, soy sauce and sesame oil and toss for 1 minute on full heat.'],
+  tips=['Wrap the tofu in a towel and weigh it down for 10 minutes before frying; it gets crisper.'],
+  variations=[('Egg free','Rice noodles instead of egg noodles.'),('Gluten free','Rice noodles and tamari.')],
+  storage=dict(fridgeDays=3, freezer=False, reheat='In a pan with a spoon of water.'),
   tags=['meal:dinner','meal:lunch','time:under-30','diet:vegetarian','diet:high-protein','ing:tofu','ing:noodles','ing:cabbage','ing:carrot','cuisine:asian','method:stir-fry','equip:hob','flavor:umami']))
 
-R.append(dict(slug='chicken-thigh-traybake', title='Kuřecí stehna z trouby s batáty a cuketou', titleEn='Chicken thigh tray bake with sweet potato and courgette',
-  summary='Všechno na jeden plech, hodí se na dva dny.', servings=2, time=dict(prepMin=10, cookMin=35, totalMin=45), difficulty='easy',
-  ingredients=[I('kuřecí stehna bez kosti a kůže',360,'g',360,173627), I('batáty',400,'g',400,168482,prep='na kostky'), I('cuketa',1,'ks',240,169291),
-    I('červená cibule',1,'ks',110,170000), I('olivový olej',1.5,'lžíce',20,171413), I('sladká paprika',1,'lžička',2,171329), I('sůl, pepř, tymián',None,None,None)],
-  steps=['Troubu rozehřejte na 210 °C.','Zeleninu a kuře promíchejte na plechu s olejem, paprikou, solí, pepřem a tymiánem.','Pečte 35 minut, v polovině promíchejte.','Kuře je hotové, když šťáva vytéká čirá.'],
-  tips=['Stehna jsou šťavnatější než prsa a při ohřívání nevysychají.'], variations=[('Bez batátů','Obyčejné brambory, pečte o 5 minut déle.')],
-  storage=dict(fridgeDays=3, freezer=True, reheat='Trouba nebo mikrovlnka.'),
+R.append(dict(slug='chicken-thigh-traybake', title='Chicken thigh tray bake with sweet potato and courgette', titleCs='Kuřecí stehna z trouby s batáty a cuketou',
+  summary='Everything on one tray; covers two days.', servings=2, time=dict(prepMin=10, cookMin=35, totalMin=45), difficulty='easy',
+  ingredients=[I('boneless skinless chicken thighs',360,'g',360,173627), I('sweet potatoes',400,'g',400,168482,prep='cubed'), I('courgette',1,'pcs',240,169291),
+    I('red onion',1,'pcs',110,170000), I('olive oil',1.5,'tbsp',20,171413), I('sweet paprika',1,'tsp',2,171329), I('salt, pepper, thyme',None,None,None)],
+  steps=['Heat the oven to 210 °C.','Toss the vegetables and chicken on a tray with the oil, paprika, salt, pepper and thyme.','Roast 35 minutes, stirring halfway.','The chicken is done when the juices run clear.'],
+  tips=['Thighs stay juicier than breast and do not dry out when reheated.'], variations=[('No sweet potatoes','Ordinary potatoes; roast 5 minutes longer.')],
+  storage=dict(fridgeDays=3, freezer=True, reheat='Oven or microwave.'),
   tags=['meal:dinner','meal:lunch','prep:meal-prep','prep:one-pan','time:under-60','diet:high-protein','ing:chicken','ing:sweet-potato','ing:zucchini','method:roast','equip:oven','flavor:savory']))
 
 out = []
@@ -160,8 +160,8 @@ for r in R:
         # unknown when ingredients without a value carry more than a quarter of the energy
         if all_kcal and unknown_kcal[k] / all_kcal > 0.25: ps[k] = None; continue
         ps[k] = round(v) if abs(v) >= 100 else round(v, 1) if abs(v) >= 1 else round(v, 3)
-    rec = dict(id='rcp-starter-' + r['slug'], type='recipe', schema=1, origin='starter', lang='cs',
-      title=r['title'], titleEn=r['titleEn'], summary=r['summary'], servings=r['servings'], time=r['time'], difficulty=r['difficulty'],
+    rec = dict(id='rcp-starter-' + r['slug'], type='recipe', schema=1, origin='starter', lang='en',
+      title=r['title'], titleEn=r['title'], titleCs=r['titleCs'], summary=r['summary'], servings=r['servings'], time=r['time'], difficulty=r['difficulty'],
       ingredients=r['ingredients'], steps=[dict(text=s, minutes=None) for s in r['steps']],
       tips=[dict(text=t) for t in r['tips']], variations=[dict(label=a, text=b) for a, b in r['variations']],
       storage=r['storage'], nutrition=dict(perServing=ps, basis='computed', confidence='high', source='USDA FoodData Central SR Legacy'),

@@ -111,6 +111,11 @@ details summary{cursor:pointer}
 .chatin .btn{flex:none;width:46px;padding:0}
 #chatQuick{margin:4px 0}
 
+/* on a computer the tab bar keeps the app's width */
+@media (min-width: 660px){
+  #tabbar{left:50%;right:auto;width:var(--maxw);transform:translateX(-50%);border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0}
+}
+
 /* floating add button */
 .fab{position:fixed;right:max(16px, calc(50% - var(--maxw)/2 + 16px));bottom:calc(78px + env(safe-area-inset-bottom));z-index:45;width:58px;height:58px;border-radius:50%;border:0;background:var(--teal);color:var(--onaccent);box-shadow:var(--shadow-lift);font-size:30px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .fabgrid{display:flex;flex-direction:column;gap:8px}

@@ -3,10 +3,9 @@
  "isRecipe": true,
  "dedupeKey": "chicken rice bowl | chicken breast, rice, broccoli, soy sauce, sesame",
  "recipe": {
-  "title": "Kuřecí miska s rýží, brokolicí a sezamem",
-  "titleEn": "Chicken rice bowl with broccoli and sesame",
-  "lang": "cs",
-  "summary": "Klasický meal prep: čtyři krabičky na obědy, vydrží do čtvrtka.",
+  "title": "Chicken rice bowl with broccoli and sesame",
+  "lang": "en",
+  "summary": "Classic meal prep: four lunch boxes that last until Thursday.",
   "servings": 4,
   "time": {
    "prepMin": 15,
@@ -17,17 +16,17 @@
   "ingredients": [
    {
     "group": null,
-    "item": "kuřecí prsa",
+    "item": "chicken breast",
     "qty": 600,
     "unit": "g",
     "grams": 600,
-    "prep": "nakrájená na kostky",
+    "prep": "cubed",
     "optional": false,
     "en": "chicken breast skinless boneless raw"
    },
    {
     "group": null,
-    "item": "rýže jasmínová nebo dlouhozrnná",
+    "item": "jasmine or long-grain rice",
     "qty": 300,
     "unit": "g",
     "grams": 300,
@@ -37,59 +36,59 @@
    },
    {
     "group": null,
-    "item": "brokolice",
+    "item": "broccoli",
     "qty": 1,
-    "unit": "ks",
+    "unit": "head",
     "grams": 480,
-    "prep": "na růžičky",
+    "prep": "in florets",
     "optional": false,
     "en": "broccoli raw"
    },
    {
-    "group": "Omáčka",
-    "item": "sójová omáčka",
+    "group": "Sauce",
+    "item": "soy sauce",
     "qty": 4,
-    "unit": "lžíce",
+    "unit": "tbsp",
     "grams": 64,
     "prep": null,
     "optional": false,
     "en": "soy sauce shoyu"
    },
    {
-    "group": "Omáčka",
-    "item": "sezamový olej",
+    "group": "Sauce",
+    "item": "sesame oil",
     "qty": 1,
-    "unit": "lžíce",
+    "unit": "tbsp",
     "grams": 14,
     "prep": null,
     "optional": false,
     "en": "oil sesame"
    },
    {
-    "group": "Omáčka",
-    "item": "stroužky česneku",
+    "group": "Sauce",
+    "item": "garlic cloves",
     "qty": 3,
-    "unit": "ks",
+    "unit": "pcs",
     "grams": 9,
-    "prep": "prolisované",
+    "prep": "crushed",
     "optional": false,
     "en": "garlic raw"
    },
    {
-    "group": "Omáčka",
-    "item": "zázvor",
+    "group": "Sauce",
+    "item": "fresh ginger",
     "qty": 2,
     "unit": "cm",
     "grams": 10,
-    "prep": "nastrouhaný",
+    "prep": "grated",
     "optional": false,
     "en": "ginger root raw"
    },
    {
     "group": null,
-    "item": "řepkový olej",
+    "item": "rapeseed oil",
     "qty": 1,
-    "unit": "lžíce",
+    "unit": "tbsp",
     "grams": 14,
     "prep": null,
     "optional": false,
@@ -97,9 +96,9 @@
    },
    {
     "group": null,
-    "item": "sezam",
+    "item": "sesame seeds",
     "qty": 2,
-    "unit": "lžíce",
+    "unit": "tbsp",
     "grams": 18,
     "prep": null,
     "optional": false,
@@ -107,9 +106,9 @@
    },
    {
     "group": null,
-    "item": "limetková šťáva",
+    "item": "lime juice",
     "qty": 1,
-    "unit": "lžíce",
+    "unit": "tbsp",
     "grams": 15,
     "prep": null,
     "optional": true,
@@ -118,39 +117,39 @@
   ],
   "steps": [
    {
-    "text": "Uvařte rýži podle návodu na obalu.",
+    "text": "Cook the rice according to the packet.",
     "minutes": null
    },
    {
-    "text": "Smíchejte sójovou omáčku, sezamový olej, česnek, zázvor a limetku.",
+    "text": "Mix the soy sauce, sesame oil, garlic, ginger and lime.",
     "minutes": null
    },
    {
-    "text": "Kuře osolte jen lehce (omáčka je slaná) a na rozpáleném oleji opékejte 6 až 8 minut dozlatova.",
+    "text": "Salt the chicken only lightly (the sauce is salty) and fry it in hot oil for 6 to 8 minutes until golden.",
     "minutes": null
    },
    {
-    "text": "Přilijte polovinu omáčky a 1 minutu provařte, ať kuře zglazuje.",
+    "text": "Pour in half of the sauce and let it bubble for 1 minute to glaze the chicken.",
     "minutes": null
    },
    {
-    "text": "Brokolici spařte nebo vařte v páře 4 minuty, ať zůstane křupavá.",
+    "text": "Blanch or steam the broccoli for 4 minutes so it stays crisp.",
     "minutes": null
    },
    {
-    "text": "Rozdělte do 4 krabiček: rýže, brokolice, kuře, zbytek omáčky a sezam.",
+    "text": "Divide into 4 boxes: rice, broccoli, chicken, the rest of the sauce and sesame seeds.",
     "minutes": null
    }
   ],
   "tips": [
    {
-    "text": "Brokolici vařte kratší dobu, při ohřívání v mikrovlnce ještě změkne.",
+    "text": "Undercook the broccoli a little; it softens further when reheated in the microwave.",
     "from": [
      "ig:EXAMPLE00000"
     ]
    },
    {
-    "text": "Omáčku na poslední den dejte do zvláštní nádobky, rýže ji jinak vsákne.",
+    "text": "Keep the sauce for the last day in a separate pot, otherwise the rice soaks it up.",
     "from": [
      "ig:EXAMPLE00000"
     ]
@@ -158,15 +157,15 @@
   ],
   "variations": [
    {
-    "label": "Bez lepku",
-    "text": "Sójovou omáčku nahraďte tamari.",
+    "label": "Gluten free",
+    "text": "Use tamari instead of soy sauce.",
     "from": [
      "ig:EXAMPLE00000"
     ]
    },
    {
-    "label": "Vegetariánsky",
-    "text": "Kuře nahraďte 600 g pevného tofu, opečte ho stejně.",
+    "label": "Vegetarian",
+    "text": "Replace the chicken with 600 g of firm tofu, fried the same way.",
     "from": [
      "ig:EXAMPLE00000"
     ]
@@ -175,7 +174,7 @@
   "storage": {
    "fridgeDays": 4,
    "freezer": true,
-   "reheat": "Mikrovlnka 2 až 3 minuty, rýži pokropte lžící vody."
+   "reheat": "Microwave 2 to 3 minutes; sprinkle the rice with a spoon of water."
   },
   "nutrition": {
    "stated": {
@@ -203,7 +202,8 @@
    "method:stir-fry",
    "equip:hob",
    "flavor:umami"
-  ]
+  ],
+  "titleCs": "Kuřecí miska s rýží, brokolicí a sezamem"
  },
  "extraction": {
   "inputs": [

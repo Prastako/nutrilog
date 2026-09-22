@@ -631,7 +631,7 @@ Object.assign(STR.cs, {
   arch_last:'Poslední synchronizace', arch_path:'Složka archivu v repozitáři', arch_sync:'Synchronizovat', arch_import:'Načíst ze souboru',
   arch_starter:'Ukazovat startovní recepty', arch_starter_d:'Tucet receptů od Clauda, aby návrhy fungovaly už před prvním archivem.',
   arch_need_repo:'Nejdřív vyplňte GitHub token a repozitář.', arch_none_yet:'Archiv v repozitáři zatím není.', arch_same:'Archiv je aktuální.',
-  arch_synced:'Archiv načten: {n} receptů.', arch_bad_file:'Tento soubor nevypadá jako archiv receptů.',
+  arch_synced:'Archiv načten, receptů: {n}.', arch_bad_file:'Tento soubor nevypadá jako archiv receptů.',
   b_format_note:'Formát zálohy je popsaný v souboru docs/DATA_FORMAT.md v repozitáři aplikace, aby ji mohly číst i další aplikace.',
   about_fooddb:'Databáze potravin',
   dg_fooddb:'Databáze potravin', dg_fooddb_ok:'načtena, {n} potravin', dg_fooddb_no:'zatím nenačtena',
