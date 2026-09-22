@@ -1,6 +1,6 @@
 # NutriLog handoff (read this first in a new chat)
 
-Last updated: 2026-09-22 (session 3, Claude Code at claude.ai/code with the repo selected). v0.2.3 is live on main (6a832e0): live index.html and sw.js show 0.2.3. Recipe archive (16 recipes) is on Drive (Jan uploaded the zip). Push route verified: this session pushes straight to main and GitHub Pages serves the change about 50 s later (deploy test commit db7c944).
+Last updated: 2026-09-22 (session 3, Claude Code at claude.ai/code with the repo selected). v0.2.3 is live on main (6a832e0): live index.html and sw.js show 0.2.3. Recipe archive (16 recipes) is on Drive (Jan uploaded the zip). Push route verified: this session pushes straight to main and GitHub Pages serves the change about 50 s later (deploy test commit db7c944). Standing working rules are now in CLAUDE.md (repo root), written for changes that reach main through a PR.
 
 ## The brief (Jan's original request, condensed)
 Personal nutrition app on Android: log meals and supplements; profile with diet goals driving meal suggestions (breakfast, lunch, snack, dinner, several options, full recipe each); recipe ideas and meal prep from an archive extracted from his saved Instagram reels (each recipe one record, same dish from several reels merged with variations and tips, generous tags, archive backed up and hosted on his Google Drive, structured to sit next to his workout reel archive); photo of food or label evaluated against the diet; in-app Claude chat about ingredients he has or misses; saved data; weekly and monthly summaries flagging lacking nutrients. No monetisation yet. Data designed so a later workout app and a shared platform can read it without a rewrite. Long jobs run 23:00 to 07:00 Prague time (schedule them as scheduled tasks); daytime is for checkpoints. Stop at hard to change decisions with a testable version. When asking Jan to do something manually, give exact steps and exact text to paste. No em dashes anywhere. Jan cannot read code; describe behaviour.
@@ -51,12 +51,28 @@ Personal nutrition app on Android: log meals and supplements; profile with diet 
 ## Push route (verified 2026-09-22, session 3)
 - Work happens in a Claude Code session at https://claude.ai/code?repositories=Prastako/nutrilog. It commits on its own branch and also pushes to main (`git push origin <branch>:main`); Pages rebuilds in about 50 s (Actions run "pages build and deployment"). No manual uploads needed.
 - Available there: Google Drive connector (Reel Recipe Atlas readable), GitHub tools, Chromium. Not available: the Project docs (source bundle, extractions JSON); Drive records/index.json has the built archive.
+- CLAUDE.md (added 2026-09-22 at Jan's request) holds the standing rules: build with tools/build.py, both tests before every PR with results in the PR description, update this file before every PR, no em dashes, describe changes by what Jan sees, exact steps for manual tasks, ask before hard to change decisions.
 - Tests there: `pip install playwright==1.56.0` first (matches the preinstalled Chromium; newer versions look for a browser that is not there).
 - Rejected earlier: a personal access token pasted into chat; driving GitHub's upload page with Claude in Chrome.
 
 ## Open questions for Jan
-- Private backup repo name (app: Settings, API keys, Backup repository, format user/name). Needed for the archive upload and for any automation. Jan's account has a private repo `Prastako/nutrilog-data` (last push 2026-08-10); likely the backup repo, not confirmed.
+- Private backup repo name (app: Settings, API keys, Backup repository, format user/name). Needed for the archive upload and for any automation. Not `Prastako/nutrilog-data`: Jan deleted it (old version), ignore it.
 - Did Jan load the recipe archive into the app (backup repo or from file)?
+- Next step on the ideas below: research session (when, one or two) and what to build first.
+
+## Ideas from Jan (2026-09-22, not started; several need research first)
+Each item: Jan's idea, then "Now:" what the app does today.
+1. Quick photo logging (premium later): photo before eating, hand next to the plate every time as the size reference; Claude estimates while he eats; a glanceable overview (seconds, not minutes) to check it matches the meal; pick how much was eaten (100 % or less); Log writes it to the diary. Now: the Photo tab evaluates a photo and logs grams; no hand reference, no eaten share, detailed rather than glanceable.
+2. Sex: more than two options. Now: Male/Female only, because the resting energy equation (Mifflin, St Jeor) has only two forms; a third option needs a rule for the calculation.
+3. Goals: keep simple Lose/Maintain/Gain, add an Advanced view with selectable pills in several categories (e.g. muscle and weight; nutrient coverage so enough minerals and vitamins are eaten per day). Include a morning/evening supplement routine proposed as a weekly schedule (not generated twice a day).
+4. Activity: simple (current 4 bands) plus Advanced with more options: specific goals (e.g. muscle gain with fat loss), weekly training attendance.
+5. Macro split: no basis to choose from. Needs an example, a recommendation from earlier choices, or an explanation.
+6. Diet goals: the current multi-select can be the Advanced view; add a Simple view with a few options (e.g. Diet: carnivore, vegetarian, vegan; My intention: ...).
+7. Meal split ("How the day splits between meals", % of daily energy): vague, reword and give context like the macro split.
+8. Diet style, allergies and refusals repeat the same options (e.g. vegetarian vs refusing meat, gluten free vs gluten allergy). Restructure to remove overlaps.
+9. PC and phone: Jan uses a PC more than the phone; both matter for future users. Now: runs on both, but data lives per device; restore from the backup replaces data, no two-way sync. Raises a server-based version.
+10. Chat limits for a public version: capped free text length; every message a fresh request (no history sent, no prompt chaining); each answer adds a short structured summary with only food and supplement information to the profile for follow-up. Now: chat sends the last 20 messages.
+11. Going public: this build is for Jan's own testing; later a public service, free tier (logging, archive) plus paid premium features. Jan worries the current model will be hard to change. Claude's note: a paid service with Claude features needs accounts, a server that holds the Claude key and enforces limits, and payments; that changes checkpoint decisions 1 (data on the device) and 4 (key in the browser). Hard to change, research first.
 
 ## Decisions (checkpoint 1, answered)
 1. Storage: approved. Phone or browser first (IndexedDB), automatic backup to his private GitHub repo as in v0.1; recipe archive master on Google Drive `Reel Recipe Atlas/` (originals, extracted, records) next to `Reel Movement Atlas/`; app copy in the private backup repo under `archive/recipes/`.
