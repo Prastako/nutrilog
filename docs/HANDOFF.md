@@ -58,8 +58,21 @@ Personal nutrition app on Android: log meals and supplements; profile with diet 
 ## Open questions for Jan
 - Private backup repo name (app: Settings, API keys, Backup repository, format user/name). Needed for the archive upload and for any automation. Not `Prastako/nutrilog-data`: Jan deleted it (old version), ignore it.
 - Did Jan load the recipe archive into the app (backup repo or from file)?
-- Who merges PRs: Jan on GitHub, or Claude after Jan says so in chat?
-- Jan has research questions and additions for the project (not yet listed here).
+- Next step on the ideas below: research session (when, one or two) and what to build first.
+
+## Ideas from Jan (2026-09-22, not started; several need research first)
+Each item: Jan's idea, then "Now:" what the app does today.
+1. Quick photo logging (premium later): photo before eating, hand next to the plate every time as the size reference; Claude estimates while he eats; a glanceable overview (seconds, not minutes) to check it matches the meal; pick how much was eaten (100 % or less); Log writes it to the diary. Now: the Photo tab evaluates a photo and logs grams; no hand reference, no eaten share, detailed rather than glanceable.
+2. Sex: more than two options. Now: Male/Female only, because the resting energy equation (Mifflin, St Jeor) has only two forms; a third option needs a rule for the calculation.
+3. Goals: keep simple Lose/Maintain/Gain, add an Advanced view with selectable pills in several categories (e.g. muscle and weight; nutrient coverage so enough minerals and vitamins are eaten per day). Include a morning/evening supplement routine proposed as a weekly schedule (not generated twice a day).
+4. Activity: simple (current 4 bands) plus Advanced with more options: specific goals (e.g. muscle gain with fat loss), weekly training attendance.
+5. Macro split: no basis to choose from. Needs an example, a recommendation from earlier choices, or an explanation.
+6. Diet goals: the current multi-select can be the Advanced view; add a Simple view with a few options (e.g. Diet: carnivore, vegetarian, vegan; My intention: ...).
+7. Meal split ("How the day splits between meals", % of daily energy): vague, reword and give context like the macro split.
+8. Diet style, allergies and refusals repeat the same options (e.g. vegetarian vs refusing meat, gluten free vs gluten allergy). Restructure to remove overlaps.
+9. PC and phone: Jan uses a PC more than the phone; both matter for future users. Now: runs on both, but data lives per device; restore from the backup replaces data, no two-way sync. Raises a server-based version.
+10. Chat limits for a public version: capped free text length; every message a fresh request (no history sent, no prompt chaining); each answer adds a short structured summary with only food and supplement information to the profile for follow-up. Now: chat sends the last 20 messages.
+11. Going public: this build is for Jan's own testing; later a public service, free tier (logging, archive) plus paid premium features. Jan worries the current model will be hard to change. Claude's note: a paid service with Claude features needs accounts, a server that holds the Claude key and enforces limits, and payments; that changes checkpoint decisions 1 (data on the device) and 4 (key in the browser). Hard to change, research first.
 
 ## Decisions (checkpoint 1, answered)
 1. Storage: approved. Phone or browser first (IndexedDB), automatic backup to his private GitHub repo as in v0.1; recipe archive master on Google Drive `Reel Recipe Atlas/` (originals, extracted, records) next to `Reel Movement Atlas/`; app copy in the private backup repo under `archive/recipes/`.
