@@ -13,3 +13,10 @@ Read `docs/HANDOFF.md` first: status, decisions, open questions.
 - Jan cannot read code. Describe changes by what he will see in the app.
 - When Jan must do something manually, give exact steps and the exact text to paste.
 - Stop and ask before decisions that are hard to change; bring a testable version.
+
+## Local worker (tasks from C:\AI-Workspace\work)
+- These rules replace the PR, Playwright, build and HANDOFF rules above for you. You have no internet: do not build, do not run Python or Playwright, do not edit `docs/HANDOFF.md`, `index.html`, `sw.js` or `data/`.
+- `src/*.js` are plain browser scripts sharing globals (no modules, no imports). Keep that style and change only what the task names.
+- UI text lives in `src/strings.js`, which has a Czech table and an English table. Every new key goes into both. English text must not contain Czech words or accented letters.
+- Unit tests: `node --test` (files `test/*.test.mjs`, node:test; load src files with node:vm as `test/core.test.mjs` does). They must pass before you finish.
+- Finish with `REPORT.md`: what the user will see, files changed, test results.
