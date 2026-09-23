@@ -185,7 +185,7 @@ async function recentFoods(days, limit){
     const ref = e.source && e.source.ref;
     if (!ref || !(ref.startsWith('usda:') || ref.startsWith('food:'))) return;
     count[ref] = (count[ref] || 0) + 1;
-    if (!last[ref] || e.updatedAt > last[ref].updatedAt) last[ref] = e;
+    if (!last[ref] || cmpIso(e.updatedAt, last[ref].updatedAt) > 0) last[ref] = e;
   });
   const refs = Object.keys(count).sort((a,b) => count[b] - count[a]).slice(0, limit || 12);
   const out = [];

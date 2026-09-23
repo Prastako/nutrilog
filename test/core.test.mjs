@@ -51,11 +51,12 @@ const ctx = createContext({
 runInContext(coreSrc, ctx);
 runInContext(
   ';globalThis.__core = { localDateKey, dateFromKey, addDays, nowIso, '
-  + 'nutAdd, nutScale, nutRound, flatProfile, computeTargets, round10 };',
+  + 'isoMs, cmpIso, nutAdd, nutScale, nutRound, flatProfile, computeTargets, round10 };',
   ctx,
 );
 const {
   localDateKey, dateFromKey, addDays, nowIso,
+  isoMs, cmpIso,
   nutAdd, nutScale, nutRound, flatProfile, computeTargets, round10,
 } = ctx.__core;
 
@@ -285,5 +286,21 @@ describe('computeTargets', () => {
       const result = computeTargets(p);
       assert.equal(result.low, result.floor);
     });
+  });
+});
+
+describe('isoMs and cmpIso', () => {
+  it('orders stamps by the real moment across the autumn clock change', () => {
+    assert.ok(isoMs('2026-10-25T02:10:00+01:00') > isoMs('2026-10-25T02:30:00+02:00'));
+  });
+  it('treats the same moment with different offsets as equal', () => {
+    assert.equal(cmpIso('2026-09-24T02:00:00+02:00', '2026-09-24T00:00:00Z'), 0);
+  });
+  it('sorts oldest first', () => {
+    const a = ['2026-10-25T02:10:00+01:00', '2026-10-24T23:00:00Z', '2026-10-25T02:30:00+02:00'].sort(cmpIso);
+    assert.deepEqual([...a], ['2026-10-24T23:00:00Z', '2026-10-25T02:30:00+02:00', '2026-10-25T02:10:00+01:00']);
+  });
+  it('returns 0 for missing or invalid input', () => {
+    for (const bad of [null, undefined, '', 'garbage', 12345, {}]) assert.equal(isoMs(bad), 0);
   });
 });

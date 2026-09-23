@@ -154,7 +154,7 @@ async function renderReview(){
   h += '<label class="opt sq" style="margin:4px 0 12px"><input type="checkbox" id="rvSupp" '+(S.prefs.review.includeSupplements ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('rv_incl_supp'))+'</span></span></label>';
 
   /* Claude commentary */
-  const saved = (await recByType('summary')).filter(s => s.periodKey === P.range.key).sort((a,b) => a.updatedAt < b.updatedAt ? 1 : -1)[0];
+  const saved = (await recByType('summary')).filter(s => s.periodKey === P.range.key).sort((a,b) => cmpIso(b.updatedAt, a.updatedAt))[0];
   h += '<div class="card"><h3>'+esc(t('rv_ai_h'))+'</h3>' +
     (saved ? '<div class="aitext">'+mdLite(saved.text)+'</div><p class="tiny" style="margin-top:8px">'+esc(t('rv_ai_when', {d: fmtDateTime(saved.updatedAt)}))+'</p>' : '<p class="tiny">'+esc(t('rv_ai_p'))+'</p>') +
     '<div class="btnrow" style="margin-top:10px"><button class="btn quiet" type="button" data-act="rv-ai" id="rvAi">'+icon('chat')+esc(saved ? t('rv_ai_again') : t('rv_ai_btn'))+'</button></div></div>';

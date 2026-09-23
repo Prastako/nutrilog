@@ -114,6 +114,17 @@ function nowIso(d){
   return localDateKey(x)+'T'+p(x.getHours())+':'+p(x.getMinutes())+':'+p(x.getSeconds())+
     sign+p(off/60)+':'+p(off%60);
 }
+/* Parse an ISO 8601 timestamp to milliseconds since epoch.
+   Returns 0 for null, undefined, empty, or unparseable input. */
+function isoMs(s){
+  if (!s || typeof s !== 'string') return 0;
+  const ms = Date.parse(s);
+  return Number.isFinite(ms) ? ms : 0;
+}
+/* Sort comparator for ISO 8601 timestamps (oldest first). */
+function cmpIso(a, b){
+  return isoMs(a) - isoMs(b);
+}
 
 /* UTF-8 safe base64. btoa alone throws on Czech diacritics. */
 function b64encode(str){

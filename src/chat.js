@@ -29,7 +29,7 @@ const CHAT_TOOLS = [
 async function chatHistory(){
   const all = await recByType('chat_message');
   const thread = S.meta.chatThread || null;
-  return all.filter(m => (m.thread || null) === thread).sort((a,b) => a.createdAt < b.createdAt ? -1 : 1);
+  return all.filter(m => (m.thread || null) === thread).sort((a,b) => cmpIso(a.createdAt, b.createdAt));
 }
 
 function chatBubble(m){
