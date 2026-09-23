@@ -1,6 +1,6 @@
 # NutriLog handoff (read this first in a new chat)
 
-Last updated: 2026-09-22 (session 3, Claude Code at claude.ai/code with the repo selected). v0.2.3 is live on main (6a832e0): live index.html and sw.js show 0.2.3. Recipe archive (16 recipes) is on Drive (Jan uploaded the zip). Push route verified: this session pushes straight to main and GitHub Pages serves the change about 50 s later (deploy test commit db7c944). Standing working rules are now in CLAUDE.md (repo root), written for changes that reach main through a PR.
+Last updated: 2026-09-23 (session 3, Claude Code). v0.2.3 is live on main. Research on going public is done: docs/research/2026-09-23-research.md (roadmap, options, 20 decisions for Jan, 14 problems in the current app, questions for a lawyer and an accountant). Waiting for Jan's answers to decisions 1 to 7 before building. Standing rules are in CLAUDE.md.
 
 ## The brief (Jan's original request, condensed)
 Personal nutrition app on Android: log meals and supplements; profile with diet goals driving meal suggestions (breakfast, lunch, snack, dinner, several options, full recipe each); recipe ideas and meal prep from an archive extracted from his saved Instagram reels (each recipe one record, same dish from several reels merged with variations and tips, generous tags, archive backed up and hosted on his Google Drive, structured to sit next to his workout reel archive); photo of food or label evaluated against the diet; in-app Claude chat about ingredients he has or misses; saved data; weekly and monthly summaries flagging lacking nutrients. No monetisation yet. Data designed so a later workout app and a shared platform can read it without a rewrite. Long jobs run 23:00 to 07:00 Prague time (schedule them as scheduled tasks); daytime is for checkpoints. Stop at hard to change decisions with a testable version. When asking Jan to do something manually, give exact steps and exact text to paste. No em dashes anywhere. Jan cannot read code; describe behaviour.
@@ -58,8 +58,23 @@ Personal nutrition app on Android: log meals and supplements; profile with diet 
 ## Open questions for Jan
 - Private backup repo name (app: Settings, API keys, Backup repository, format user/name). Needed for the archive upload and for any automation. Not `Prastako/nutrilog-data`: Jan deleted it (old version), ignore it.
 - Did Jan load the recipe archive into the app (backup repo or from file)?
-- Research run scheduled for 2026-09-23 01:15 Prague (after Jan's usage plan resets at 01:00): trigger trig_019gb6Ag3Qg7N4YjyTn1Z9A5 wakes the Claude Code session session_018yyUtT1MZnkJyPkvsja6P7. Output: docs/research/2026-09-23-research.md with a roadmap to going public. If that file is missing in the morning, the run did not happen.
-- What to build first: open until the roadmap is in.
+- Decisions from the research (full list with options: research doc section (e)). Needed now:
+  1. Server: Supabase in Frankfurt with own small sync?
+  2. Build ideas 8, 6, 2, 4, 3, 5, 7 now on the current app, in that order?
+  3. Fix the section (f) problems now (magnesium preset to 250 mg, Lower carb note, sex handling, timestamps, Open Food Facts credit)?
+  4. Activity multipliers to 1.40, 1.55, 1.70, 1.90?
+  5. Sex options: Male, Female, In between, Prefer not to say?
+  6. Supplement suggestions for Jan only, as a test?
+  7. Photo test: weigh 15 to 20 meals, photo with and without hand?
+  Decisions 8 to 16 before the closed beta, 17 to 20 before the public launch.
+
+## Research 2026-09-23: roadmap to going public (summary; details in docs/research/2026-09-23-research.md)
+- Run overnight by 8 research agents plus a report writer (notes kept out of git). Legal, tax and medical points are research, not advice.
+- Stage 1, Jan alone: fixes, then ideas 8, 6, 2, 4, 3, 5, 7, supplement weekly plan and quick photo log screen, all on the current app (they carry over); a sync proof on Jan's PC and phone once decision 1 is yes.
+- Stage 2, closed beta (10 to 100 people): own domain off GitHub Pages (GitHub terms exclude commercial services), paid Supabase in Frankfurt, email sign-in, Claude key on the server with per-user limits, 18+, health-data consent (GDPR Art. 9), AI labels, new chat design (idea 10), recipes by pasted text or link only.
+- Stage 3, public: business set up, merchant of record payments, 14-day trial, premium = Claude features, free = everything without Claude.
+- Changes checkpoint decisions 1 (data on device), 4 (key in browser) and 5 (GitHub Pages) from Stage 2 on.
+- Estimates: servers 0 USD now, 25 to 30 USD a month in beta, 50 to 110 USD at 10,000 users; Claude about 1.9 USD per typical premium user a month with today's prompts, 0.65 USD with lean ones; suggested price 39.99 EUR a year.
 
 ## Ideas from Jan (2026-09-22, not started; several need research first)
 Each item: Jan's idea, then "Now:" what the app does today.
