@@ -52,14 +52,14 @@ runInContext(coreSrc, ctx);
 runInContext(
   ';globalThis.__core = { localDateKey, dateFromKey, addDays, cycleDue, nowIso, '
   + 'isoMs, cmpIso, nutAdd, nutScale, nutRound, flatProfile, computeTargets, round10, '
-  + 'SUPP_UL, suppUlOver };',
+  + 'round5, SUPP_UL, suppUlOver, splitPreview };',
   ctx,
 );
 const {
   localDateKey, dateFromKey, addDays, cycleDue, nowIso,
   isoMs, cmpIso,
-  nutAdd, nutScale, nutRound, flatProfile, computeTargets, round10,
-  SUPP_UL, suppUlOver,
+  nutAdd, nutScale, nutRound, flatProfile, computeTargets, round10, round5,
+  SUPP_UL, suppUlOver, splitPreview,
 } = ctx.__core;
 
 /* ================================================================== */
@@ -377,5 +377,76 @@ describe('cycleDue', () => {
     assert.ok(cycleDue('2026-09-24', '2026-09-30', 3));
     assert.ok(!cycleDue('2026-09-24', '2026-09-25', 3));
     assert.ok(!cycleDue('2026-09-24', '2026-09-26', 3));
+  });
+});
+
+describe('splitPreview', () => {
+  function profile(sex, age, heightCm, weightKg, activityLevel, direction, preset) {
+    return {
+      person: { sex, age, heightCm, weightKg, activityLevel },
+      goals: { direction, macroSplit: { preset: preset || 'balanced' } },
+    };
+  }
+
+  it('returns null when weightKg is missing', () => {
+    const p = {
+      person: { sex: 'male', age: 28, heightCm: 180, weightKg: null, activityLevel: 2 },
+      goals: { direction: 'maintain' },
+    };
+    assert.equal(splitPreview(p), null);
+  });
+
+  describe('male 28, 180 cm, 75 kg, activity 2, maintain, balanced', () => {
+    const p = profile('male', 28, 180, 75, 2, 'maintain', 'balanced');
+
+    it('kcal equals computeTargets mid', () => {
+      const g = computeTargets(p);
+      const result = splitPreview(p);
+      assert.equal(result.kcal, g.mid);
+    });
+
+    it('p equals round5(kcal * 25 / 100 / 4)', () => {
+      const g = computeTargets(p);
+      const result = splitPreview(p);
+      assert.equal(result.p, round5(g.mid * 25 / 100 / 4));
+    });
+
+    it('fatHigh is false', () => {
+      const result = splitPreview(p);
+      assert.equal(result.fatHigh, false);
+    });
+
+    it('slots are breakfast, lunch, snack, dinner with correct kcal', () => {
+      const g = computeTargets(p);
+      const result = splitPreview(p);
+      const expected = [
+        { slot: 'breakfast', kcal: round10(g.mid * 25 / 100) },
+        { slot: 'lunch', kcal: round10(g.mid * 35 / 100) },
+        { slot: 'snack', kcal: round10(g.mid * 10 / 100) },
+        { slot: 'dinner', kcal: round10(g.mid * 30 / 100) },
+      ];
+      assert.equal(JSON.stringify([...result.slots]), JSON.stringify(expected));
+    });
+  });
+
+  it('preset lowcarb gives fatHigh true', () => {
+    const p = profile('male', 28, 180, 75, 2, 'maintain', 'lowcarb');
+    const result = splitPreview(p);
+    assert.equal(result.fatHigh, true);
+  });
+
+  it('custom slots {breakfast:50, lunch:50, snack:0, dinner:0} produce only breakfast and lunch', () => {
+    const p = {
+      person: { sex: 'male', age: 28, heightCm: 180, weightKg: 75, activityLevel: 2 },
+      goals: { direction: 'maintain', macroSplit: { preset: 'balanced' }, slots: { breakfast: 50, lunch: 50, snack: 0, dinner: 0 } },
+    };
+    const g = computeTargets(p);
+    const result = splitPreview(p);
+    const expected = [
+      { slot: 'breakfast', kcal: round10(g.mid * 50 / 100) },
+      { slot: 'lunch', kcal: round10(g.mid * 50 / 100) },
+    ];
+    assert.equal(result.slots.length, 2, 'should have exactly 2 slots');
+    assert.equal(JSON.stringify([...result.slots]), JSON.stringify(expected));
   });
 });

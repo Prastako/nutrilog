@@ -682,6 +682,27 @@ function slotShares(){
   return out;
 }
 
+function splitPreview(rec){
+  const g = computeTargets(rec);
+  if (!g) return null;
+  const kcal = g.mid;
+  const weight = Number(rec.person.weightKg);
+  const p = round5(kcal * g.split.p / 100 / 4);
+  const f = round5(kcal * g.split.f / 100 / 9);
+  const c = round5(kcal * g.split.c / 100 / 4);
+  const pkg = Math.round(p / weight * 10) / 10;
+  const fatHigh = g.split.f > 35;
+  const s = (rec.goals && rec.goals.slots) || DEFAULT_SLOTS;
+  const sum = SLOTS.reduce((a, k) => a + (Number(s[k]) || 0), 0) || 100;
+  const slots = [];
+  SLOTS.forEach(k => {
+    const share = (Number(s[k]) || 0) / sum;
+    if (share === 0) return;
+    slots.push({ slot: k, kcal: round10(kcal * share) });
+  });
+  return { kcal, p, f, c, pkg, fatHigh, slots };
+}
+
 /* ---------- 8. Reference values ----------
    Daily values for adults from the European Food Safety Authority
    (EFSA Dietary Reference Values, 2017 summary report and updates),
