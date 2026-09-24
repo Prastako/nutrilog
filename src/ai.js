@@ -210,8 +210,17 @@ async function buildContext(opts){
     ' g; fat ' + g.macros.f.low + ' to ' + g.macros.f.high + ' g; carbohydrate ' + g.macros.c.low + ' to ' + g.macros.c.high + ' g; fibre at least 25 g.');
   const shares = slotShares();
   lines.push('MEAL SLOTS share of the day: ' + SLOTS.map(s => s + ' ' + Math.round(shares[s]*100) + '%').join(', '));
-  if ((G.dietStyle||[]).length) lines.push('DIET STYLE: ' + G.dietStyle.map(x => t('ds_'+x)).join(', '));
-  if ((G.aims||[]).length) lines.push('AIMS: ' + G.aims.map(x => t('aim_'+x)).join(', '));
+  const pat = F.pattern || 'everything', po = F.patternOpts || {};
+  lines.push('EATING PATTERN: ' + t('fp_'+pat) + (pat === 'vegetarian' ? (po.noEggs ? ', no eggs' : '') + (po.noMilk ? ', no milk products' : '') : '') +
+    (pat === 'littlemeat' ? ' (keep meat modest, plants first)' : '') + (pat === 'carnivore' ? ' (animal foods only, their choice; still say honestly which nutrients are missing)' : ''));
+  const cond = F.conditions || [];
+  if (cond.length) lines.push('HEALTH CONDITIONS: ' + cond.map(c => t('fc_'+c)).join(', ') +
+    (cond.indexOf('lactose') >= 0 ? '. Lactose intolerance: keep lactose small (up to about 12 g at a time) or use lactose-free products' : '') +
+    (cond.indexOf('kidney') >= 0 ? '. Kidney disease: never push high protein; suggest checking protein with a doctor' : '') + '.');
+  if ((F.rules||[]).length) lines.push('FOOD RULES, hard like allergies: ' + F.rules.map(r => t('fr_'+r)).join(', '));
+  if ((F.prefs||[]).length) lines.push('PREFERENCES (soft): ' + F.prefs.map(p => t('pf_'+p)).join(', '));
+  if ((G.focus||[]).length) lines.push('HEALTH FOCUS: ' + G.focus.map(x => x === 'mediterranean' ? t('ds_mediterranean') : t('aim_'+x)).join(', '));
+  if ((G.hints||[]).length) lines.push('ALSO WOULD LIKE (no numeric target, soft hints only): ' + G.hints.map(x => t('aim_'+x)).join(', '));
   if ((G.focusNutrients||[]).length) lines.push('NUTRIENTS TO FOCUS ON: ' + G.focusNutrients.map(nutLabel).join(', '));
   if (G.notes) lines.push('NOTES FROM THE PERSON (their own words): ' + G.notes);
   lines.push('HARD EXCLUSIONS, never include them, check every ingredient and hidden sources such as sauces and stock: ' + exclusionText());

@@ -435,6 +435,11 @@ async function loadState(){
   if (!S.meta.installedAt){ S.meta.installedAt = nowIso(); await saveMeta(); }
   await migrateFromSchema1();
   S.profile = await recGet('profile');
+  /* v0.2.6: old diet style and aims chips become eating pattern, focus and hints (idea 8). The old fields stay stored. */
+  if (S.profile && (!S.profile.food || S.profile.food.pattern === undefined)){
+    S.profile = migrateDietV3(S.profile);
+    await recPut(S.profile);
+  }
 }
 
 async function savePrefs(){ S.prefs.lang = S.lang; S.prefs.theme = S.theme; await kvSet('prefs', S.prefs); }
