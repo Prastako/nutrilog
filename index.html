@@ -2068,23 +2068,23 @@ function referenceValues(){
 
 const ALLERGENS = [
   {id:'gluten', cs:'Lepek', en:'Gluten',
-   syn:['pšenice','žito','ječmen','oves','špalda','kamut','mouka','strouhanka','kuskus','bulgur','wheat','rye','barley','oats','spelt','flour','breadcrumbs','couscous','pasta','těstoviny','bread','chléb','noodles','nudle','seitan','panko','tortilla']},
+   syn:['pšenice','žito','ječmen','oves','špalda','kamut','mouka','strouhanka','kuskus','bulgur','wheat','rye','barley','oats','spelt','flour','breadcrumbs','couscous','pasta','těstoviny','bread','chléb','noodles','nudle','seitan','panko','tortilla','soy sauce','sójová omáčka','teriyaki','spaghetti','linguine','fettuccine','tagliatelle','penne','rigatoni','macaroni','lasagne','lasagna','gnocchi','semolina','krupice','pita','naan','bagel','croissant','cracker','biscuit','pastry','dumpling','knedlík','rohlík','beer','pivo','malt']},
   {id:'crustaceans', cs:'Korýši', en:'Crustaceans',
-   syn:['krevety','garnáty','krab','humr','langusta','shrimp','prawn','crab','lobster','crayfish']},
+   syn:['krevety','garnáty','krab','humr','langusta','shrimp','prawn','crab','lobster','crayfish','kimchi','krill']},
   {id:'egg', cs:'Vejce', en:'Eggs',
-   syn:['vejce','žloutek','bílek','majonéza','egg','yolk','egg white','mayonnaise','albumin']},
+   syn:['vejce','žloutek','bílek','majonéza','egg','yolk','egg white','mayonnaise','albumin','custard','meringue','aioli']},
   {id:'fish', cs:'Ryby', en:'Fish',
-   syn:['losos','tuňák','treska','sardinky','ančovičky','rybí omáčka','worcesterská omáčka','salmon','tuna','cod','sardines','anchovies','fish sauce','fish']},
+   syn:['losos','tuňák','treska','sardinky','ančovičky','rybí omáčka','worcesterská omáčka','salmon','tuna','cod','sardines','anchovies','fish sauce','fish','anchovy','worcestershire','kimchi','mackerel','trout','herring','haddock','hake','pollock','tilapia','makrela','pstruh','sleď','kapr','candát']},
   {id:'peanut', cs:'Arašídy', en:'Peanuts',
    syn:['arašídy','podzemnice olejná','arašídové máslo','peanut','peanut butter','groundnut']},
   {id:'soy', cs:'Sója', en:'Soybeans',
-   syn:['sója','sójová omáčka','tofu','edamame','miso','tempeh','soy','soya','soy sauce','tamari']},
+   syn:['sója','sójová omáčka','tofu','edamame','miso','tempeh','soy','soya','soy sauce','tamari','teriyaki','shoyu','natto']},
   {id:'milk', cs:'Mléko', en:'Milk',
-   syn:['mléko','máslo','sýr','smetana','jogurt','tvaroh','syrovátka','laktóza','milk','butter','cheese','cream','yoghurt','yogurt','whey','lactose','ghee','parmesan','mozzarella','feta','ricotta','skyr','kefir']},
+   syn:['mléko','máslo','sýr','smetana','jogurt','tvaroh','syrovátka','laktóza','milk','butter','cheese','cream','yoghurt','yogurt','whey','lactose','ghee','parmesan','mozzarella','feta','ricotta','skyr','kefir','pesto','mascarpone','quark','paneer','halloumi','gouda','cheddar','camembert','bechamel','custard','eidam','hermelín']},
   {id:'nuts', cs:'Skořápkové plody', en:'Tree nuts',
-   syn:['mandle','lískové ořechy','vlašské ořechy','kešu','pekanové ořechy','para ořechy','pistácie','makadamie','marcipán','almond','hazelnut','walnut','cashew','pecan','brazil nut','pistachio','macadamia','marzipan','praline']},
+   syn:['mandle','lískové ořechy','vlašské ořechy','kešu','pekanové ořechy','para ořechy','pistácie','makadamie','marcipán','almond','hazelnut','walnut','cashew','pecan','brazil nut','pistachio','macadamia','marzipan','praline','pesto']},
   {id:'celery', cs:'Celer', en:'Celery',
-   syn:['celer','celerová nať','bulion','vývar v kostce','celery','celeriac','stock cube']},
+   syn:['celer','celerová nať','bulion','vývar v kostce','celery','celeriac','stock cube','bouillon']},
   {id:'mustard', cs:'Hořčice', en:'Mustard',
    syn:['hořčice','hořčičné semínko','dijon','mustard','mustard seed']},
   {id:'sesame', cs:'Sezam', en:'Sesame',
@@ -2126,11 +2126,12 @@ const FOCUS_CHOICES = ['fib','prot','vitd','fe','ca','mg','k','zn','b12','fol','
    Removed from the text before matching, so they do not raise false alarms. */
 const EXCLUSION_FALSE_FRIENDS = {
   milk: ['coconut milk','almond milk','oat milk','soy milk','soya milk','rice milk','peanut butter','cocoa butter','almond butter','nut butter','cashew butter','apple butter','cream of tartar','coconut cream',
-         'kokosove mleko','mandlove mleko','ovesne mleko','sojove mleko','ryzove mleko','arasidove maslo','kakaove maslo','mandlove maslo','kokosova smetana'],
+         'kokosove mleko','mandlove mleko','ovesne mleko','sojove mleko','ryzove mleko','arasidove maslo','kakaove maslo','mandlove maslo','kokosova smetana','syrup','sirup','butternut'],
   egg: ['eggplant','egg noodles free'],
   nuts: ['nutmeg','butternut','coconut','muskatovy orisek','muskatovy'],
   fish: ['fish sauce free'],
-  gluten: ['gluten free','bez lepku','buckwheat','pohanka','rice flour','ryzova mouka','corn flour','kukuricna mouka','almond flour','mandlova mouka','coconut flour','chickpea flour','cizrnova mouka','rice noodles','ryzove nudle','glass noodles','sklenene nudle','corn tortilla','kukuricna tortilla']
+  gluten: ['gluten free soy sauce','gluten free','bez lepku','buckwheat','pohanka','rice flour','ryzova mouka','corn flour','kukuricna mouka','almond flour','mandlova mouka','coconut flour','chickpea flour','cizrnova mouka','rice noodles','ryzove nudle','glass noodles','sklenene nudle','corn tortilla','kukuricna tortilla','breast','breakfast','paste','pastinak','pastrami'],
+  molluscs: ['oyster mushroom']
 };
 
 /* All exclusion words for the hard filter, folded for matching.
