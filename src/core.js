@@ -841,6 +841,20 @@ const DIET_STYLES = ['omnivore','flexitarian','pescatarian','vegetarian','vegan'
 const AIMS = ['muscle','fatloss','energy','digestion','fibre','lesssugar','lesssalt','veg','protein','heart','sleep','skin'];
 const FOCUS_CHOICES = ['fib','prot','vitd','fe','ca','mg','k','zn','b12','fol','vitc','o3ld','iod','se'];
 
+const PATTERNS = ['everything','littlemeat','pescatarian','vegetarian','vegan','carnivore'];
+const CONDITIONS = ['coeliac','lactose','kidney'];
+const FOOD_RULES = ['halal','kosher','nopork','nobeef','noalcohol'];
+const FOOD_PREFS = ['avoidgluten','lactosefreeproducts'];
+const HEALTH_FOCUS = ['fibre','lesssugar','lesssalt','veg','heart','digestion','mediterranean'];
+const SOFT_HINTS = ['energy','sleep','skin'];
+const DIET_GROUPS = {
+  meat: ['meat','beef','veal','pork','ham','bacon','chicken','turkey','duck','goose','lamb','mutton','venison','rabbit','mince','steak','ribeye','sirloin','brisket','sausage','salami','chorizo','prosciutto','pancetta','pepperoni','mortadella','pastrami','jerky','liver','gelatin','gelatine','lard','suet','bone broth','maso','hovězí','vepřové','kuřecí','kuře','krůtí','kachna','kachní','husa','jehněčí','telecí','zvěřina','králík','slanina','šunka','klobása','párek','párky','játra','želatina','sádlo'],
+  pork: ['pork','ham','bacon','prosciutto','pancetta','salami','chorizo','pepperoni','lard','gelatin','gelatine','vepř','vepřové','šunka','slanina','sádlo','želatina'],
+  beef: ['beef','veal','ribeye','sirloin','brisket','bresaola','hamburger','hovězí','telecí'],
+  alcohol: ['wine','beer','rum','vodka','gin','brandy','cognac','whisky','whiskey','liqueur','sake','mirin','sherry','vermouth','prosecco','champagne','cider','víno','pivo','slivovice','becherovka'],
+  honey: ['honey','honeycomb']
+};
+
 /* Phrases that contain an allergen word but are not that allergen.
    Removed from the text before matching, so they do not raise false alarms. */
 const EXCLUSION_FALSE_FRIENDS = {
@@ -854,12 +868,31 @@ const EXCLUSION_FALSE_FRIENDS = {
            'breadfruit','pitanga','winter spaghetti','spaghetti squash','potato flour','acorn flour','cottonseed flour','sesame flour','sunflower seed flour','carob flour','peanut flour','soy flour','arrowroot flour','millet flour','sorghum flour','tapioca flour','flounder','root beer','breadnut','chlebovnik','kukuricna krupice',
            'bramborova mouk','bramborove mouk','zaludova mouk','bavlnikova mouk','sezamova mouk','slunecnicova mouk','karobova mouk','arasidova mouk','sojova mouk',
            'marantova mouk','pohankova mouk','jahlova mouk','cirokova mouk','cirokove mouk','ryzove mouk'],
-  molluscs: ['oyster mushroom','scalloped','summer scallop','scallop squash'],
-  crustaceans: ['crabapple'],
+  molluscs: ['oyster mushroom','mushrooms oyster','vegetable oyster','scalloped','summer scallop','scallop squash'],
+  crustaceans: ['crabapple','krabic'],
   celery: ['cele ','celeho ','celemu ','cely ','cela ','celych ','celou ','celem ','celym '],
   lupin: ['lupink'],
-  soy: ['tamarind','non soy']
+  soy: ['tamarind','non soy'],
+  meat: ['coconut meat','meatless','meat substitute','meat free','plant based meat','vegan meat','vegetarian meat','gooseberr','lamb s lettuce','lambs lettuce','tofu steak','cauliflower steak','mushroom steak','celeriac steak','cabbage steak','vegan sausage','vegetarian sausage','meatless sausage','coconut bacon','tempeh bacon','vegan bacon','vegan mince','soy mince','plant based mince','cod liver','pepperoncin','sojove maso','kruton','steam','steak cut','steak fries','steakov','steak sauce','lambsquarter','grated meat','meat extender','bezmas','bacon meatless','bacon bits meatless','sausage meatless','frankfurter meatless','chicken meatless','egg duck','egg turkey','duck egg','turkey egg','vejce kachni','vejce kruti','sauce duck','duck sauce','kachni svestkova','meatballs meatless','parek bezmas','klobasa bezmas','masove kulicky bezmas','masovy nastavovac'],
+  pork: ['hamburger','pepperoncin','coconut bacon','tempeh bacon','vegan bacon','bacon meatless','bacon bits meatless','bezmas'],
+  alcohol: ['ginger','ginkgo','cider vinegar','wine vinegar','sherry vinegar','vinegar cider','vinegar red wine','vinegar white wine','rump'],
+  honey: ['honeydew']
 };
+
+function impliedExclusions(rec){
+  const F = (rec && rec.food) || {};
+  const out = [];
+  const push = (ids, label, type) => ids.forEach(id => out.push({id, label, type, syn: []}));
+  const P = F.pattern, o = F.patternOpts || {};
+  if (P === 'pescatarian') push(['meat'], t('fp_'+P), 'pattern');
+  if (P === 'vegetarian') push(['meat','fish','crustaceans','molluscs'].concat(o.noEggs?['egg']:[], o.noMilk?['milk']:[]), t('fp_'+P), 'pattern');
+  if (P === 'vegan') push(['meat','fish','crustaceans','molluscs','egg','milk','honey'], t('fp_'+P), 'pattern');
+  if ((F.conditions||[]).indexOf('coeliac') >= 0) push(['gluten'], t('fc_coeliac'), 'condition');
+  const R = {halal:['pork','alcohol'], kosher:['pork','crustaceans','molluscs'], nopork:['pork'], nobeef:['beef'], noalcohol:['alcohol']};
+  (F.rules||[]).forEach(r => { if (R[r]) push(R[r], t('fr_'+r), 'rule'); });
+  return out;
+}
+
 
 /* All exclusion words for the hard filter, folded for matching.
    Longer words are cut by one letter so Czech endings still match
@@ -867,13 +900,14 @@ const EXCLUSION_FALSE_FRIENDS = {
 function exclusionTerms(){
   const ex = (S.profile && S.profile.food && S.profile.food.exclusions) || [];
   const out = [];
-  ex.forEach(x => {
+  ex.concat(impliedExclusions(S.profile)).forEach(x => {
     /* a known allergen always carries the full, current list of other names */
     const known = x.id ? ALLERGENS.find(a => a.id === x.id) : null;
-    const words = [x.label].concat(x.syn || [], known ? known.syn.concat([known.cs, known.en]) : []).map(fold)
+    const group = x.id && DIET_GROUPS[x.id] ? DIET_GROUPS[x.id] : [];
+    const words = (x.type === 'pattern' || x.type === 'condition' || x.type === 'rule' ? [] : [x.label]).concat(x.syn || [], known ? known.syn.concat([known.cs, known.en]) : [], group).map(fold)
       .map(w => w.replace(/[^a-z0-9]+/g,' ').trim()).filter(w => w.length >= 3)
       .map(w => (w.length >= 5 && w.indexOf(' ') < 0) ? w.slice(0, -1) : w);
-    out.push({id: x.id || null, label: exclLabel(x), type: x.type, words});
+    out.push({id: x.id || null, label: (x.type === 'pattern' || x.type === 'condition' || x.type === 'rule') ? x.label : exclLabel(x), type: x.type, words});
   });
   return out;
 }
