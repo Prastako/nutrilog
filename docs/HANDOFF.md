@@ -1,6 +1,18 @@
 # NutriLog handoff (read this first in a new chat)
 
-Last updated: 2026-09-23 (session 3, Claude Code). v0.2.3 is live on main. Research on going public is done: docs/research/2026-09-23-research.md (roadmap, options, 20 decisions for Jan, 14 problems in the current app, questions for a lawyer and an accountant). Waiting for Jan's answers to decisions 1 to 7 before building. Standing rules are in CLAUDE.md.
+Last updated: 2026-09-24 night (claude.ai session with the hybrid workspace on RYZEN9). v0.2.3 is live on main. Version 0.2.4 is ready on branch `overnight-20260924` (not pushed, not live): see "Overnight 2026-09-24" below. Research on going public: docs/research/2026-09-23-research.md. Standing rules are in CLAUDE.md.
+
+## Overnight 2026-09-24: first real work through the local worker
+- Built by the local model (qwen3.6:27b via C:\AI-Workspace), reviewed, finished and tested by Claude. Branch `overnight-20260924` in the cloud clone and in C:\AI-Workspace\projects\nutrilog (after the last sync task). Nothing pushed to GitHub, the live app is unchanged.
+- What Jan will see in 0.2.4:
+  - Supplements: the Magnesium preset is now 250 mg (the EU limit for supplements). A supplement saved from the old 300 mg preset keeps its dose and still shows its name in the chosen language.
+  - Supplements: the "Supplements today" card warns when that day's planned doses go above an EU upper level (vitamin D 100 µg, vitamin A 3000 µg, vitamin E 300 mg, B6 12 mg, magnesium 250 mg, zinc 25 mg, selenium 255 µg, iodine 600 µg, calcium 2500 mg, iron 40 mg). Only supplements are counted, food is not.
+  - Supplements: "Every other day" schedule (a true 2-day cycle from a chosen first day), next to the weekday choice.
+  - Open Food Facts credit (their licence requires it) under product search results, on the product amount screen, and in Settings, About.
+  - Invisible: saved timestamps are compared as moments in time (recent foods, latest review summary, chat order), so the autumn clock change cannot put an older change first.
+- Tests: new unit tests `node --test` (test/*.test.mjs, 53 tests at the time of writing: dates, nutrient sums, calorie targets, timestamps, supplement limits, every-other-day cycle). Both Playwright tests pass on 0.2.4 (LEFTOVER CZECH: none, no page errors). Extra overnight UI checks (not in repo) passed: warning text in English and Czech, preset chips, credit on barcode and search, About row, every-other-day save and reopen.
+- Not done on purpose (waiting for Jan): activity numbers, sex options, profile restructure (ideas 2 to 8), restore merge, anything server related.
+- Lessons for worker tasks: the worker has a 64k context and fails ("autocompact thrashing") when it reads src/log.js, src/core.js or src/strings.js whole; tasks must give line numbers and tell it to read in ranges (now in CLAUDE.md). One attempt invented its own nutrient limits instead of the given table: every number in a task needs a hidden check.
 
 ## The brief (Jan's original request, condensed)
 Personal nutrition app on Android: log meals and supplements; profile with diet goals driving meal suggestions (breakfast, lunch, snack, dinner, several options, full recipe each); recipe ideas and meal prep from an archive extracted from his saved Instagram reels (each recipe one record, same dish from several reels merged with variations and tips, generous tags, archive backed up and hosted on his Google Drive, structured to sit next to his workout reel archive); photo of food or label evaluated against the diet; in-app Claude chat about ingredients he has or misses; saved data; weekly and monthly summaries flagging lacking nutrients. No monetisation yet. Data designed so a later workout app and a shared platform can read it without a rewrite. Long jobs run 23:00 to 07:00 Prague time (schedule them as scheduled tasks); daytime is for checkpoints. Stop at hard to change decisions with a testable version. When asking Jan to do something manually, give exact steps and exact text to paste. No em dashes anywhere. Jan cannot read code; describe behaviour.
@@ -56,6 +68,8 @@ Personal nutrition app on Android: log meals and supplements; profile with diet 
 - Rejected earlier: a personal access token pasted into chat; driving GitHub's upload page with Claude in Chrome.
 
 ## Open questions for Jan
+- Push 0.2.4 (branch `overnight-20260924`) to main so it goes live? It is tested but Jan has not seen it yet.
+- The research decisions below assumed a public paid service. Jan said on 2026-09-23 that NutriLog is now a personal project for him and maybe some friends (no business). Which decisions still apply (for example sync between PC and phone, sharing with friends)?
 - Private backup repo name (app: Settings, API keys, Backup repository, format user/name). Needed for the archive upload and for any automation. Not `Prastako/nutrilog-data`: Jan deleted it (old version), ignore it.
 - Did Jan load the recipe archive into the app (backup repo or from file)?
 - Decisions from the research (full list with options: research doc section (e)). Needed now:
