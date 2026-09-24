@@ -99,6 +99,18 @@ function dateFromKey(key){
 function addDays(key, n){
   const d = dateFromKey(key); d.setDate(d.getDate()+n); return localDateKey(d);
 }
+/* Returns true when the number of calendar days from startKey to dateKey
+   is a multiple of every (including zero), so dateKey falls on a scheduled
+   day of the cycle.  Works for dates before startKey too.  Falls back to
+   true when startKey is missing or every is not a number >= 2. */
+function cycleDue(startKey, dateKey, every){
+  if (!startKey || typeof every !== 'number' || every < 2) return true;
+  const s = dateFromKey(startKey).getTime();
+  const d = dateFromKey(dateKey).getTime();
+  const dayMs = 24 * 60 * 60 * 1000;
+  const diff = Math.round((d - s) / dayMs);
+  return Math.abs(diff % every) === 0;
+}
 function localTime(d){
   const x = d || new Date();
   const p = n => String(n).padStart(2,'0');

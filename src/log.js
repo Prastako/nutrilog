@@ -509,8 +509,13 @@ function suppUnitLabel(s){
 const SUPP_NUT_CHOICES = ['vitd','epa','dha','mg','b12','zn','vitc','fe','iod','ca','k','se','vita','vite','vitk','b1','b2','b3','b5','b6','biot','fol','cu','mn','kcal','prot','fat','carb','fib'];
 
 function suppScheduledOn(s, dateKey){
-  const days = (s.schedule && s.schedule.days) || [0,1,2,3,4,5,6];
-  return s.active !== false && days.indexOf(dateFromKey(dateKey).getDay()) >= 0;
+  if (s.active === false) return false;
+  const sch = s.schedule;
+  if (sch && typeof sch.every === 'number' && sch.every >= 2){
+    return cycleDue(sch.start, dateKey, sch.every);
+  }
+  const days = (sch && sch.days) || [0,1,2,3,4,5,6];
+  return days.indexOf(dateFromKey(dateKey).getDay()) >= 0;
 }
 
 async function renderSuppChecklist(el, dateKey, showManage){
@@ -592,6 +597,7 @@ function suppForm(s){
   const isNew = !s || s._new || !s.id;
   s = s || {type:'supplement', name:'', form:'capsule', unitLabel:'', perUnit:{}, extra:[], defaultUnits:1, schedule:{days:[0,1,2,3,4,5,6], time:'morning'}, active:true};
   const rows = Object.keys(s.perUnit || {}).map(k => ({k, v: (k==='epa'||k==='dha') ? s.perUnit[k]*1000 : s.perUnit[k]}));
+  const isAltSaved = !!(s.schedule && s.schedule.every >= 2);
   const dayNames = S.lang === 'cs' ? ['Ne','Po','Út','St','Čt','Pá','So'] : ['Su','Mo','Tu','We','Th','Fr','Sa'];
   const nutRow = (r, i) => '<div class="inline" data-nr="'+i+'"><select data-nk>' +
       SUPP_NUT_CHOICES.map(k => '<option value="'+k+'"'+(k===r.k?' selected':'')+'>'+esc(nutLabel(k))+' ('+esc(k==='epa'||k==='dha' ? 'mg' : nutUnit(k))+')</option>').join('') +
@@ -605,8 +611,15 @@ function suppForm(s){
     '<div class="btnrow" style="margin:6px 0 12px"><button class="btn quiet" type="button" id="addNr">+ '+esc(t('sp_add_nut'))+'</button>' +
     '<button class="btn quiet" type="button" id="iuD">'+esc(t('sp_iu'))+'</button></div>' +
     '<div class="field"><label for="sx">'+esc(t('sp_extra'))+'</label><input id="sx" type="text" value="'+esc((s.extra||[]).map(x => x.name+' '+x.amount+' '+x.unit).join('; '))+'" placeholder="'+esc(t('sp_extra_ph'))+'"></div>' +
-    '<div class="field"><span class="flabel">'+esc(t('sp_days'))+'</span><div class="chips" id="sdays">' +
+    '<div class="field"><span class="flabel">'+esc(t('sp_days'))+'</span><div class="chips" id="srep">' +
+      [['days', t('sp_rep_days')],['alt', t('sp_rep_alt')]].map(x => '<button class="chip" type="button" data-rep="'+x[0]+'" aria-pressed="'+((isAltSaved ? 'alt' : 'days')===x[0])+'">'+esc(x[1])+'</button>').join('') + '</div></div>' +
+    '<div id="sdaysrow"'+(isAltSaved ? ' style="display:none"' : '')+'>' +
+    '<div class="field"><span class="flabel">'+esc(t('sp_rep_days'))+'</span><div class="chips" id="sdays">' +
       [1,2,3,4,5,6,0].map(d => '<button class="chip" type="button" data-day="'+d+'" aria-pressed="'+((s.schedule.days||[]).indexOf(d)>=0)+'">'+dayNames[d]+'</button>').join('') + '</div></div>' +
+    '</div>' +
+    '<div id="sstartrow"'+(isAltSaved ? '' : ' style="display:none"')+'>' +
+    '<div class="field"><label for="sstart">'+esc(t('sp_rep_start'))+'</label><input id="sstart" type="date" value="'+esc(s.schedule.start || localDateKey())+'"></div>' +
+    '</div>' +
     '<div class="field"><span class="flabel">'+esc(t('sp_time'))+'</span><div class="chips" id="stime">' +
       ['morning','noon','evening','any'].map(x => '<button class="chip" type="button" data-time="'+x+'" aria-pressed="'+((s.schedule.time||'any')===x)+'">'+esc(t('sp_time_'+x))+'</button>').join('') + '</div></div>' +
     '<label class="opt sq"><input type="checkbox" id="sact" '+(s.active !== false ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('sp_active'))+'</span></span></label>';
@@ -623,6 +636,12 @@ function suppForm(s){
   });
   $$('#sdays [data-day]').forEach(bt => bt.addEventListener('click', () => bt.setAttribute('aria-pressed', bt.getAttribute('aria-pressed') === 'true' ? 'false' : 'true')));
   $$('#stime [data-time]').forEach(bt => bt.addEventListener('click', () => $$('#stime [data-time]').forEach(x => x.setAttribute('aria-pressed', x === bt ? 'true' : 'false'))));
+  $$('#srep [data-rep]').forEach(bt => bt.addEventListener('click', () => {
+    $$('#srep [data-rep]').forEach(x => x.setAttribute('aria-pressed', x === bt ? 'true' : 'false'));
+    const isAlt = bt.getAttribute('data-rep') === 'alt';
+    $('#sdaysrow').style.display = isAlt ? 'none' : '';
+    $('#sstartrow').style.display = isAlt ? '' : 'none';
+  }));
   if (!isNew) $('#sDel').addEventListener('click', async () => { await recDelete(s.id); S.afterSheet = openSuppManager; closeSheet(); toast(t('lg_deleted')); });
   $('#sSave').addEventListener('click', async () => {
     const name = $('#sn').value.trim();
@@ -639,10 +658,17 @@ function suppForm(s){
     });
     const rec = Object.assign({}, s);
     delete rec._new;
+    const isAlt = ($$('#srep [data-rep]').find(x => x.getAttribute('aria-pressed') === 'true') || {getAttribute:() => 'days'}).getAttribute('data-rep') === 'alt';
+    const sch = {
+      days: $$('#sdays [data-day]').filter(x => x.getAttribute('aria-pressed') === 'true').map(x => Number(x.getAttribute('data-day'))),
+      time: ($$('#stime [data-time]').find(x => x.getAttribute('aria-pressed') === 'true') || {getAttribute:() => 'any'}).getAttribute('data-time')
+    };
+    if (isAlt){
+      sch.every = 2;
+      sch.start = $('#sstart').value || localDateKey();
+    }
     Object.assign(rec, {type:'supplement', name, form: $('#sf').value, unitLabel: $('#sul').value.trim(), defaultUnits: Number($('#su').value) || 1,
-      perUnit: per, extra, active: $('#sact').checked,
-      schedule: {days: $$('#sdays [data-day]').filter(x => x.getAttribute('aria-pressed') === 'true').map(x => Number(x.getAttribute('data-day'))),
-                 time: ($$('#stime [data-time]').find(x => x.getAttribute('aria-pressed') === 'true') || {getAttribute:() => 'any'}).getAttribute('data-time')}});
+      perUnit: per, extra, active: $('#sact').checked, schedule: sch});
     await recPut(rec);
     S.afterSheet = openSuppManager;
     closeSheet(); toast(t('lg_saved'));

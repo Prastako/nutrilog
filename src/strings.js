@@ -544,7 +544,8 @@ Object.assign(STR.cs, {
   sp_new:'Nový doplněk', sp_edit:'Upravit doplněk', sp_name:'Název', sp_form:'Forma', sp_units:'Kusů na dávku', sp_unit_label:'Jednotka (nepovinné)', sp_unit_label_ph:'např. kapsle, odměrka 5 g',
   sp_per_unit:'Obsah jednoho kusu', sp_add_nut:'Živina', sp_iu:'Vitamin D v IU', sp_iu_q:'Kolik IU vitaminu D obsahuje jeden kus?',
   sp_extra:'Další látky (nepočítají se do živin)', sp_extra_ph:'např. Kreatin 5 g; Kurkumin 500 mg',
-  sp_days:'Dny', sp_time:'Kdy', sp_active:'Aktivní', sp_paused:'pozastaveno', sp_taken:'Zapsáno jako užité.', sp_untaken:'Zrušeno.',
+  sp_days:'Dny', sp_rep_days:'Vybrané dny', sp_rep_alt:'Obden', sp_rep_start:'První den',
+  sp_time:'Kdy', sp_active:'Aktivní', sp_paused:'pozastaveno', sp_taken:'Zapsáno jako užité.', sp_untaken:'Zrušeno.',
   sp_form_capsule:'kapsle', sp_form_tablet:'tableta', sp_form_softgel:'gelová kapsle', sp_form_powder:'prášek', sp_form_drops:'kapky', sp_form_liquid:'tekutina',
   sp_time_morning:'ráno', sp_time_noon:'v poledne', sp_time_evening:'večer', sp_time_any:'kdykoli',
 
@@ -677,7 +678,8 @@ Object.assign(STR.en, {
   sp_new:'New supplement', sp_edit:'Edit supplement', sp_name:'Name', sp_form:'Form', sp_units:'Units per dose', sp_unit_label:'Unit (optional)', sp_unit_label_ph:'e.g. capsule, 5 g scoop',
   sp_per_unit:'Contents of one unit', sp_add_nut:'Nutrient', sp_iu:'Vitamin D in IU', sp_iu_q:'How many IU of vitamin D in one unit?',
   sp_extra:'Other substances (not counted as nutrients)', sp_extra_ph:'e.g. Creatine 5 g; Curcumin 500 mg',
-  sp_days:'Days', sp_time:'When', sp_active:'Active', sp_paused:'paused', sp_taken:'Logged as taken.', sp_untaken:'Removed.',
+  sp_days:'Days', sp_rep_days:'Chosen days', sp_rep_alt:'Every other day', sp_rep_start:'First day',
+  sp_time:'When', sp_active:'Active', sp_paused:'paused', sp_taken:'Logged as taken.', sp_untaken:'Removed.',
   sp_form_capsule:'capsule', sp_form_tablet:'tablet', sp_form_softgel:'softgel', sp_form_powder:'powder', sp_form_drops:'drops', sp_form_liquid:'liquid',
   sp_time_morning:'morning', sp_time_noon:'midday', sp_time_evening:'evening', sp_time_any:'any time',
 

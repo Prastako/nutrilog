@@ -50,13 +50,13 @@ const ctx = createContext({
 
 runInContext(coreSrc, ctx);
 runInContext(
-  ';globalThis.__core = { localDateKey, dateFromKey, addDays, nowIso, '
+  ';globalThis.__core = { localDateKey, dateFromKey, addDays, cycleDue, nowIso, '
   + 'isoMs, cmpIso, nutAdd, nutScale, nutRound, flatProfile, computeTargets, round10, '
   + 'SUPP_UL, suppUlOver };',
   ctx,
 );
 const {
-  localDateKey, dateFromKey, addDays, nowIso,
+  localDateKey, dateFromKey, addDays, cycleDue, nowIso,
   isoMs, cmpIso,
   nutAdd, nutScale, nutRound, flatProfile, computeTargets, round10,
   SUPP_UL, suppUlOver,
@@ -324,5 +324,58 @@ describe('suppUlOver', () => {
   });
   it('uses the EFSA levels', () => {
     assert.equal(SUPP_UL.mg, 250); assert.equal(SUPP_UL.vitd, 100); assert.equal(SUPP_UL.zn, 25); assert.equal(SUPP_UL.fe, 40);
+  });
+});
+
+describe('cycleDue', () => {
+  it('is true for the start date itself (day 0)', () => {
+    assert.ok(cycleDue('2026-09-24', '2026-09-24', 2));
+  });
+
+  it('is true every other day from start', () => {
+    assert.ok(cycleDue('2026-09-24', '2026-09-26', 2));
+    assert.ok(cycleDue('2026-09-24', '2026-09-28', 2));
+    assert.ok(cycleDue('2026-09-24', '2026-09-30', 2));
+  });
+
+  it('is false on the days in between', () => {
+    assert.ok(!cycleDue('2026-09-24', '2026-09-25', 2));
+    assert.ok(!cycleDue('2026-09-24', '2026-09-27', 2));
+  });
+
+  it('works for dates before the start', () => {
+    assert.ok(cycleDue('2026-09-24', '2026-09-22', 2));
+    assert.ok(!cycleDue('2026-09-24', '2026-09-23', 2));
+  });
+
+  it('handles DST autumn transition correctly (clocks fall back)', () => {
+    // 2026-10-25 is autumn DST change in Prague. Calendar day counting avoids the shift.
+    assert.ok(cycleDue('2026-10-24', '2026-10-26', 2));
+    assert.ok(cycleDue('2026-10-25', '2026-10-27', 2));
+  });
+
+  it('handles DST spring transition correctly (clocks spring forward)', () => {
+    // 2026-03-29 is spring DST change in Prague
+    assert.ok(cycleDue('2026-03-28', '2026-03-30', 2));
+    assert.ok(cycleDue('2026-03-29', '2026-03-31', 2));
+  });
+
+  it('returns true when startKey is missing', () => {
+    assert.ok(cycleDue(null, '2026-09-24', 2));
+    assert.ok(cycleDue(undefined, '2026-09-24', 2));
+    assert.ok(cycleDue('', '2026-09-24', 2));
+  });
+
+  it('returns true when every is less than 2', () => {
+    assert.ok(cycleDue('2026-09-24', '2026-09-25', 1));
+    assert.ok(cycleDue('2026-09-24', '2026-09-25', 0));
+  });
+
+  it('supports every=3 cycle', () => {
+    assert.ok(cycleDue('2026-09-24', '2026-09-24', 3));
+    assert.ok(cycleDue('2026-09-24', '2026-09-27', 3));
+    assert.ok(cycleDue('2026-09-24', '2026-09-30', 3));
+    assert.ok(!cycleDue('2026-09-24', '2026-09-25', 3));
+    assert.ok(!cycleDue('2026-09-24', '2026-09-26', 3));
   });
 });
