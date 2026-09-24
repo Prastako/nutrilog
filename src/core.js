@@ -659,6 +659,7 @@ function flatProfile(rec){
   const ms = G.macroSplit || {};
   return {
     sex: P.sex, age: P.age, height: P.heightCm, weight: P.weightKg,
+    bodyFat: P.bodyFatPct, periods: P.periods,
     activity: P.activityLevel, direction: G.direction || 'maintain',
     split: ms.preset || 'balanced', custom: {p: ms.proteinPct, f: ms.fatPct, c: ms.carbPct}
   };
@@ -666,17 +667,34 @@ function flatProfile(rec){
 
 function computeTargets(rec){
   const p = flatProfile(rec);
-  if (!p || !p.sex || !p.age || !p.height || !p.weight) return null;
+  if (!p || !p.age || !p.weight) return null;
   const w = Number(p.weight), h = Number(p.height), a = Number(p.age);
-  const rmr = 10*w + 6.25*h - 5*a + (p.sex === 'male' ? 5 : -161);
+  const bf = Number(p.bodyFat);
+  let rmr, rmrRel, method;
+  if (bf >= 3 && bf <= 60) {
+    rmr = 22 * (w * (1 - bf/100)) + 500;
+    rmrRel = 0.10;
+    method = 'leanmass';
+  } else if (h > 0) {
+    rmr = 10*w + 6.25*h - 5*a - 78;
+    rmrRel = Math.sqrt(0.10*0.10 + (83/rmr)*(83/rmr));
+    method = 'mifflin';
+  } else {
+    const male = a < 30 ? 15.057*w + 692.2 : a < 60 ? 11.472*w + 873.1 : 11.711*w + 587.7;
+    const female = a < 30 ? 14.818*w + 486.6 : a < 60 ? 8.126*w + 845.6 : 9.082*w + 658.5;
+    rmr = (male + female) / 2;
+    const half = Math.abs(male - female) / 2;
+    rmrRel = Math.sqrt(0.12*0.12 + (half/rmr)*(half/rmr));
+    method = 'weight';
+  }
   const band = ACTIVITY.find(x => x.id === Number(p.activity)) || ACTIVITY[1];
   const tdee = rmr * band.mult;
   const actRel = band.unc / band.mult;
-  const rel = Math.sqrt(RMR_REL_UNC*RMR_REL_UNC + actRel*actRel);
+  const rel = Math.sqrt(rmrRel*rmrRel + actRel*actRel);
   const adj = DIRECTIONS[p.direction] || 1;
   let low  = tdee * (1 - rel) * adj;
   let high = tdee * (1 + rel) * adj;
-  const floorAbs = FLOOR_ABS[p.sex] || 1200;
+  const floorAbs = 1200;
   const floor = Math.max(round10(rmr), floorAbs);
   let floorBinding = false;
   if (low < floor){ low = floor; floorBinding = true; }
@@ -692,7 +710,7 @@ function computeTargets(rec){
   const macros = { p: mac(split.p,4), f: mac(split.f,9), c: mac(split.c,4) };
   return {
     rmr: Math.round(rmr), mult: band.mult, tdee: Math.round(tdee),
-    relPct: Math.round(rel*1000)/10,
+    relPct: Math.round(rel*1000)/10, method,
     low, high, mid: round10((low+high)/2), floor, floorAbs, floorBinding, split, macros,
     proteinPerKg: { low: Math.round(macros.p.low/w*10)/10, high: Math.round(macros.p.high/w*10)/10 }
   };
@@ -739,9 +757,11 @@ function splitPreview(rec){
 function referenceValues(){
   const p = flatProfile(S.profile) || {};
   const g = computeTargets(S.profile);
-  const male = p.sex !== 'female';
   const age = Number(p.age) || 30;
-  const kcal = g ? g.mid : (male ? 2500 : 2000);
+  const w = Number(p.weight) || 63.3;
+  const f = clamp((w - 58.5) / (68.1 - 58.5), 0, 1);
+  const mix = (fem, man, d) => d ? round1(fem + f*(man - fem)) : Math.round(fem + f*(man - fem));
+  const kcal = g ? g.mid : 2250;
   const MJ = kcal * 4.184 / 1000;
   const ref = {
     kcal: {kind:'range', low: g ? g.low : null, high: g ? g.high : null},
@@ -758,24 +778,24 @@ function referenceValues(){
     na:   {kind:'max', v:2000},
     k:    {kind:'min', v:3500},
     ca:   {kind:'min', v: age < 25 ? 1000 : 950},
-    mg:   {kind:'min', v: male ? 350 : 300},
+    mg:   {kind:'min', v: mix(300, 350)},
     p:    {kind:'min', v:550},
-    fe:   {kind:'min', v: (!male && age < 50) ? 16 : 11},
-    zn:   {kind:'min', v: male ? 11.7 : 9.3},
-    cu:   {kind:'min', v: male ? 1.6 : 1.3},
+    fe:   {kind:'min', v: p.periods === 'no' ? 11 : 16},
+    zn:   {kind:'min', v: mix(9.3, 11.7, 1)},
+    cu:   {kind:'min', v: mix(1.3, 1.6, 1)},
     mn:   {kind:'min', v:3},
     se:   {kind:'min', v:70},
     iod:  {kind:'min', v:150},
-    vita: {kind:'min', v: male ? 750 : 650},
+    vita: {kind:'min', v: mix(650, 750)},
     vitd: {kind:'min', v:15},
-    vite: {kind:'min', v: male ? 13 : 11},
+    vite: {kind:'min', v: mix(11, 13, 1)},
     vitk: {kind:'min', v:70},
-    vitc: {kind:'min', v: male ? 110 : 95},
+    vitc: {kind:'min', v: mix(95, 110)},
     b1:   {kind:'min', v: round1(0.1*MJ)},
     b2:   {kind:'min', v:1.6},
     b3:   {kind:'min', v: Math.round(1.6*MJ)},
     b5:   {kind:'min', v:5},
-    b6:   {kind:'min', v: male ? 1.7 : 1.6},
+    b6:   {kind:'min', v: mix(1.6, 1.7, 1)},
     biot: {kind:'min', v:40},
     fol:  {kind:'min', v:330},
     b12:  {kind:'min', v:4},
