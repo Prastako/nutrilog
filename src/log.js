@@ -222,7 +222,7 @@ async function addSearchUI(body){
       try {
         const offs = await offSearch(q);
         offs.forEach((f,i) => FOOD_ROWS['o'+i] = {food:f});
-        box.innerHTML = offs.length ? '<p class="eyebrow">Open Food Facts</p>' + offs.map((f,i) => foodRow(f, 'o'+i)).join('') : '<p class="tiny">'+esc(t('fs_none'))+'</p>';
+        box.innerHTML = offs.length ? '<p class="eyebrow">Open Food Facts</p>' + offs.map((f,i) => foodRow(f, 'o'+i)).join('') + offCreditHtml() : '<p class="tiny">'+esc(t('fs_none'))+'</p>';
       } catch(err){ box.innerHTML = '<div class="notice bad">'+esc(String(err.message||err))+'</div>'; }
     });
     $('#estBtn').addEventListener('click', () => { $$('#addModes button').forEach(x => x.classList.toggle('on', x.getAttribute('data-mode')==='describe')); addMode('describe'); const ta = $('#dq'); if (ta) ta.value = q; });
@@ -240,6 +240,12 @@ async function addSearchUI(body){
 }
 let FOOD_ROWS = {};
 
+function offCreditHtml(){
+  const link = '<a href="https://world.openfoodfacts.org" target="_blank" rel="noopener">openfoodfacts.org</a>';
+  const parts = t('off_credit').split('{link}');
+  return '<p class="tiny offcredit">' + parts.map(esc).join(link) + '</p>';
+}
+
 function foodRow(f, key, grams){
   const k = f.per100 && f.per100.kcal;
   const src = f.kind === 'custom' ? t('fs_mine') : f.kind === 'off' ? 'OFF' : 'USDA';
@@ -256,7 +262,8 @@ function amountStep(food, grams){
   const ex = exclusionHits(food.en + ' ' + (food.cs||'') + ' ' + (food.ingredients||''));
   let h = '<div class="card flat" style="margin-top:12px"><h3>'+esc(foodName(food))+'</h3>' +
     '<p class="tiny">'+esc(t('am_per100'))+': '+esc(fmtNum(food.per100.kcal))+' kcal · '+esc(macroLine(food.per100))+'</p>' +
-    (food.nutriscore ? '<p class="tiny">Nutri-Score '+esc(food.nutriscore.toUpperCase())+(food.nova ? ' · NOVA '+esc(food.nova) : '')+'</p>' : '') + '</div>';
+    (food.nutriscore ? '<p class="tiny">Nutri-Score '+esc(food.nutriscore.toUpperCase())+(food.nova ? ' · NOVA '+esc(food.nova) : '')+'</p>' : '') +
+    (food.kind === 'off' ? offCreditHtml() : '') + '</div>';
   if (ex.length) h += '<div class="notice bad"><b>'+esc(t('rc_excl_h'))+'</b> '+esc(ex.map(x=>x.label).join(', '))+'</div>';
   h += '<div class="chips" style="margin:10px 0">' +
     ['100 g'].concat(portions.map(p => p.label)).map((lab, i) =>

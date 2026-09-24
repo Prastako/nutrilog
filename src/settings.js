@@ -370,6 +370,7 @@ function renderSettings(){
     '<div class="kv"><span class="k">'+esc(t('about_version'))+'</span><span class="v num">'+esc(VERSION)+'</span></div>' +
     '<div class="kv"><span class="k">'+esc(t('about_schema'))+'</span><span class="v num">'+esc(SCHEMA)+'</span></div>' +
     '<div class="kv"><span class="k">'+esc(t('about_fooddb'))+'</span><span class="v tiny">USDA FoodData Central, SR Legacy</span></div>' +
+    '<div class="kv"><span class="k">'+esc(t('about_products'))+'</span><span class="v tiny">Open Food Facts (openfoodfacts.org), ODbL</span></div>' +
     '<div class="btnrow" style="margin-top:12px">' +
       '<button class="btn quiet" type="button" data-act="update-check">'+icon('refresh')+esc(t('about_update'))+'</button>' +
       (S.installPrompt ? '<button class="btn quiet" type="button" data-act="install">'+esc(t('about_install'))+'</button>' : '') +
