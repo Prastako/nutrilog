@@ -1,6 +1,6 @@
 # NutriLog handoff (read this first in a new chat)
 
-Last updated: 2026-09-24 night (claude.ai session with the hybrid workspace on RYZEN9). v0.2.3 is live on main. Version 0.2.4 is ready on branch `overnight-20260924` (not pushed, not live): see "Overnight 2026-09-24" below. Research on going public: docs/research/2026-09-23-research.md. Standing rules are in CLAUDE.md.
+Last updated: 2026-09-24 early morning (claude.ai session with the hybrid workspace on RYZEN9). v0.2.3 is live on main. Version 0.2.5 is ready on branch `overnight-20260924` (not pushed, not live): see "Overnight 2026-09-24" and "0.2.5" below. Research on going public: docs/research/2026-09-23-research.md. Standing rules are in CLAUDE.md.
 
 ## Overnight 2026-09-24: first real work through the local worker
 - Built by the local model (qwen3.6:27b via C:\AI-Workspace), reviewed, finished and tested by Claude. Branch `overnight-20260924` in the cloud clone and in C:\AI-Workspace\projects\nutrilog (after the last sync task). Nothing pushed to GitHub, the live app is unchanged.
@@ -13,6 +13,15 @@ Last updated: 2026-09-24 night (claude.ai session with the hybrid workspace on R
 - Tests: new unit tests `node --test` (test/*.test.mjs, 53 tests at the time of writing: dates, nutrient sums, calorie targets, timestamps, supplement limits, every-other-day cycle). Both Playwright tests pass on 0.2.4 (LEFTOVER CZECH: none, no page errors). Extra overnight UI checks (not in repo) passed: warning text in English and Czech, preset chips, credit on barcode and search, About row, every-other-day save and reopen.
 - Not done on purpose (waiting for Jan): activity numbers, sex options, profile restructure (ideas 2 to 8), restore merge, anything server related.
 - Lessons for worker tasks: the worker has a 64k context and fails ("autocompact thrashing") when it reads src/log.js, src/core.js or src/strings.js whole; tasks must give line numbers and tell it to read in ranges (now in CLAUDE.md). One attempt invented its own nutrient limits instead of the given table: every number in a task needs a hidden check.
+
+## 0.2.5 (same night, second half; branch `overnight-20260924`, not pushed)
+- Profile, macro split card: a line shows what the split means at the middle of the calorie target, e.g. "At the middle of your target, 2,440 kcal: protein about 155 g (2.1 g per kg of body weight), fat 80 g, carbohydrate 275 g a day." It updates while typing. A warning appears when fat is above 35 % (outside the EU range, e.g. Lower carb) and when protein is above 2.2 g per kg. Research problems 2 and 13 are shown, not yet fixed (the fix is idea 5, waiting for decision 2).
+- Profile, meal split: a line shows kcal per meal, e.g. "At 2,440 kcal a day: Breakfast 610 kcal, Lunch 850 kcal, Snack 240 kcal, Dinner 730 kcal. This only sets the size of meal ideas; it does not change your daily target." (first step of idea 7).
+- Allergy filter (used for recipe suggestions, the red warning on the food amount screen, food ideas in the Review): now catches wheat in soy sauce and teriyaki, pasta shapes (spaghetti, penne, lasagne...), pita, bagels, crackers, beer, malt, fish and shellfish in kimchi, Worcestershire, more fish names, milk in pesto and more cheeses, egg in custard, meringue and aioli, soy in teriyaki. It no longer raises false alarms for chicken breast, breakfast, tomato paste, maple syrup, butternut squash, oyster mushrooms, breadfruit, non-wheat flours, flounder, crabapples, tamarind, and in Czech names for raw foods (syrový is not sýr), white beans (bílé is not bílek), whole eggs (celé is not celer), oven-baked foods (trouba is not trout). Tests: test/exclusions.test.mjs (64 rows). Audit scripts that list every USDA food and recipe each allergen hits are not in the repo (supervisor scratch).
+- Readability: light-theme grey text and orange tags darkened, dark-theme faint text lightened, so all text meets WCAG AA contrast; the date arrows on Recipes and Review have names for screen readers; Suggestions/All and Week/Month are proper tabs. An automatic accessibility check (axe-core, WCAG 2 A and AA) finds no issues on the 7 main screens, the add-food sheet and the supplements sheet, light and dark.
+- Docs: the pivot to a personal project (Jan, 2026-09-23) is applied to this file and the research doc (checkpoint decisions 9 to 11, open questions).
+- Tests on 9f92fb4: `node --test` 164 pass; e2e_test_en.py (LEFTOVER CZECH: none, no page errors); e2e_test.py (no page errors); e2e_test_supp.py all passed; new tools/e2e_test_profile.py all passed.
+- Worker lessons: the worker thrashes when it reads src/strings.js even in ranges (very long lines); CLAUDE.md now says never read it, grep and edit instead. Two of the three tasks this half were finished by the supervisor after the worker ran out of context.
 
 ## The brief (Jan's original request, condensed)
 Personal nutrition app on Android: log meals and supplements; profile with diet goals driving meal suggestions (breakfast, lunch, snack, dinner, several options, full recipe each); recipe ideas and meal prep from an archive extracted from his saved Instagram reels (each recipe one record, same dish from several reels merged with variations and tips, generous tags, archive backed up and hosted on his Google Drive, structured to sit next to his workout reel archive); photo of food or label evaluated against the diet; in-app Claude chat about ingredients he has or misses; saved data; weekly and monthly summaries flagging lacking nutrients. No monetisation yet. Data designed so a later workout app and a shared platform can read it without a rewrite. Long jobs run 23:00 to 07:00 Prague time (schedule them as scheduled tasks); daytime is for checkpoints. Stop at hard to change decisions with a testable version. When asking Jan to do something manually, give exact steps and exact text to paste. No em dashes anywhere. Jan cannot read code; describe behaviour.
@@ -68,13 +77,13 @@ Personal nutrition app on Android: log meals and supplements; profile with diet 
 - Rejected earlier: a personal access token pasted into chat; driving GitHub's upload page with Claude in Chrome.
 
 ## Open questions for Jan
-- Push 0.2.4 (branch `overnight-20260924`) to main so it goes live? It is tested but Jan has not seen it yet.
+- Push 0.2.5 (branch `overnight-20260924`, includes 0.2.4) to main so it goes live? It is tested but Jan has not seen it yet.
 - Private backup repo name (app: Settings, API keys, Backup repository, format user/name). Needed for the archive upload and for any automation. Not `Prastako/nutrilog-data`: Jan deleted it (old version), ignore it.
 - Did Jan load the recipe archive into the app (backup repo or from file)?
 - Decisions from the research (full list with options: research doc section (e)). Needed now:
   1. Server for option B (friends): a. Server route: Supabase in Frankfurt (research recommendation)? b. Sign-in: emailed code plus Google (research recommendation)? c. Monthly Claude limit per friend, in USD? d. Do diaries sync through the server (Jan's PC and phone, friends' devices), or does the server only hold the Claude key? e. Web address: stay on prastako.github.io or move to an own domain before friends install?
   2. Build ideas 8, 6, 2, 4, 3, 5, 7 now on the current app, in that order?
-  3. Fix the section (f) problems now (magnesium preset to 250 mg, Lower carb note, sex handling, timestamps, Open Food Facts credit)?
+  3. Section (f) problems: done on the branch except sex handling (part of idea 2) and the restore merge (with sync).
   4. Activity multipliers to 1.40, 1.55, 1.70, 1.90?
   5. Sex options: Male, Female, In between, Prefer not to say?
   6. Supplement suggestions for Jan only, as a test?
