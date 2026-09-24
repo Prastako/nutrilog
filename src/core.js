@@ -893,6 +893,46 @@ function impliedExclusions(rec){
   return out;
 }
 
+/* Convert old diet-style chips (rec.goals.dietStyle, rec.goals.aims)
+   to the new profile fields (rec.food.pattern, etc.).
+   Returns a deep copy; original is untouched. */
+function migrateDietV3(rec){
+  const r = deepCopy(rec);
+  if (r.food && r.food.pattern !== undefined) return r;
+  if (!r.food) r.food = {};
+  if (!r.goals) r.goals = {};
+  const ds = r.goals.dietStyle || [];
+  const aims = r.goals.aims || [];
+
+  // pattern
+  if (ds.includes('vegan')) r.food.pattern = 'vegan';
+  else if (ds.includes('vegetarian')) r.food.pattern = 'vegetarian';
+  else if (ds.includes('pescatarian')) r.food.pattern = 'pescatarian';
+  else if (ds.includes('flexitarian')) r.food.pattern = 'littlemeat';
+  else r.food.pattern = 'everything';
+
+  // patternOpts, conditions, rules
+  r.food.patternOpts = { noEggs: false, noMilk: false };
+  r.food.conditions = [];
+  r.food.rules = [];
+
+  // prefs
+  r.food.prefs = [];
+  if (ds.includes('glutenfree') && !(r.food.exclusions||[]).some(e => e.id === 'gluten'))
+    r.food.prefs.push('avoidgluten');
+  if (ds.includes('lactosefree')) r.food.prefs.push('lactosefreeproducts');
+
+  // goals.focus: aims that are in HEALTH_FOCUS (aims order), then mediterranean from ds
+  r.goals.focus = aims.filter(a => HEALTH_FOCUS.includes(a));
+  if (ds.includes('mediterranean') && !r.goals.focus.includes('mediterranean'))
+    r.goals.focus.push('mediterranean');
+
+  // goals.hints: aims that are in SOFT_HINTS
+  r.goals.hints = aims.filter(a => SOFT_HINTS.includes(a));
+
+  return r;
+}
+
 
 /* All exclusion words for the hard filter, folded for matching.
    Longer words are cut by one letter so Czech endings still match
