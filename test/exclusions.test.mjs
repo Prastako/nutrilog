@@ -247,4 +247,84 @@ describe('exclusionHits false negatives', () => {
   it("gluten 'Fish, flatfish (flounder)' is not flagged", () => {
     assert.ok(!hit('gluten', 'Fish, flatfish (flounder and sole species), cooked'));
   });
+
+  it("milk 'Kuřecí prsa, syrová' is not flagged", () => {
+    assert.ok(!hit('milk', 'Kuřecí prsa, syrová'));
+  });
+
+  it("milk 'Brokolice, syrové' is not flagged", () => {
+    assert.ok(!hit('milk', 'Brokolice, syrové'));
+  });
+
+  it("milk 'Sýr, eidam' is flagged", () => {
+    assert.ok(hit('milk', 'Sýr, eidam'));
+  });
+
+  it("milk 'syrovátka' is flagged", () => {
+    assert.ok(hit('milk', 'syrovátka'));
+  });
+
+  it("milk 'Chanos (milkfish), syrový' is not flagged", () => {
+    assert.ok(!hit('milk', 'Chanos (milkfish), syrový'));
+  });
+
+  it("egg 'Fazole bílé (navy), vařené' is not flagged", () => {
+    assert.ok(!hit('egg', 'Fazole bílé (navy), vařené'));
+  });
+
+  it("egg 'Vejce, bílek, sušený' is flagged", () => {
+    assert.ok(hit('egg', 'Vejce, bílek, sušený'));
+  });
+
+  it("celery 'Vejce, celé, vařené natvrdo' is not flagged", () => {
+    assert.ok(!hit('celery', 'Vejce, celé, vařené natvrdo'));
+  });
+
+  it("celery 'Celer, syrový' is flagged", () => {
+    assert.ok(hit('celery', 'Celer, syrový'));
+  });
+
+  it("fish 'Kuřecí prsa, pečená v troubě' is not flagged", () => {
+    assert.ok(!hit('fish', 'Kuřecí prsa, pečená v troubě'));
+  });
+
+  it("fish 'Pstruh, pečený' is flagged", () => {
+    assert.ok(hit('fish', 'Pstruh, pečený'));
+  });
+
+  it("fish 'Kapradí, syrové' is not flagged", () => {
+    assert.ok(!hit('fish', 'Kapradí, syrové'));
+  });
+
+  it("fish 'Kapr, pečený' is flagged", () => {
+    assert.ok(hit('fish', 'Kapr, pečený'));
+  });
+
+  it("lupin 'Kokos, sušený, slazený, lupínky' is not flagged", () => {
+    assert.ok(!hit('lupin', 'Kokos, sušený, slazený, lupínky'));
+  });
+
+  it("lupin 'Lupina, zralá semena' is flagged", () => {
+    assert.ok(hit('lupin', 'Lupina, zralá semena'));
+  });
+
+  it("gluten 'Bramborová mouka' is not flagged", () => {
+    assert.ok(!hit('gluten', 'Bramborová mouka'));
+  });
+
+  it("gluten 'Žitná mouka, světlá' is flagged", () => {
+    assert.ok(hit('gluten', 'Žitná mouka, světlá'));
+  });
+
+  it("gluten 'Root beer' is not flagged", () => {
+    assert.ok(!hit('gluten', 'Root beer'));
+  });
+
+  it("gluten 'Kukuřičná krupice, bílá' is not flagged", () => {
+    assert.ok(!hit('gluten', 'Kukuřičná krupice, bílá'));
+  });
+
+  it("gluten 'Pšeničná krupice' is flagged", () => {
+    assert.ok(hit('gluten', 'Pšeničná krupice'));
+  });
 });
