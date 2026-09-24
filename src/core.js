@@ -540,6 +540,24 @@ const NUT_KEYS = NUTRIENTS.map(n => n.k);
 /* EPA and DHA are also shown together, as the long chain omega 3. */
 const NUT_DERIVED = { o3ld: {cs:'Omega 3, EPA a DHA', en:'Omega 3, EPA and DHA', unit:'mg', from:['epa','dha'], scale:1000, grp:'fat'} };
 
+/* EU (EFSA) upper levels used to warn about supplements, in the units of
+   NUTRIENTS. Only supplements are counted, so the warning is a lower bound:
+   for most nutrients the limit covers food plus supplements; for magnesium
+   it covers supplements only. Iron has a safe level (40 mg), not an upper
+   level. Source: EFSA overview of upper levels, version 11, August 2025. */
+const SUPP_UL = {vitd:100, vita:3000, vite:300, b6:12, mg:250, zn:25, se:255, iod:600, ca:2500, fe:40};
+
+/* [{k, amount, ul}] for every SUPP_UL nutrient above its level, in SUPP_UL order. */
+function suppUlOver(nutrients){
+  if (!nutrients) return [];
+  const out = [];
+  for (const k of Object.keys(SUPP_UL)){
+    const v = nutrients[k];
+    if (typeof v === 'number' && isFinite(v) && v > SUPP_UL[k]) out.push({k, amount: v, ul: SUPP_UL[k]});
+  }
+  return out;
+}
+
 function nutLabel(k){ return NUT[k] ? L(NUT[k]) : (NUT_DERIVED[k] ? L(NUT_DERIVED[k]) : k); }
 function nutUnit(k){ return NUT[k] ? NUT[k].unit : (NUT_DERIVED[k] ? NUT_DERIVED[k].unit : ''); }
 

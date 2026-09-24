@@ -479,7 +479,8 @@ const SUPP_PRESETS = [
   {key:'d1000', name:{cs:'Vitamin D3 1000 IU', en:'Vitamin D3 1000 IU'}, form:'capsule', per:{vitd:25}},
   {key:'d2000', name:{cs:'Vitamin D3 2000 IU', en:'Vitamin D3 2000 IU'}, form:'capsule', per:{vitd:50}},
   {key:'o3', name:{cs:'Omega 3 (rybí olej)', en:'Omega 3 (fish oil)'}, form:'capsule', per:{epa:0.18, dha:0.12}},
-  {key:'mg', name:{cs:'Hořčík 300 mg', en:'Magnesium 300 mg'}, form:'tablet', per:{mg:300}},
+  {key:'mg', name:{cs:'Hořčík 250 mg', en:'Magnesium 250 mg'}, form:'tablet', per:{mg:250}},
+  {key:'mg300', name:{cs:'Hořčík 300 mg', en:'Magnesium 300 mg'}, form:'tablet', per:{mg:300}, hidden:true},
   {key:'b12', name:{cs:'Vitamin B12 1000 µg', en:'Vitamin B12 1000 µg'}, form:'tablet', per:{b12:1000}},
   {key:'zn', name:{cs:'Zinek 15 mg', en:'Zinc 15 mg'}, form:'tablet', per:{zn:15}},
   {key:'c', name:{cs:'Vitamin C 500 mg', en:'Vitamin C 500 mg'}, form:'tablet', per:{vitc:500}},
@@ -510,8 +511,20 @@ async function renderSuppChecklist(el, dateKey, showManage){
   const supps = (await recByType('supplement')).filter(s => s.active !== false);
   const intakes = await recByTypeDate('supplement_intake', dateKey, dateKey);
   if (!supps.length && !showManage){ el.innerHTML = ''; return; }
+
+  /* Upper level check: the day's planned doses plus intakes of supplements
+     not planned for that day. */
+  const dayTotals = {};
+  const addN = (n, f) => { for (const k in (n || {})){ const v = Number(n[k]) * f; if (isFinite(v)) dayTotals[k] = (dayTotals[k] || 0) + v; } };
+  supps.forEach(s => {
+    if (suppScheduledOn(s, dateKey)) addN(s.perUnit, Number(s.defaultUnits) || 1);
+    else intakes.filter(i => i.supplementId === s.id).forEach(i => addN(i.nutrients, 1));
+  });
+  const ulOver = suppUlOver(dayTotals);
+
   let h = '<div class="card"><div class="sheethead" style="align-items:center;margin-bottom:6px"><h3 style="flex:1">'+esc(t('sp_today'))+'</h3>' +
     '<button class="linkbtn" type="button" data-act="supp-manage">'+esc(t('sp_manage'))+'</button></div>';
+
   if (!supps.length) h += '<p class="tiny">'+esc(t('sp_none'))+'</p>';
   supps.forEach(s => {
     const taken = intakes.filter(i => i.supplementId === s.id);
@@ -520,6 +533,9 @@ async function renderSuppChecklist(el, dateKey, showManage){
     h += '<label class="ing supp"><input type="checkbox" data-supp="'+esc(s.id)+'" data-date="'+esc(dateKey)+'" '+(taken.length ? 'checked' : '')+'>' +
       '<span class="it">'+esc(suppName(s))+' <span class="tiny">'+esc(fmtQty(s.defaultUnits||1))+' × '+esc(suppUnitLabel(s) || t('sp_form_'+(s.form||'capsule')))+
       ((s.schedule && s.schedule.time) ? ' · '+esc(t('sp_time_'+s.schedule.time)) : '')+'</span></span></label>';
+  });
+  ulOver.forEach(o => {
+    h += '<div class="notice warn">'+esc(t('sp_ul_over', {a: fmtAmt(o.amount), u: nutUnit(o.k), n: nutLabel(o.k), ul: fmtAmt(o.ul)}))+'</div>';
   });
   h += '</div>';
   el.innerHTML = h;
@@ -549,7 +565,7 @@ async function openSuppManager(){
       '<span class="fm tiny">'+esc(per.join(', ') || '–')+'</span></button>';
   });
   b += '<p class="eyebrow" style="margin-top:16px">'+esc(t('sp_presets'))+'</p><div class="chips">' +
-    SUPP_PRESETS.map(p => '<button class="chip add" type="button" data-preset="'+p.key+'">+ '+esc(L(p.name))+'</button>').join('') + '</div>' +
+    SUPP_PRESETS.filter(p => !p.hidden).map(p => '<button class="chip add" type="button" data-preset="'+p.key+'">+ '+esc(L(p.name))+'</button>').join('') + '</div>' +
     '<p class="tiny" style="margin-top:8px">'+esc(t('sp_presets_note'))+'</p>';
   const sheet = openSheet(esc(t('sp_manage')), b, '<button class="btn" type="button" id="sNew">'+esc(t('sp_new'))+'</button>', {tall:true});
   $('#sNew').addEventListener('click', () => suppForm(null));

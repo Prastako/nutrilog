@@ -540,6 +540,7 @@ Object.assign(STR.cs, {
 
   sp_today:'Doplňky dnes', sp_manage:'Spravovat', sp_none:'Zatím žádné doplňky.', sp_none_long:'Zatím tu nejsou žádné doplňky. Přidejte vlastní nebo začněte předvolbou a upravte hodnoty podle etikety.',
   sp_presets:'Rychlé předvolby', sp_presets_note:'Předvolby jsou běžné dávky. Vždy je porovnejte s etiketou svého výrobku.',
+  sp_ul_over:'Doplňky na tento den dávají dohromady {a} {u} (živina: {n}). Bezpečný horní limit EU z doplňků je {ul} {u} denně.',
   sp_new:'Nový doplněk', sp_edit:'Upravit doplněk', sp_name:'Název', sp_form:'Forma', sp_units:'Kusů na dávku', sp_unit_label:'Jednotka (nepovinné)', sp_unit_label_ph:'např. kapsle, odměrka 5 g',
   sp_per_unit:'Obsah jednoho kusu', sp_add_nut:'Živina', sp_iu:'Vitamin D v IU', sp_iu_q:'Kolik IU vitaminu D obsahuje jeden kus?',
   sp_extra:'Další látky (nepočítají se do živin)', sp_extra_ph:'např. Kreatin 5 g; Kurkumin 500 mg',
@@ -670,6 +671,7 @@ Object.assign(STR.en, {
 
   sp_today:'Supplements today', sp_manage:'Manage', sp_none:'No supplements yet.', sp_none_long:'No supplements yet. Add your own or start from a preset and adjust the values to your label.',
   sp_presets:'Quick presets', sp_presets_note:'Presets are common doses. Always check them against your product label.',
+  sp_ul_over:'Your supplements for this day add up to {a} {u} of {n}. The EU safe upper level from supplements is {ul} {u} a day.',
   sp_new:'New supplement', sp_edit:'Edit supplement', sp_name:'Name', sp_form:'Form', sp_units:'Units per dose', sp_unit_label:'Unit (optional)', sp_unit_label_ph:'e.g. capsule, 5 g scoop',
   sp_per_unit:'Contents of one unit', sp_add_nut:'Nutrient', sp_iu:'Vitamin D in IU', sp_iu_q:'How many IU of vitamin D in one unit?',
   sp_extra:'Other substances (not counted as nutrients)', sp_extra_ph:'e.g. Creatine 5 g; Curcumin 500 mg',

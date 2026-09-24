@@ -51,13 +51,15 @@ const ctx = createContext({
 runInContext(coreSrc, ctx);
 runInContext(
   ';globalThis.__core = { localDateKey, dateFromKey, addDays, nowIso, '
-  + 'isoMs, cmpIso, nutAdd, nutScale, nutRound, flatProfile, computeTargets, round10 };',
+  + 'isoMs, cmpIso, nutAdd, nutScale, nutRound, flatProfile, computeTargets, round10, '
+  + 'SUPP_UL, suppUlOver };',
   ctx,
 );
 const {
   localDateKey, dateFromKey, addDays, nowIso,
   isoMs, cmpIso,
   nutAdd, nutScale, nutRound, flatProfile, computeTargets, round10,
+  SUPP_UL, suppUlOver,
 } = ctx.__core;
 
 /* ================================================================== */
@@ -302,5 +304,25 @@ describe('isoMs and cmpIso', () => {
   });
   it('returns 0 for missing or invalid input', () => {
     for (const bad of [null, undefined, '', 'garbage', 12345, {}]) assert.equal(isoMs(bad), 0);
+  });
+});
+
+describe('suppUlOver', () => {
+  const keys = (r) => r.map(x => x.k).join(',');
+  it('flags magnesium above 250 mg', () => {
+    const r = suppUlOver({mg: 300});
+    assert.equal(r.length, 1);
+    assert.equal(r[0].k, 'mg'); assert.equal(r[0].amount, 300); assert.equal(r[0].ul, 250);
+  });
+  it('does not flag an amount equal to the level', () => { assert.equal(suppUlOver({mg: 250}).length, 0); });
+  it('flags only nutrients above their level', () => { assert.equal(keys(suppUlOver({vitd: 125, zn: 10})), 'vitd'); });
+  it('keeps the order of SUPP_UL', () => { assert.equal(keys(suppUlOver({fe: 41, mg: 251})), 'mg,fe'); });
+  it('returns an empty list for missing or invalid input', () => {
+    assert.equal(suppUlOver(null).length, 0);
+    assert.equal(suppUlOver(undefined).length, 0);
+    assert.equal(suppUlOver({mg: null, vitd: 'x', zn: NaN, fe: Infinity}).length, 0);
+  });
+  it('uses the EFSA levels', () => {
+    assert.equal(SUPP_UL.mg, 250); assert.equal(SUPP_UL.vitd, 100); assert.equal(SUPP_UL.zn, 25); assert.equal(SUPP_UL.fe, 40);
   });
 });
