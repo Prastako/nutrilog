@@ -69,20 +69,19 @@ Personal nutrition app on Android: log meals and supplements; profile with diet 
 
 ## Open questions for Jan
 - Push 0.2.4 (branch `overnight-20260924`) to main so it goes live? It is tested but Jan has not seen it yet.
-- The research decisions below assumed a public paid service. Jan said on 2026-09-23 that NutriLog is now a personal project for him and maybe some friends (no business). Which decisions still apply (for example sync between PC and phone, sharing with friends)?
 - Private backup repo name (app: Settings, API keys, Backup repository, format user/name). Needed for the archive upload and for any automation. Not `Prastako/nutrilog-data`: Jan deleted it (old version), ignore it.
 - Did Jan load the recipe archive into the app (backup repo or from file)?
 - Decisions from the research (full list with options: research doc section (e)). Needed now:
-  1. Server: Supabase in Frankfurt with own small sync?
+  1. Server for option B (friends): a. Server route: Supabase in Frankfurt (research recommendation)? b. Sign-in: emailed code plus Google (research recommendation)? c. Monthly Claude limit per friend, in USD? d. Do diaries sync through the server (Jan's PC and phone, friends' devices), or does the server only hold the Claude key? e. Web address: stay on prastako.github.io or move to an own domain before friends install?
   2. Build ideas 8, 6, 2, 4, 3, 5, 7 now on the current app, in that order?
   3. Fix the section (f) problems now (magnesium preset to 250 mg, Lower carb note, sex handling, timestamps, Open Food Facts credit)?
   4. Activity multipliers to 1.40, 1.55, 1.70, 1.90?
   5. Sex options: Male, Female, In between, Prefer not to say?
   6. Supplement suggestions for Jan only, as a test?
   7. Photo test: weigh 15 to 20 meals, photo with and without hand?
-  Decisions 8 to 16 before the closed beta, 17 to 20 before the public launch.
 
 ## Research 2026-09-23: roadmap to going public (summary; details in docs/research/2026-09-23-research.md)
+- Status 2026-09-23: Stage 1 and section (f) still apply. From Stage 2, only the server with Jan's key, per-person limits and sign-in apply (friends, option B). Domain for a public service, payments, pricing and the lawyer and accountant questions are reference only.
 - Run overnight by 8 research agents plus a report writer (notes kept out of git). Legal, tax and medical points are research, not advice.
 - Stage 1, Jan alone: fixes, then ideas 8, 6, 2, 4, 3, 5, 7, supplement weekly plan and quick photo log screen, all on the current app (they carry over); a sync proof on Jan's PC and phone once decision 1 is yes.
 - Stage 2, closed beta (10 to 100 people): own domain off GitHub Pages (GitHub terms exclude commercial services), paid Supabase in Frankfurt, email sign-in, Claude key on the server with per-user limits, 18+, health-data consent (GDPR Art. 9), AI labels, new chat design (idea 10), recipes by pasted text or link only.
@@ -92,7 +91,7 @@ Personal nutrition app on Android: log meals and supplements; profile with diet 
 
 ## Ideas from Jan (2026-09-22, not started; several need research first)
 Each item: Jan's idea, then "Now:" what the app does today.
-1. Quick photo logging (premium later): photo before eating, hand next to the plate every time as the size reference; Claude estimates while he eats; a glanceable overview (seconds, not minutes) to check it matches the meal; pick how much was eaten (100 % or less); Log writes it to the diary. Now: the Photo tab evaluates a photo and logs grams; no hand reference, no eaten share, detailed rather than glanceable.
+1. Quick photo logging: photo before eating, hand next to the plate every time as the size reference; Claude estimates while he eats; a glanceable overview (seconds, not minutes) to check it matches the meal; pick how much was eaten (100 % or less); Log writes it to the diary. Now: the Photo tab evaluates a photo and logs grams; no hand reference, no eaten share, detailed rather than glanceable.
 2. Sex: more than two options. Now: Male/Female only, because the resting energy equation (Mifflin, St Jeor) has only two forms; a third option needs a rule for the calculation.
 3. Goals: keep simple Lose/Maintain/Gain, add an Advanced view with selectable pills in several categories (e.g. muscle and weight; nutrient coverage so enough minerals and vitamins are eaten per day). Include a morning/evening supplement routine proposed as a weekly schedule (not generated twice a day).
 4. Activity: simple (current 4 bands) plus Advanced with more options: specific goals (e.g. muscle gain with fat loss), weekly training attendance.
@@ -101,8 +100,8 @@ Each item: Jan's idea, then "Now:" what the app does today.
 7. Meal split ("How the day splits between meals", % of daily energy): vague, reword and give context like the macro split.
 8. Diet style, allergies and refusals repeat the same options (e.g. vegetarian vs refusing meat, gluten free vs gluten allergy). Restructure to remove overlaps.
 9. PC and phone: Jan uses a PC more than the phone; both matter for future users. Now: runs on both, but data lives per device; restore from the backup replaces data, no two-way sync. Raises a server-based version.
-10. Chat limits for a public version: capped free text length; every message a fresh request (no history sent, no prompt chaining); each answer adds a short structured summary with only food and supplement information to the profile for follow-up. Now: chat sends the last 20 messages.
-11. Going public: this build is for Jan's own testing; later a public service, free tier (logging, archive) plus paid premium features. Jan worries the current model will be hard to change. Claude's note: a paid service with Claude features needs accounts, a server that holds the Claude key and enforces limits, and payments; that changes checkpoint decisions 1 (data on the device) and 4 (key in the browser). Hard to change, research first.
+10. Chat limits for a public version: capped free text length; every message a fresh request (no history sent, no prompt chaining); each answer adds a short structured summary with only food and supplement information to the profile for follow-up. Now: chat sends the last 20 messages. Status 2026-09-23: kept as a way to lower Claude cost on Jan's key and to keep friends within their monthly limit.
+11. Going public: this build is for Jan's own testing; later a public service, free tier (logging, archive) plus paid premium features. Jan worries the current model will be hard to change. Claude's note: a paid service with Claude features needs accounts, a server that holds the Claude key and enforces limits, and payments; that changes checkpoint decisions 1 (data on the device) and 4 (key in the browser). Hard to change, research first. Status 2026-09-23: dropped.
 
 ## Decisions (checkpoint 1, answered)
 1. Storage: approved. Phone or browser first (IndexedDB), automatic backup to his private GitHub repo as in v0.1; recipe archive master on Google Drive `Reel Recipe Atlas/` (originals, extracted, records) next to `Reel Movement Atlas/`; app copy in the private backup repo under `archive/recipes/`.
@@ -113,7 +112,9 @@ Each item: Jan's idea, then "Now:" what the app does today.
 6. Reel source: a Saved collection on his Instagram. Link collecting snippet (version 2) below; the fallback is Instagram's "Download your information" (Saved only, JSON).
 7. Claude GitHub App: installed and connected (did not grant push to this chat).
 8. Archive originals: still images only, no videos (2026-09-21).
-9. Going public is the final goal (2026-09-22): a public service, free tier plus paid premium. Everything else leads toward it and is scheduled accordingly.
+9. Personal project (2026-09-23, replaces going public): NutriLog serves Jan and possibly a few friends. No public service, premium tier or payments. Research and materials are kept for personal development.
+10. Sharing with friends (2026-09-23): option B. Friends use the app with Jan's Claude key through a small server that enforces a monthly limit per person. Whether diaries also sync through that server: open, see Open questions.
+11. Coding (2026-09-23): code is written by local models in Jan's hybrid workspace (C:\AI-Workspace on RYZEN9) through task files; Claude writes the task files, reviews and tests. The workspace is set up and in use since the night of 2026-09-24.
 
 Link collecting snippet (version 2, current):
 ```
