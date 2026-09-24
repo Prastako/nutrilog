@@ -831,7 +831,7 @@ const EXCLUSION_FALSE_FRIENDS = {
   nuts: ['nutmeg','butternut','coconut','muskatovy orisek','muskatovy'],
   fish: ['fish sauce free'],
   gluten: ['gluten free soy sauce','gluten free','bez lepku','buckwheat flour','buckwheat','pohanka','rice flour','ryzova mouka','corn flour','kukuricna mouka','almond flour','mandlova mouka','coconut flour','chickpea flour','cizrnova mouka','rice noodles','ryzove nudle','glass noodles','sklenene nudle','corn tortilla','kukuricna tortilla','breast','breakfast','paste','pastinak','pastrami',
-           'breadfruit','pitanga','winter spaghetti','spaghetti squash','potato flour','acorn flour','cottonseed flour','sesame flour','sunflower seed flour','carob flour','peanut flour','soy flour','arrowroot flour','millet flour','sorghum flour','tapioca flour'],
+           'breadfruit','pitanga','winter spaghetti','spaghetti squash','potato flour','acorn flour','cottonseed flour','sesame flour','sunflower seed flour','carob flour','peanut flour','soy flour','arrowroot flour','millet flour','sorghum flour','tapioca flour','flounder'],
   molluscs: ['oyster mushroom','scalloped','summer scallop','scallop squash'],
   crustaceans: ['crabapple'],
   soy: ['tamarind','non soy']

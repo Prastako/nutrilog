@@ -243,4 +243,8 @@ describe('exclusionHits false negatives', () => {
   it("molluscs 'Scallops, raw' is still flagged", () => {
     assert.ok(hit('molluscs', 'Mollusks, scallop, raw'));
   });
+
+  it("gluten 'Fish, flatfish (flounder)' is not flagged", () => {
+    assert.ok(!hit('gluten', 'Fish, flatfish (flounder and sole species), cooked'));
+  });
 });
