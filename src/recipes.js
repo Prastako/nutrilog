@@ -223,8 +223,8 @@ function recipeCard(r, extra){
 function renderRecipes(){
   const host = $('#s-recipes');
   let h = '<div class="seg" role="tablist">' +
-    '<button type="button" class="'+(S.recipeTab==='suggest'?'on':'')+'" data-act="rtab" data-v="suggest">'+esc(t('rt_suggest'))+'</button>' +
-    '<button type="button" class="'+(S.recipeTab==='all'?'on':'')+'" data-act="rtab" data-v="all">'+esc(t('rt_all'))+'</button>' +
+    '<button type="button" role="tab" aria-selected="'+(S.recipeTab==='suggest')+'" class="'+(S.recipeTab==='suggest'?'on':'')+'" data-act="rtab" data-v="suggest">'+esc(t('rt_suggest'))+'</button>' +
+    '<button type="button" role="tab" aria-selected="'+(S.recipeTab==='all')+'" class="'+(S.recipeTab==='all'?'on':'')+'" data-act="rtab" data-v="all">'+esc(t('rt_all'))+'</button>' +
     '</div>';
   h += '<div id="rtabBody"></div>';
   host.innerHTML = h;
@@ -541,9 +541,9 @@ async function suggestFor(slot, dateKey, n){
 async function renderSuggestions(){
   const host = $('#rtabBody');
   const dateKey = S.suggestDate || localDateKey();
-  let h = '<div class="daynav" style="margin-top:12px"><button class="iconbtn sm" type="button" data-act="sdate" data-d="-1">'+icon('back')+'</button>' +
+  let h = '<div class="daynav" style="margin-top:12px"><button class="iconbtn sm" type="button" data-act="sdate" data-d="-1" aria-label="'+esc(t('lg_prev'))+'">'+icon('back')+'</button>' +
     '<span class="num">'+esc(dateKey === localDateKey() ? t('today') : fmtShortDate(dateKey))+'</span>' +
-    '<button class="iconbtn sm flip" type="button" data-act="sdate" data-d="1">'+icon('back')+'</button></div>';
+    '<button class="iconbtn sm flip" type="button" data-act="sdate" data-d="1" aria-label="'+esc(t('lg_next'))+'">'+icon('back')+'</button></div>';
   if (!S.profile) h += '<div class="notice warn">'+esc(t('sg_noprofile'))+'</div>';
   if (!visibleRecipes().length) h += '<div class="notice">'+esc(t('sg_norecipes'))+'</div>';
   h += '<div id="sgSlots"></div>';

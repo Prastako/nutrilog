@@ -96,10 +96,10 @@ async function renderReview(){
   const P = await periodData(mode, S.reviewAnchor);
   const ref = referenceValues();
   let h = '<div class="seg" role="tablist">' +
-    '<button type="button" class="'+(mode==='week'?'on':'')+'" data-act="rmode" data-v="week">'+esc(t('rv_week'))+'</button>' +
-    '<button type="button" class="'+(mode==='month'?'on':'')+'" data-act="rmode" data-v="month">'+esc(t('rv_month'))+'</button></div>';
-  h += '<div class="daynav" style="margin-top:12px"><button class="iconbtn sm" type="button" data-act="rnav" data-d="-1">'+icon('back')+'</button>' +
-    '<span class="num">'+esc(periodLabel(mode, P.range))+'</span><button class="iconbtn sm flip" type="button" data-act="rnav" data-d="1">'+icon('back')+'</button></div>';
+    '<button type="button" role="tab" aria-selected="'+(mode==='week')+'" class="'+(mode==='week'?'on':'')+'" data-act="rmode" data-v="week">'+esc(t('rv_week'))+'</button>' +
+    '<button type="button" role="tab" aria-selected="'+(mode==='month')+'" class="'+(mode==='month'?'on':'')+'" data-act="rmode" data-v="month">'+esc(t('rv_month'))+'</button></div>';
+  h += '<div class="daynav" style="margin-top:12px"><button class="iconbtn sm" type="button" data-act="rnav" data-d="-1" aria-label="'+esc(t('rv_prev'))+'">'+icon('back')+'</button>' +
+    '<span class="num">'+esc(periodLabel(mode, P.range))+'</span><button class="iconbtn sm flip" type="button" data-act="rnav" data-d="1" aria-label="'+esc(t('rv_next'))+'">'+icon('back')+'</button></div>';
   if (!P.nDays){
     h += '<div class="card flat"><p class="muted">'+esc(t('rv_empty'))+'</p></div>';
     host.innerHTML = h; return;
