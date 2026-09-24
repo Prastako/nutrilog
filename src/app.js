@@ -174,6 +174,11 @@ function bindEvents(){
       else list.push({id: a.id, label: L(a), type:'allergy', syn: a.syn.slice()});
       renderProfile();
     }
+    else if (act === 'slot-preset'){
+      const preset = SLOT_PRESETS.find(p => p.id === id);
+      if (preset) S.draft.goals.slots = {...preset.slots};
+      renderProfile();
+    }
     else if (act.indexOf('pchip-') === 0){
       const field = act.slice(6);
       const holder = field === 'cuisines' ? S.draft.food : S.draft.goals;

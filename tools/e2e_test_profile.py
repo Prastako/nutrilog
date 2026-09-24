@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Checks for 0.2.5: the profile preview under the macro split and the meal split
-(calories, grams, g per kg, fat and protein warnings, live update, Czech).
+(calories, grams, g per kg, fat and protein warnings, live update, Czech) and the meal split pattern chips.
 Usage: python3 tools/e2e_test_profile.py <repo_dir> <shots_dir>"""
 import os, sys, threading, functools, http.server, socketserver
 from playwright.sync_api import sync_playwright
@@ -39,6 +39,17 @@ with sync_playwright() as p:
     ok('more protein than most people can use' in mp(), 'high protein warning')
     page.locator('#macroPreviewBox').scroll_into_view_if_needed(); page.screenshot(path=SHOTS+'/p1_macro.png')
     page.locator('#slotPreviewBox').scroll_into_view_if_needed(); page.screenshot(path=SHOTS+'/p2_slots.png')
+    # meal split pattern chips (0.2.5)
+    page.click('[data-act="slot-preset"][data-id="three"]'); page.wait_for_timeout(400)
+    vals = [page.input_value('#sl-'+k) for k in ['breakfast','lunch','snack','dinner']]
+    ok(vals == ['30','35','0','35'], '3 meals chip fills 30/35/0/35: %s' % vals)
+    ok(page.get_attribute('[data-act="slot-preset"][data-id="three"]','aria-pressed') == 'true', '3 meals chip pressed')
+    ok('Snack' not in sp(), '3 meals: no snack in the per-meal line')
+    page.fill('#sl-breakfast','31'); page.wait_for_timeout(300)
+    ok(page.locator('[data-act="slot-preset"][aria-pressed="true"]').count() == 0, 'typing own numbers unpresses the chips')
+    page.click('[data-act="slot-preset"][data-id="bigbf"]'); page.wait_for_timeout(400)
+    ok(page.input_value('#sl-dinner') == '20' and page.get_attribute('[data-act="slot-preset"][data-id="bigbf"]','aria-pressed') == 'true', 'big breakfast chip')
+    page.locator('[data-act="slot-preset"]').first.scroll_into_view_if_needed(); page.screenshot(path=SHOTS+'/p4_slot_chips.png')
     page.evaluate("S.lang='cs'; S.draft && renderProfile()"); page.wait_for_timeout(400)
     print(mp()); ok('Při středu vašeho cíle' in mp() and 'g na kg' in mp(), 'Czech preview')
     ok(',' in mp().split('(')[1].split(' ')[0], 'Czech decimal comma in g per kg')

@@ -215,6 +215,8 @@ input::placeholder,textarea::placeholder{color:var(--ink3);opacity:.85}
 .chip[aria-pressed="true"]{background:var(--teal-soft);border-color:var(--teal);color:var(--teal)}
 .chip.add{border-style:dashed;color:var(--ink2)}
 .inline{display:flex;gap:9px;align-items:flex-start}
+.inline:has(> .field){align-items:flex-end;margin-bottom:16px}
+.inline > .field{margin-bottom:0}
 .inline > *{flex:1}
 .inline > .none{flex:none}
 

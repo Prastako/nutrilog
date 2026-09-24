@@ -236,6 +236,8 @@ input::placeholder,textarea::placeholder{color:var(--ink3);opacity:.85}
 .chip[aria-pressed="true"]{background:var(--teal-soft);border-color:var(--teal);color:var(--teal)}
 .chip.add{border-style:dashed;color:var(--ink2)}
 .inline{display:flex;gap:9px;align-items:flex-start}
+.inline:has(> .field){align-items:flex-end;margin-bottom:16px}
+.inline > .field{margin-bottom:0}
 .inline > *{flex:1}
 .inline > .none{flex:none}
 
@@ -1129,6 +1131,11 @@ Object.assign(STR.cs, {
   pg_h:'Cíle stravy', pg_intro:'Podle tohoto se řídí návrhy jídel, chat i rozbory.',
   pg_style:'Styl stravy', pg_aims:'O co mi jde', pg_focus:'Na které živiny se zaměřit', pg_notes:'Poznámky pro Clauda',
   pg_notes_ph:'Vlastními slovy: co vám dělá dobře a co ne, čemu se vyhýbáte, co chcete změnit.',
+  slp_intro:'Vyberte vzorec, nebo nastavte vlastní procenta níže.',
+  slp_three:'3 jídla',
+  slp_snack:'3 jídla a svačina',
+  slp_bigbf:'Velká snídaně, lehká večeře',
+  slp_lightbf:'Lehká snídaně, hlavní jídlo později',
   pg_slots:'Rozdělení dne mezi jídla', pg_slots_note:'Procenta denní energie. Nemusí dávat přesně 100, přepočítají se.',
   ms_preview:'Při středu vašeho cíle {kcal} kcal: bílkoviny asi {p} g ({pkg} g na kg váhy), tuky {f} g, sacharidy {c} g denně.',
   ms_fat_high:'Tuky nad 35 % energie jsou mimo referenční rozmezí EU (20 až 35 %).',
@@ -1268,6 +1275,11 @@ Object.assign(STR.en, {
   pg_h:'Diet goals', pg_intro:'Meal suggestions, the chat and the reviews follow this.',
   pg_style:'Diet style', pg_aims:'What I am after', pg_focus:'Nutrients to focus on', pg_notes:'Notes for Claude',
   pg_notes_ph:'In your own words: what works for you and what does not, what you avoid, what you want to change.',
+  slp_intro:'Pick a pattern or set your own percentages below.',
+  slp_three:'3 meals',
+  slp_snack:'3 meals and a snack',
+  slp_bigbf:'Big breakfast, light dinner',
+  slp_lightbf:'Light breakfast, main meal later',
   pg_slots:'How the day splits between meals', pg_slots_note:'Percent of daily energy. They need not add up to exactly 100; they are rescaled.',
   ms_preview:'At the middle of your target, {kcal} kcal: protein about {p} g ({pkg} g per kg of body weight), fat {f} g, carbohydrate {c} g a day.',
   ms_fat_high:'Fat above 35 % of energy is outside the EU reference range (20 to 35 %).',
@@ -1924,6 +1936,25 @@ const RMR_REL_UNC = 0.10;
 const FLOOR_ABS = { male:1500, female:1200 };
 const DEFAULT_SLOTS = { breakfast:25, lunch:35, snack:10, dinner:30 };
 const SLOTS = ['breakfast','lunch','snack','dinner'];
+const SLOT_PRESETS = [
+  {id:'three',   slots:{breakfast:30, lunch:35, snack:0,  dinner:35}},
+  {id:'snack',   slots:{breakfast:25, lunch:35, snack:10, dinner:30}},
+  {id:'bigbf',   slots:{breakfast:35, lunch:35, snack:10, dinner:20}},
+  {id:'lightbf', slots:{breakfast:15, lunch:35, snack:15, dinner:35}}
+];
+
+function slotPresetId(slots){
+  if (!slots) return null;
+  for (var i = 0; i < SLOT_PRESETS.length; i++){
+    var p = SLOT_PRESETS[i];
+    var match = true;
+    for (var j = 0; j < SLOTS.length; j++){
+      if (Number(slots[SLOTS[j]]) !== p.slots[SLOTS[j]]){ match = false; break; }
+    }
+    if (match) return p.id;
+  }
+  return null;
+}
 
 function round10(n){ return Math.round(n/10)*10; }
 function round5(n){ return Math.round(n/5)*5; }
@@ -5320,6 +5351,21 @@ function updateProfilePreview(){
   if (mb) mb.innerHTML = x.macro;
   var sb = document.getElementById('slotPreviewBox');
   if (sb) sb.innerHTML = x.slots;
+  var chips = document.querySelectorAll('[data-act="slot-preset"]');
+  for (var i = 0; i < chips.length; i++){
+    chips[i].setAttribute('aria-pressed', String(slotPresetId(S.draft.goals.slots) === chips[i].getAttribute('data-id')));
+  }
+}
+
+function slotPresetChips(G){
+  var current = slotPresetId(G.slots);
+  var h = '<p class="tiny">'+esc(t('slp_intro'))+'</p><div class="chips" style="margin-bottom:10px">';
+  for (var i = 0; i < SLOT_PRESETS.length; i++){
+    var p = SLOT_PRESETS[i];
+    h += '<button class="chip" type="button" data-act="slot-preset" data-id="'+p.id+'" aria-pressed="'+(current === p.id)+'">'+esc(t('slp_'+p.id))+'</button>';
+  }
+  h += '</div>';
+  return h;
 }
 
 function renderProfile(){
@@ -5362,7 +5408,7 @@ function renderProfile(){
     '<p class="flabel" style="margin-top:14px">'+esc(t('pg_aims'))+'</p>' + chipSet('pchip-aims', AIMS, G.aims, v => t('aim_'+v)) +
     '<p class="flabel" style="margin-top:14px">'+esc(t('pg_focus'))+'</p>' + chipSet('pchip-focusNutrients', FOCUS_CHOICES, G.focusNutrients, nutLabel) +
     '<div class="field" style="margin-top:14px"><label for="g-notes">'+esc(t('pg_notes'))+'</label><textarea id="g-notes" data-bind="goals.notes" placeholder="'+esc(t('pg_notes_ph'))+'">'+esc(G.notes||'')+'</textarea></div>' +
-    '<p class="flabel">'+esc(t('pg_slots'))+'</p><div class="inline">' +
+    '<p class="flabel">'+esc(t('pg_slots'))+'</p>' + slotPresetChips(G) + '<div class="inline">' +
       SLOTS.map(s => num('goals.slots.'+s, 'sl-'+s, t('slot_'+s)+' %', 'inputmode="numeric" min="0" max="80"')).join('') + '</div>' +
     '<p class="tiny">'+esc(t('pg_slots_note'))+'</p>' +
     '<div id="slotPreviewBox">' + previewParts(d).slots + '</div></div>';
@@ -5944,6 +5990,11 @@ function bindEvents(){
       const at = list.findIndex(x => x.id === id);
       if (at >= 0) list.splice(at, 1);
       else list.push({id: a.id, label: L(a), type:'allergy', syn: a.syn.slice()});
+      renderProfile();
+    }
+    else if (act === 'slot-preset'){
+      const preset = SLOT_PRESETS.find(p => p.id === id);
+      if (preset) S.draft.goals.slots = {...preset.slots};
       renderProfile();
     }
     else if (act.indexOf('pchip-') === 0){

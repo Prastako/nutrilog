@@ -624,6 +624,25 @@ const RMR_REL_UNC = 0.10;
 const FLOOR_ABS = { male:1500, female:1200 };
 const DEFAULT_SLOTS = { breakfast:25, lunch:35, snack:10, dinner:30 };
 const SLOTS = ['breakfast','lunch','snack','dinner'];
+const SLOT_PRESETS = [
+  {id:'three',   slots:{breakfast:30, lunch:35, snack:0,  dinner:35}},
+  {id:'snack',   slots:{breakfast:25, lunch:35, snack:10, dinner:30}},
+  {id:'bigbf',   slots:{breakfast:35, lunch:35, snack:10, dinner:20}},
+  {id:'lightbf', slots:{breakfast:15, lunch:35, snack:15, dinner:35}}
+];
+
+function slotPresetId(slots){
+  if (!slots) return null;
+  for (var i = 0; i < SLOT_PRESETS.length; i++){
+    var p = SLOT_PRESETS[i];
+    var match = true;
+    for (var j = 0; j < SLOTS.length; j++){
+      if (Number(slots[SLOTS[j]]) !== p.slots[SLOTS[j]]){ match = false; break; }
+    }
+    if (match) return p.id;
+  }
+  return null;
+}
 
 function round10(n){ return Math.round(n/10)*10; }
 function round5(n){ return Math.round(n/5)*5; }

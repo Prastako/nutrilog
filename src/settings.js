@@ -54,6 +54,21 @@ function updateProfilePreview(){
   if (mb) mb.innerHTML = x.macro;
   var sb = document.getElementById('slotPreviewBox');
   if (sb) sb.innerHTML = x.slots;
+  var chips = document.querySelectorAll('[data-act="slot-preset"]');
+  for (var i = 0; i < chips.length; i++){
+    chips[i].setAttribute('aria-pressed', String(slotPresetId(S.draft.goals.slots) === chips[i].getAttribute('data-id')));
+  }
+}
+
+function slotPresetChips(G){
+  var current = slotPresetId(G.slots);
+  var h = '<p class="tiny">'+esc(t('slp_intro'))+'</p><div class="chips" style="margin-bottom:10px">';
+  for (var i = 0; i < SLOT_PRESETS.length; i++){
+    var p = SLOT_PRESETS[i];
+    h += '<button class="chip" type="button" data-act="slot-preset" data-id="'+p.id+'" aria-pressed="'+(current === p.id)+'">'+esc(t('slp_'+p.id))+'</button>';
+  }
+  h += '</div>';
+  return h;
 }
 
 function renderProfile(){
@@ -96,7 +111,7 @@ function renderProfile(){
     '<p class="flabel" style="margin-top:14px">'+esc(t('pg_aims'))+'</p>' + chipSet('pchip-aims', AIMS, G.aims, v => t('aim_'+v)) +
     '<p class="flabel" style="margin-top:14px">'+esc(t('pg_focus'))+'</p>' + chipSet('pchip-focusNutrients', FOCUS_CHOICES, G.focusNutrients, nutLabel) +
     '<div class="field" style="margin-top:14px"><label for="g-notes">'+esc(t('pg_notes'))+'</label><textarea id="g-notes" data-bind="goals.notes" placeholder="'+esc(t('pg_notes_ph'))+'">'+esc(G.notes||'')+'</textarea></div>' +
-    '<p class="flabel">'+esc(t('pg_slots'))+'</p><div class="inline">' +
+    '<p class="flabel">'+esc(t('pg_slots'))+'</p>' + slotPresetChips(G) + '<div class="inline">' +
       SLOTS.map(s => num('goals.slots.'+s, 'sl-'+s, t('slot_'+s)+' %', 'inputmode="numeric" min="0" max="80"')).join('') + '</div>' +
     '<p class="tiny">'+esc(t('pg_slots_note'))+'</p>' +
     '<div id="slotPreviewBox">' + previewParts(d).slots + '</div></div>';
