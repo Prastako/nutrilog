@@ -138,7 +138,7 @@ Link collecting snippet (version 2, current):
 
 ## Where things are
 - Repo `Prastako/nutrilog` (public, GitHub Pages, https://prastako.github.io/nutrilog/). Source in `src/`, built into `index.html` by `tools/build.py`. Never edit `index.html` by hand.
-- Source bundle: project doc `claude/nutrilog-v0.2.3-source-bundle.json` ({"files": {path: content}}, includes tools/fooddb/names_cs.json and the stills-only pipeline); restore = write files, `sh tools/fooddb/build.sh`, `python3 tools/build.py 0.2.3`. Older bundles were removed.
+- Source bundle: project doc `claude/nutrilog-v0.2.5-source-bundle.json` ({"files": {path: content}}, branch overnight-20260924 at the time of writing, all text files except data/foods.json, data/recipes-starter.json, index.html and icons); restore = write files, `sh tools/fooddb/build.sh`, `python3 tools/build.py 0.2.5`. The working copy is also on RYZEN9 in C:\AI-Workspace\projects\nutrilog. Older bundles were removed.
 - Data contract: `docs/DATA_FORMAT.md`. Pipeline: `tools/reels/PIPELINE.md` with fetch.py, prepare.py, build_archive.py. Prepare is about 20 s per reel; whisper can misdetect the language, check transcripts that look garbled.
 - Food database `data/foods.json`: 3,840 USDA SR Legacy foods, 38 nutrients, English names plus Czech names in field `cs` (from tools/fooddb/names_cs.json). Starter recipes: 12, English.
 - English test: `python3 tools/e2e_test_en.py <repo_dir> <shots_dir>` (run after every change to screens or strings).
