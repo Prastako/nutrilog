@@ -230,58 +230,61 @@ describe('nutRound', () => {
 });
 
 describe('computeTargets', () => {
-  function profile(sex, age, heightCm, weightKg, activityLevel, direction) {
+  function profile(sex, age, heightCm, weightKg, activityLevel, direction, bodyFatPct) {
     return {
-      person: { sex, age, heightCm, weightKg, activityLevel },
+      person: { sex, age, heightCm, weightKg, activityLevel, bodyFatPct },
       goals: { direction },
     };
   }
 
-  it('returns null when sex is missing', () => {
-    assert.equal(computeTargets(profile(null, 28, 180, 75, 2, 'maintain')), null);
-  });
-
   it('returns null when age is missing', () => {
     assert.equal(computeTargets(profile('male', null, 180, 75, 2, 'maintain')), null);
-  });
-
-  it('returns null when height is missing', () => {
-    assert.equal(computeTargets(profile('male', 28, null, 75, 2, 'maintain')), null);
   });
 
   it('returns null when weight is missing', () => {
     assert.equal(computeTargets(profile('male', 28, 180, null, 2, 'maintain')), null);
   });
 
-  describe('normal male profile', () => {
-    // sex male, age 28, heightCm 180, weightKg 75, activityLevel 2, direction maintain
+  it('mifflin: rmr 1657 for age 28, height 180, weight 75', () => {
     const p = profile('male', 28, 180, 75, 2, 'maintain');
-
-    it('rmr is 1740 (Mifflin-St Jeor: 10*75 + 6.25*180 - 5*28 + 5)', () => {
-      const result = computeTargets(p);
-      assert.equal(result.rmr, 1740);
-    });
-
-    it('low and high are multiples of 10', () => {
-      const result = computeTargets(p);
-      assert.equal(result.low % 10, 0, 'low must be multiple of 10');
-      assert.equal(result.high % 10, 0, 'high must be multiple of 10');
-    });
-
-    it('low < high', () => {
-      const result = computeTargets(p);
-      assert.ok(result.low < result.high, `low (${result.low}) must be < high (${result.high})`);
-    });
+    const result = computeTargets(p);
+    assert.equal(result.rmr, 1657);
+    assert.equal(result.method, 'mifflin');
   });
 
-  describe('small light female profile with direction lose', () => {
-    // sex female, age 35, heightCm 160, weightKg 40, activityLevel 1, direction lose
-    // RMR = 1064, TDEE = 1330, low ~1033 < floor 1200 so floorBinding = true
+  it('weight: rmr 1545 for age 35, weight 70, no height', () => {
+    const p = profile('male', 35, 0, 70, 2, 'maintain');
+    const result = computeTargets(p);
+    assert.equal(result.rmr, 1545);
+    assert.equal(result.method, 'weight');
+  });
+
+  it('leanmass: rmr 1996 for body fat 15%, weight 80', () => {
+    const p = profile('male', 25, 175, 80, 2, 'maintain', 15);
+    const result = computeTargets(p);
+    assert.equal(result.rmr, 1996);
+    assert.equal(result.method, 'leanmass');
+  });
+
+  it('low and high are multiples of 10', () => {
+    const p = profile('male', 28, 180, 75, 2, 'maintain');
+    const result = computeTargets(p);
+    assert.equal(result.low % 10, 0, 'low must be multiple of 10');
+    assert.equal(result.high % 10, 0, 'high must be multiple of 10');
+  });
+
+  it('low < high', () => {
+    const p = profile('male', 28, 180, 75, 2, 'maintain');
+    const result = computeTargets(p);
+    assert.ok(result.low < result.high, `low (${result.low}) must be < high (${result.high})`);
+  });
+
+  describe('floor binding', () => {
     const p = profile('female', 35, 160, 40, 1, 'lose');
 
-    it('floorBinding is true (calorie minimum applies)', () => {
+    it('floorBinding is true for small person losing weight', () => {
       const result = computeTargets(p);
-      assert.equal(result.floorBinding, true, 'floor must bind for small female losing weight');
+      assert.equal(result.floorBinding, true);
     });
 
     it('low equals floor', () => {

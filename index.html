@@ -7,7 +7,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F2EADC" id="metaThemeColor">
 <script>
-const VERSION = '0.2.5';
+const VERSION = '0.2.6';
 const SCHEMA = 2;
 </script>
 <meta name="mobile-web-app-capable" content="yes">
@@ -503,7 +503,7 @@ input[type=search],input[type=date]{width:100%;min-height:var(--tap);padding:11p
 
 <script>
 /* ============================================================
-   NutriLog 0.2.5. Built from src/ by tools/build.py.
+   NutriLog 0.2.6. Built from src/ by tools/build.py.
    Edit the files in src/, then run the build; do not edit this
    generated block by hand.
    ============================================================ */
@@ -1136,6 +1136,18 @@ Object.assign(STR.cs, {
   slp_snack:'3 jídla a svačina',
   slp_bigbf:'Velká snídaně, lehká večeře',
   slp_lightbf:'Lehká snídaně, hlavní jídlo později',
+  fp_everything:'Jím všechno', fp_littlemeat:'Málo masa', fp_pescatarian:'Ryby ano, maso ne', fp_vegetarian:'Vegetariánská', fp_vegan:'Veganská', fp_carnivore:'Jen živočišná strava', fc_coeliac:'Celiakie', fc_lactose:'Nesnášenlivost laktózy', fc_kidney:'Onemocnění ledvin', fr_halal:'Halal', fr_kosher:'Košer', fr_nopork:'Bez vepřového', fr_nobeef:'Bez hovězího', fr_noalcohol:'Bez alkoholu',
+  pw_h:'Co jíte', pw_intro:'Jedna volba. Vegetariánská a veganská navíc vyřadí maso a ryby (veganská i vejce, mléčné výrobky a med) z návrhů, receptů i chatu.',
+  fp_everything_d:'Nic se nevyřazuje.', fp_littlemeat_d:'Maso jen občas. Nic se neskrývá, Claude drží maso střídmě.', fp_pescatarian_d:'Ryby a mořské plody, maso ne.',
+  fp_vegetarian_d:'Bez masa a ryb. Vejce a mléčné výrobky ano, pokud je níže nevyškrtnete.', fp_vegan_d:'Bez živočišných potravin: bez masa, ryb, vajec, mléčných výrobků a medu.', fp_carnivore_d:'Jen živočišné potraviny.',
+  fpo_noeggs:'Bez vajec', fpo_nomilk:'Bez mléčných výrobků',
+  fp_carnivore_warn:'Strava jen z živočišných potravin má málo dlouhodobých studií. Lidem, kteří tak jedí, často stoupá LDL cholesterol a bez rostlin má strava velmi málo vlákniny a vitaminu C a často chybí vápník, hořčík, thiamin, folát a jód. Pokud ji zvolíte, nechte si u lékaře zkontrolovat cholesterol a v Přehledu sledujte, co chybí. Aplikace pro tuto volbu rostlinné potraviny neskrývá.',
+  fc_h:'Zdravotní stav', fc_note_coeliac:'Celiakie skryje vše s lepkem, stejně jako alergie na lepek.',
+  fc_note_lactose:'Alergie na mléko není totéž co nesnášenlivost laktózy. Většina lidí s nesnášenlivostí laktózy snese najednou asi 12 g laktózy (zhruba sklenici mléka), proto se mléčné výrobky neskrývají; Claude drží menší porce nebo volí bezlaktózové výrobky.',
+  fc_note_kidney:'Při onemocnění ledvin potřebují cíle bílkovin radu lékaře; Claude o tom ví.',
+  fr_h:'Pravidla stravy', fr_note:'Skryjí vepřové, hovězí, alkohol nebo mořské plody v surovinách. Certifikaci halal a košer ze seznamu surovin ověřit nelze.',
+  ft_summary:'Doladit: zdravotní zaměření, preference, poznámky', ft_focus:'Zdravotní zaměření', ft_hints:'Bylo by fajn', ft_prefs:'Preference',
+  pf_avoidgluten:'Vyhýbám se lepku dobrovolně', pf_lactosefreeproducts:'Raději bezlaktózové výrobky', pm_h:'Jídla během dne',
   pg_slots:'Rozdělení dne mezi jídla', pg_slots_note:'Procenta denní energie. Nemusí dávat přesně 100, přepočítají se.',
   ms_preview:'Při středu vašeho cíle {kcal} kcal: bílkoviny asi {p} g ({pkg} g na kg váhy), tuky {f} g, sacharidy {c} g denně.',
   ms_fat_high:'Tuky nad 35 % energie jsou mimo referenční rozmezí EU (20 až 35 %).',
@@ -1280,6 +1292,18 @@ Object.assign(STR.en, {
   slp_snack:'3 meals and a snack',
   slp_bigbf:'Big breakfast, light dinner',
   slp_lightbf:'Light breakfast, main meal later',
+  fp_everything:'I eat everything', fp_littlemeat:'Little meat', fp_pescatarian:'Fish yes, meat no', fp_vegetarian:'Vegetarian', fp_vegan:'Vegan', fp_carnivore:'Animal foods only', fc_coeliac:'Coeliac disease', fc_lactose:'Lactose intolerance', fc_kidney:'Kidney disease', fr_halal:'Halal', fr_kosher:'Kosher', fr_nopork:'No pork', fr_nobeef:'No beef', fr_noalcohol:'No alcohol',
+  pw_h:'What you eat', pw_intro:'One choice. Vegetarian and vegan also keep meat and fish (vegan: also eggs, milk products and honey) out of suggestions, recipes and the chat.',
+  fp_everything_d:'No food groups left out.', fp_littlemeat_d:'Meat now and then. Nothing is hidden; Claude keeps meat modest.', fp_pescatarian_d:'Fish and seafood, no meat.',
+  fp_vegetarian_d:'No meat or fish. Eggs and milk products are fine unless you tick them off below.', fp_vegan_d:'No animal foods: no meat, fish, eggs, milk products or honey.', fp_carnivore_d:'Only animal foods.',
+  fpo_noeggs:'No eggs', fpo_nomilk:'No milk products',
+  fp_carnivore_warn:'Eating only animal foods has few long-term studies. People who eat this way often see LDL cholesterol go up, and without plants the diet is very low in fibre and vitamin C and often short in calcium, magnesium, thiamin, folate and iodine. If you choose it, have your cholesterol checked by your doctor and use the Review to see what is missing. The app does not hide plant foods for this choice.',
+  fc_h:'Health conditions', fc_note_coeliac:'Coeliac disease hides everything with gluten, the same as a gluten allergy.',
+  fc_note_lactose:'Milk allergy is not the same as lactose intolerance. Most people with lactose intolerance handle up to about 12 g of lactose at a time (roughly a glass of milk), so milk products are not hidden; Claude keeps portions small or picks lactose-free products.',
+  fc_note_kidney:'With kidney disease, protein targets need advice from your doctor; Claude is told about it.',
+  fr_h:'Food rules', fr_note:'These hide pork, beef, alcohol or shellfish in ingredients. Halal and kosher certification cannot be checked from an ingredient list.',
+  ft_summary:'Fine-tune: health focus, preferences, notes', ft_focus:'Health focus', ft_hints:'Also nice to have', ft_prefs:'Preferences',
+  pf_avoidgluten:'Avoid gluten by choice', pf_lactosefreeproducts:'Prefer lactose-free products', pm_h:'Meals through the day',
   pg_slots:'How the day splits between meals', pg_slots_note:'Percent of daily energy. They need not add up to exactly 100; they are rescaled.',
   ms_preview:'At the middle of your target, {kcal} kcal: protein about {p} g ({pkg} g per kg of body weight), fat {f} g, carbohydrate {c} g a day.',
   ms_fat_high:'Fat above 35 % of energy is outside the EU reference range (20 to 35 %).',
@@ -1747,6 +1771,11 @@ async function loadState(){
   if (!S.meta.installedAt){ S.meta.installedAt = nowIso(); await saveMeta(); }
   await migrateFromSchema1();
   S.profile = await recGet('profile');
+  /* v0.2.6: old diet style and aims chips become eating pattern, focus and hints (idea 8). The old fields stay stored. */
+  if (S.profile && (!S.profile.food || S.profile.food.pattern === undefined)){
+    S.profile = migrateDietV3(S.profile);
+    await recPut(S.profile);
+  }
 }
 
 async function savePrefs(){ S.prefs.lang = S.lang; S.prefs.theme = S.theme; await kvSet('prefs', S.prefs); }
@@ -2153,6 +2182,20 @@ const DIET_STYLES = ['omnivore','flexitarian','pescatarian','vegetarian','vegan'
 const AIMS = ['muscle','fatloss','energy','digestion','fibre','lesssugar','lesssalt','veg','protein','heart','sleep','skin'];
 const FOCUS_CHOICES = ['fib','prot','vitd','fe','ca','mg','k','zn','b12','fol','vitc','o3ld','iod','se'];
 
+const PATTERNS = ['everything','littlemeat','pescatarian','vegetarian','vegan','carnivore'];
+const CONDITIONS = ['coeliac','lactose','kidney'];
+const FOOD_RULES = ['halal','kosher','nopork','nobeef','noalcohol'];
+const FOOD_PREFS = ['avoidgluten','lactosefreeproducts'];
+const HEALTH_FOCUS = ['fibre','lesssugar','lesssalt','veg','heart','digestion','mediterranean'];
+const SOFT_HINTS = ['energy','sleep','skin'];
+const DIET_GROUPS = {
+  meat: ['meat','beef','veal','pork','ham','bacon','chicken','turkey','duck','goose','lamb','mutton','venison','rabbit','mince','steak','ribeye','sirloin','brisket','sausage','salami','chorizo','prosciutto','pancetta','pepperoni','mortadella','pastrami','jerky','liver','gelatin','gelatine','lard','suet','bone broth','maso','hovězí','vepřové','kuřecí','kuře','krůtí','kachna','kachní','husa','jehněčí','telecí','zvěřina','králík','slanina','šunka','klobása','párek','párky','játra','želatina','sádlo'],
+  pork: ['pork','ham','bacon','prosciutto','pancetta','salami','chorizo','pepperoni','lard','gelatin','gelatine','vepř','vepřové','šunka','slanina','sádlo','želatina'],
+  beef: ['beef','veal','ribeye','sirloin','brisket','bresaola','hamburger','hovězí','telecí'],
+  alcohol: ['wine','beer','rum','vodka','gin','brandy','cognac','whisky','whiskey','liqueur','sake','mirin','sherry','vermouth','prosecco','champagne','cider','víno','pivo','slivovice','becherovka'],
+  honey: ['honey','honeycomb']
+};
+
 /* Phrases that contain an allergen word but are not that allergen.
    Removed from the text before matching, so they do not raise false alarms. */
 const EXCLUSION_FALSE_FRIENDS = {
@@ -2166,12 +2209,71 @@ const EXCLUSION_FALSE_FRIENDS = {
            'breadfruit','pitanga','winter spaghetti','spaghetti squash','potato flour','acorn flour','cottonseed flour','sesame flour','sunflower seed flour','carob flour','peanut flour','soy flour','arrowroot flour','millet flour','sorghum flour','tapioca flour','flounder','root beer','breadnut','chlebovnik','kukuricna krupice',
            'bramborova mouk','bramborove mouk','zaludova mouk','bavlnikova mouk','sezamova mouk','slunecnicova mouk','karobova mouk','arasidova mouk','sojova mouk',
            'marantova mouk','pohankova mouk','jahlova mouk','cirokova mouk','cirokove mouk','ryzove mouk'],
-  molluscs: ['oyster mushroom','scalloped','summer scallop','scallop squash'],
-  crustaceans: ['crabapple'],
+  molluscs: ['oyster mushroom','mushrooms oyster','vegetable oyster','scalloped','summer scallop','scallop squash'],
+  crustaceans: ['crabapple','krabic'],
   celery: ['cele ','celeho ','celemu ','cely ','cela ','celych ','celou ','celem ','celym '],
   lupin: ['lupink'],
-  soy: ['tamarind','non soy']
+  soy: ['tamarind','non soy'],
+  meat: ['coconut meat','meatless','meat substitute','meat free','plant based meat','vegan meat','vegetarian meat','gooseberr','lamb s lettuce','lambs lettuce','tofu steak','cauliflower steak','mushroom steak','celeriac steak','cabbage steak','vegan sausage','vegetarian sausage','meatless sausage','coconut bacon','tempeh bacon','vegan bacon','vegan mince','soy mince','plant based mince','cod liver','pepperoncin','sojove maso','kruton','steam','steak cut','steak fries','steakov','steak sauce','lambsquarter','grated meat','meat extender','bezmas','bacon meatless','bacon bits meatless','sausage meatless','frankfurter meatless','chicken meatless','egg duck','egg turkey','duck egg','turkey egg','vejce kachni','vejce kruti','sauce duck','duck sauce','kachni svestkova','meatballs meatless','parek bezmas','klobasa bezmas','masove kulicky bezmas','masovy nastavovac'],
+  pork: ['hamburger','pepperoncin','coconut bacon','tempeh bacon','vegan bacon','bacon meatless','bacon bits meatless','bezmas'],
+  alcohol: ['ginger','ginkgo','cider vinegar','wine vinegar','sherry vinegar','vinegar cider','vinegar red wine','vinegar white wine','rump'],
+  honey: ['honeydew']
 };
+
+function impliedExclusions(rec){
+  const F = (rec && rec.food) || {};
+  const out = [];
+  const push = (ids, label, type) => ids.forEach(id => out.push({id, label, type, syn: []}));
+  const P = F.pattern, o = F.patternOpts || {};
+  if (P === 'pescatarian') push(['meat'], t('fp_'+P), 'pattern');
+  if (P === 'vegetarian') push(['meat','fish','crustaceans','molluscs'].concat(o.noEggs?['egg']:[], o.noMilk?['milk']:[]), t('fp_'+P), 'pattern');
+  if (P === 'vegan') push(['meat','fish','crustaceans','molluscs','egg','milk','honey'], t('fp_'+P), 'pattern');
+  if ((F.conditions||[]).indexOf('coeliac') >= 0) push(['gluten'], t('fc_coeliac'), 'condition');
+  const R = {halal:['pork','alcohol'], kosher:['pork','crustaceans','molluscs'], nopork:['pork'], nobeef:['beef'], noalcohol:['alcohol']};
+  (F.rules||[]).forEach(r => { if (R[r]) push(R[r], t('fr_'+r), 'rule'); });
+  return out;
+}
+
+/* Convert old diet-style chips (rec.goals.dietStyle, rec.goals.aims)
+   to the new profile fields (rec.food.pattern, etc.).
+   Returns a deep copy; original is untouched. */
+function migrateDietV3(rec){
+  const r = deepCopy(rec);
+  if (r.food && r.food.pattern !== undefined) return r;
+  if (!r.food) r.food = {};
+  if (!r.goals) r.goals = {};
+  const ds = r.goals.dietStyle || [];
+  const aims = r.goals.aims || [];
+
+  // pattern
+  if (ds.includes('vegan')) r.food.pattern = 'vegan';
+  else if (ds.includes('vegetarian')) r.food.pattern = 'vegetarian';
+  else if (ds.includes('pescatarian')) r.food.pattern = 'pescatarian';
+  else if (ds.includes('flexitarian')) r.food.pattern = 'littlemeat';
+  else r.food.pattern = 'everything';
+
+  // patternOpts, conditions, rules
+  r.food.patternOpts = { noEggs: false, noMilk: false };
+  r.food.conditions = [];
+  r.food.rules = [];
+
+  // prefs
+  r.food.prefs = [];
+  if (ds.includes('glutenfree') && !(r.food.exclusions||[]).some(e => e.id === 'gluten'))
+    r.food.prefs.push('avoidgluten');
+  if (ds.includes('lactosefree')) r.food.prefs.push('lactosefreeproducts');
+
+  // goals.focus: aims that are in HEALTH_FOCUS (aims order), then mediterranean from ds
+  r.goals.focus = aims.filter(a => HEALTH_FOCUS.includes(a));
+  if (ds.includes('mediterranean') && !r.goals.focus.includes('mediterranean'))
+    r.goals.focus.push('mediterranean');
+
+  // goals.hints: aims that are in SOFT_HINTS
+  r.goals.hints = aims.filter(a => SOFT_HINTS.includes(a));
+
+  return r;
+}
+
 
 /* All exclusion words for the hard filter, folded for matching.
    Longer words are cut by one letter so Czech endings still match
@@ -2179,13 +2281,14 @@ const EXCLUSION_FALSE_FRIENDS = {
 function exclusionTerms(){
   const ex = (S.profile && S.profile.food && S.profile.food.exclusions) || [];
   const out = [];
-  ex.forEach(x => {
+  ex.concat(impliedExclusions(S.profile)).forEach(x => {
     /* a known allergen always carries the full, current list of other names */
     const known = x.id ? ALLERGENS.find(a => a.id === x.id) : null;
-    const words = [x.label].concat(x.syn || [], known ? known.syn.concat([known.cs, known.en]) : []).map(fold)
+    const group = x.id && DIET_GROUPS[x.id] ? DIET_GROUPS[x.id] : [];
+    const words = (x.type === 'pattern' || x.type === 'condition' || x.type === 'rule' ? [] : [x.label]).concat(x.syn || [], known ? known.syn.concat([known.cs, known.en]) : [], group).map(fold)
       .map(w => w.replace(/[^a-z0-9]+/g,' ').trim()).filter(w => w.length >= 3)
       .map(w => (w.length >= 5 && w.indexOf(' ') < 0) ? w.slice(0, -1) : w);
-    out.push({id: x.id || null, label: exclLabel(x), type: x.type, words});
+    out.push({id: x.id || null, label: (x.type === 'pattern' || x.type === 'condition' || x.type === 'rule') ? x.label : exclLabel(x), type: x.type, words});
   });
   return out;
 }
@@ -2731,8 +2834,17 @@ async function buildContext(opts){
     ' g; fat ' + g.macros.f.low + ' to ' + g.macros.f.high + ' g; carbohydrate ' + g.macros.c.low + ' to ' + g.macros.c.high + ' g; fibre at least 25 g.');
   const shares = slotShares();
   lines.push('MEAL SLOTS share of the day: ' + SLOTS.map(s => s + ' ' + Math.round(shares[s]*100) + '%').join(', '));
-  if ((G.dietStyle||[]).length) lines.push('DIET STYLE: ' + G.dietStyle.map(x => t('ds_'+x)).join(', '));
-  if ((G.aims||[]).length) lines.push('AIMS: ' + G.aims.map(x => t('aim_'+x)).join(', '));
+  const pat = F.pattern || 'everything', po = F.patternOpts || {};
+  lines.push('EATING PATTERN: ' + t('fp_'+pat) + (pat === 'vegetarian' ? (po.noEggs ? ', no eggs' : '') + (po.noMilk ? ', no milk products' : '') : '') +
+    (pat === 'littlemeat' ? ' (keep meat modest, plants first)' : '') + (pat === 'carnivore' ? ' (animal foods only, their choice; still say honestly which nutrients are missing)' : ''));
+  const cond = F.conditions || [];
+  if (cond.length) lines.push('HEALTH CONDITIONS: ' + cond.map(c => t('fc_'+c)).join(', ') +
+    (cond.indexOf('lactose') >= 0 ? '. Lactose intolerance: keep lactose small (up to about 12 g at a time) or use lactose-free products' : '') +
+    (cond.indexOf('kidney') >= 0 ? '. Kidney disease: never push high protein; suggest checking protein with a doctor' : '') + '.');
+  if ((F.rules||[]).length) lines.push('FOOD RULES, hard like allergies: ' + F.rules.map(r => t('fr_'+r)).join(', '));
+  if ((F.prefs||[]).length) lines.push('PREFERENCES (soft): ' + F.prefs.map(p => t('pf_'+p)).join(', '));
+  if ((G.focus||[]).length) lines.push('HEALTH FOCUS: ' + G.focus.map(x => x === 'mediterranean' ? t('ds_mediterranean') : t('aim_'+x)).join(', '));
+  if ((G.hints||[]).length) lines.push('ALSO WOULD LIKE (no numeric target, soft hints only): ' + G.hints.map(x => t('aim_'+x)).join(', '));
   if ((G.focusNutrients||[]).length) lines.push('NUTRIENTS TO FOCUS ON: ' + G.focusNutrients.map(nutLabel).join(', '));
   if (G.notes) lines.push('NOTES FROM THE PERSON (their own words): ' + G.notes);
   lines.push('HARD EXCLUSIONS, never include them, check every ingredient and hidden sources such as sauces and stock: ' + exclusionText());
@@ -5307,8 +5419,9 @@ function blankProfile(){
     id:'profile', type:'profile', schema:2,
     person:{ sex:'', age:null, ageRecordedOn:null, heightCm:null, weightKg:null, activityLevel:2 },
     goals:{ direction:'maintain', macroSplit:{preset:'balanced', proteinPct:25, fatPct:30, carbPct:45},
-      dietStyle:[], aims:[], focusNutrients:[], notes:'', slots: deepCopy(DEFAULT_SLOTS) },
-    food:{ exclusions:[], cuisines:[], cuisineOther:'', dislikes:'' },
+      dietStyle:[], aims:[], focusNutrients:[], notes:'', slots: deepCopy(DEFAULT_SLOTS), focus:[], hints:[] },
+    food:{ exclusions:[], cuisines:[], cuisineOther:'', dislikes:'',
+      pattern:'everything', patternOpts:{noEggs:false, noMilk:false}, conditions:[], rules:[], prefs:[] },
     kitchen:{ timeWeekday:2, timeWeekend:3, equipment:[], budget:'bud3', mealPrep:{cookDaysPerWeek:3, batchServings:3} }
   };
 }
@@ -5369,7 +5482,7 @@ function slotPresetChips(G){
 }
 
 function renderProfile(){
-  const d = S.draft || (S.draft = S.profile ? mergeDefaults(deepCopy(S.profile), blankProfile()) : blankProfile());
+  const d = S.draft || (S.draft = S.profile ? mergeDefaults(migrateDietV3(S.profile), blankProfile()) : blankProfile());
   const P = d.person, G = d.goals, F = d.food, K = d.kitchen;
   const num = (path, id, label, attrs) => '<div class="field"><label for="'+id+'">'+esc(label)+'</label><input id="'+id+'" type="number" '+attrs+' data-bind="'+path+'" value="'+esc(getPath(d, path) == null ? '' : getPath(d, path))+'"></div>';
   let h = '<p class="muted">'+esc(t('p_intro'))+'</p><div class="orn"><i></i></div>';
@@ -5402,15 +5515,23 @@ function renderProfile(){
   h += '<div id="macroPreviewBox">' + previewParts(d).macro + '</div>';
   h += '</div>';
 
-  /* diet goals: new in v0.2 */
-  h += '<div class="card"><h3>'+esc(t('pg_h'))+'</h3><p class="tiny" style="margin-bottom:10px">'+esc(t('pg_intro'))+'</p>' +
-    '<p class="flabel">'+esc(t('pg_style'))+'</p>' + chipSet('pchip-dietStyle', DIET_STYLES, G.dietStyle, v => t('ds_'+v)) +
-    '<p class="flabel" style="margin-top:14px">'+esc(t('pg_aims'))+'</p>' + chipSet('pchip-aims', AIMS, G.aims, v => t('aim_'+v)) +
-    '<p class="flabel" style="margin-top:14px">'+esc(t('pg_focus'))+'</p>' + chipSet('pchip-focusNutrients', FOCUS_CHOICES, G.focusNutrients, nutLabel) +
-    '<div class="field" style="margin-top:14px"><label for="g-notes">'+esc(t('pg_notes'))+'</label><textarea id="g-notes" data-bind="goals.notes" placeholder="'+esc(t('pg_notes_ph'))+'">'+esc(G.notes||'')+'</textarea></div>' +
-    '<p class="flabel">'+esc(t('pg_slots'))+'</p>' + slotPresetChips(G) + '<div class="inline">' +
-      SLOTS.map(s => num('goals.slots.'+s, 'sl-'+s, t('slot_'+s)+' %', 'inputmode="numeric" min="0" max="80"')).join('') + '</div>' +
-    '<p class="tiny">'+esc(t('pg_slots_note'))+'</p>' +
+  /* What you eat card */
+  h += '<div class="card"><h3>' + esc(t('pw_h')) + '</h3><p class="tiny" style="margin-bottom:10px">' + esc(t('pw_intro')) + '</p><div class="opts">' +
+    PATTERNS.map(v => optRow('food.pattern', v, F.pattern === v, t('fp_' + v), t('fp_' + v + '_d'))).join('') + '</div>';
+  if (F.pattern === 'vegetarian'){
+    h += '<div class="opts two" style="margin-top:10px">' +
+      optRow('food.patternOpts.noEggs', '1', !!(F.patternOpts || {}).noEggs, t('fpo_noeggs'), '', true) +
+      optRow('food.patternOpts.noMilk', '1', !!(F.patternOpts || {}).noMilk, t('fpo_nomilk'), '', true) + '</div>';
+  }
+  if (F.pattern === 'carnivore'){
+    h += '<div class="notice warn" style="margin-top:10px">' + esc(t('fp_carnivore_warn')) + '</div>';
+  }
+  h += '</div>';
+
+  /* Meals through the day card */
+  h += '<div class="card"><h3>' + esc(t('pm_h')) + '</h3>' + slotPresetChips(G) + '<div class="inline">' +
+    SLOTS.map(s => num('goals.slots.'+s, 'sl-'+s, t('slot_'+s)+' %', 'inputmode="numeric" min="0" max="80"')).join('') + '</div>' +
+    '<p class="tiny">' + esc(t('pg_slots_note')) + '</p>' +
     '<div id="slotPreviewBox">' + previewParts(d).slots + '</div></div>';
 
   /* exclusions */
@@ -5441,6 +5562,29 @@ function renderProfile(){
     h += '<button class="chip" type="button" aria-pressed="'+(on?'true':'false')+'" data-act="excl-quick" data-id="'+a.id+'">'+esc(L(a))+'</button>';
   });
   h += '</div><div class="field" style="margin-top:14px"><label for="f-dis">'+esc(t('pf_dislikes'))+'</label><input id="f-dis" type="text" data-bind="food.dislikes" value="'+esc(F.dislikes||'')+'" placeholder="'+esc(t('pf_dislikes_ph'))+'"></div></div>';
+
+  /* Health conditions & Food rules card */
+  h += '<div class="card"><h3>' + esc(t('fc_h')) + '</h3>' +
+    chipSet('pchip-conditions', CONDITIONS, F.conditions || [], v => t('fc_' + v));
+  (F.conditions || []).forEach(function(c){
+    h += '<p class="tiny" style="margin-top:8px">' + esc(t('fc_note_' + c)) + '</p>';
+  });
+  h += '<p class="flabel" style="margin-top:14px">' + esc(t('fr_h')) + '</p>' +
+    chipSet('pchip-rules', FOOD_RULES, F.rules || [], v => t('fr_' + v)) +
+    '<p class="tiny" style="margin-top:8px">' + esc(t('fr_note')) + '</p></div>';
+
+  /* Fine-tune section */
+  h += '<details class="card" id="ftBox"' + (S.ftOpen ? ' open' : '') + '><summary><h3 style="display:inline">' + esc(t('ft_summary')) + '</h3></summary>' +
+    '<p class="flabel" style="margin-top:12px">' + esc(t('ft_focus')) + '</p>' +
+    chipSet('pchip-focus', HEALTH_FOCUS, G.focus || [], v => v === 'mediterranean' ? t('ds_mediterranean') : t('aim_' + v)) +
+    '<p class="flabel" style="margin-top:14px">' + esc(t('ft_hints')) + '</p>' +
+    chipSet('pchip-hints', SOFT_HINTS, G.hints || [], v => t('aim_' + v)) +
+    '<p class="flabel" style="margin-top:14px">' + esc(t('ft_prefs')) + '</p>' +
+    chipSet('pchip-prefs', FOOD_PREFS, F.prefs || [], v => t('pf_' + v)) +
+    '<p class="flabel" style="margin-top:14px">' + esc(t('pg_focus')) + '</p>' +
+    chipSet('pchip-focusNutrients', FOCUS_CHOICES, G.focusNutrients, nutLabel) +
+    '<div class="field" style="margin-top:14px"><label for="g-notes">'+esc(t('pg_notes'))+'</label><textarea id="g-notes" data-bind="goals.notes" placeholder="'+esc(t('pg_notes_ph'))+'">'+esc(G.notes||'')+'</textarea></div>' +
+    '</details>';
 
   h += '<div class="card"><h3>'+esc(t('p_cuisines'))+'</h3>' + chipSet('pchip-cuisines', CUISINES.map(c => c.id), F.cuisines, id => L(CUISINES.find(c => c.id === id))) +
     '<div class="field" style="margin-top:12px"><input type="text" data-bind="food.cuisineOther" value="'+esc(F.cuisineOther||'')+'" placeholder="'+esc(t('p_cuisine_free_ph'))+'"></div></div>';
@@ -5999,11 +6143,12 @@ function bindEvents(){
     }
     else if (act.indexOf('pchip-') === 0){
       const field = act.slice(6);
-      const holder = field === 'cuisines' ? S.draft.food : S.draft.goals;
+      const holder = ['cuisines','conditions','rules','prefs'].indexOf(field) >= 0 ? S.draft.food : S.draft.goals;
       const arr = holder[field] || (holder[field] = []);
       const at = arr.indexOf(id);
       if (at >= 0) arr.splice(at, 1); else arr.push(id);
       b.setAttribute('aria-pressed', at >= 0 ? 'false' : 'true');
+      if (field === 'conditions') renderProfile();
     }
 
     /* diary */
@@ -6108,9 +6253,12 @@ function bindEvents(){
     }
     else if (el.name === 'person.activityLevel' || el.name === 'kitchen.timeWeekday' || el.name === 'kitchen.timeWeekend') setPath(S.draft, el.name, Number(v));
     else if (el.name === 'goals.macroSplit.preset'){ setPath(S.draft, el.name, v); renderProfile(); }
+    else if (el.name === 'food.pattern'){ setPath(S.draft, el.name, v); renderProfile(); }
+    else if (el.name.indexOf('food.patternOpts.') === 0){ setPath(S.draft, el.name, el.checked); renderProfile(); }
     else setPath(S.draft, el.name, v);
     updateProfilePreview();
   });
+  prof.addEventListener('toggle', (e) => { if (e.target.id === 'ftBox') S.ftOpen = e.target.open; }, true);
 
   /* settings inputs */
   const set = $('#s-settings');

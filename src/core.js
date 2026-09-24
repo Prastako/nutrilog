@@ -435,6 +435,11 @@ async function loadState(){
   if (!S.meta.installedAt){ S.meta.installedAt = nowIso(); await saveMeta(); }
   await migrateFromSchema1();
   S.profile = await recGet('profile');
+  /* v0.2.6: old diet style and aims chips become eating pattern, focus and hints (idea 8). The old fields stay stored. */
+  if (S.profile && (!S.profile.food || S.profile.food.pattern === undefined)){
+    S.profile = migrateDietV3(S.profile);
+    await recPut(S.profile);
+  }
 }
 
 async function savePrefs(){ S.prefs.lang = S.lang; S.prefs.theme = S.theme; await kvSet('prefs', S.prefs); }
@@ -654,6 +659,7 @@ function flatProfile(rec){
   const ms = G.macroSplit || {};
   return {
     sex: P.sex, age: P.age, height: P.heightCm, weight: P.weightKg,
+    bodyFat: P.bodyFatPct, periods: P.periods,
     activity: P.activityLevel, direction: G.direction || 'maintain',
     split: ms.preset || 'balanced', custom: {p: ms.proteinPct, f: ms.fatPct, c: ms.carbPct}
   };
@@ -661,17 +667,34 @@ function flatProfile(rec){
 
 function computeTargets(rec){
   const p = flatProfile(rec);
-  if (!p || !p.sex || !p.age || !p.height || !p.weight) return null;
+  if (!p || !p.age || !p.weight) return null;
   const w = Number(p.weight), h = Number(p.height), a = Number(p.age);
-  const rmr = 10*w + 6.25*h - 5*a + (p.sex === 'male' ? 5 : -161);
+  const bf = Number(p.bodyFat);
+  let rmr, rmrRel, method;
+  if (bf >= 3 && bf <= 60) {
+    rmr = 22 * (w * (1 - bf/100)) + 500;
+    rmrRel = 0.10;
+    method = 'leanmass';
+  } else if (h > 0) {
+    rmr = 10*w + 6.25*h - 5*a - 78;
+    rmrRel = Math.sqrt(0.10*0.10 + (83/rmr)*(83/rmr));
+    method = 'mifflin';
+  } else {
+    const male = a < 30 ? 15.057*w + 692.2 : a < 60 ? 11.472*w + 873.1 : 11.711*w + 587.7;
+    const female = a < 30 ? 14.818*w + 486.6 : a < 60 ? 8.126*w + 845.6 : 9.082*w + 658.5;
+    rmr = (male + female) / 2;
+    const half = Math.abs(male - female) / 2;
+    rmrRel = Math.sqrt(0.12*0.12 + (half/rmr)*(half/rmr));
+    method = 'weight';
+  }
   const band = ACTIVITY.find(x => x.id === Number(p.activity)) || ACTIVITY[1];
   const tdee = rmr * band.mult;
   const actRel = band.unc / band.mult;
-  const rel = Math.sqrt(RMR_REL_UNC*RMR_REL_UNC + actRel*actRel);
+  const rel = Math.sqrt(rmrRel*rmrRel + actRel*actRel);
   const adj = DIRECTIONS[p.direction] || 1;
   let low  = tdee * (1 - rel) * adj;
   let high = tdee * (1 + rel) * adj;
-  const floorAbs = FLOOR_ABS[p.sex] || 1200;
+  const floorAbs = 1200;
   const floor = Math.max(round10(rmr), floorAbs);
   let floorBinding = false;
   if (low < floor){ low = floor; floorBinding = true; }
@@ -687,7 +710,7 @@ function computeTargets(rec){
   const macros = { p: mac(split.p,4), f: mac(split.f,9), c: mac(split.c,4) };
   return {
     rmr: Math.round(rmr), mult: band.mult, tdee: Math.round(tdee),
-    relPct: Math.round(rel*1000)/10,
+    relPct: Math.round(rel*1000)/10, method,
     low, high, mid: round10((low+high)/2), floor, floorAbs, floorBinding, split, macros,
     proteinPerKg: { low: Math.round(macros.p.low/w*10)/10, high: Math.round(macros.p.high/w*10)/10 }
   };
@@ -734,9 +757,11 @@ function splitPreview(rec){
 function referenceValues(){
   const p = flatProfile(S.profile) || {};
   const g = computeTargets(S.profile);
-  const male = p.sex !== 'female';
   const age = Number(p.age) || 30;
-  const kcal = g ? g.mid : (male ? 2500 : 2000);
+  const w = Number(p.weight) || 63.3;
+  const f = clamp((w - 58.5) / (68.1 - 58.5), 0, 1);
+  const mix = (fem, man, d) => d ? round1(fem + f*(man - fem)) : Math.round(fem + f*(man - fem));
+  const kcal = g ? g.mid : 2250;
   const MJ = kcal * 4.184 / 1000;
   const ref = {
     kcal: {kind:'range', low: g ? g.low : null, high: g ? g.high : null},
@@ -753,24 +778,24 @@ function referenceValues(){
     na:   {kind:'max', v:2000},
     k:    {kind:'min', v:3500},
     ca:   {kind:'min', v: age < 25 ? 1000 : 950},
-    mg:   {kind:'min', v: male ? 350 : 300},
+    mg:   {kind:'min', v: mix(300, 350)},
     p:    {kind:'min', v:550},
-    fe:   {kind:'min', v: (!male && age < 50) ? 16 : 11},
-    zn:   {kind:'min', v: male ? 11.7 : 9.3},
-    cu:   {kind:'min', v: male ? 1.6 : 1.3},
+    fe:   {kind:'min', v: p.periods === 'no' ? 11 : 16},
+    zn:   {kind:'min', v: mix(9.3, 11.7, 1)},
+    cu:   {kind:'min', v: mix(1.3, 1.6, 1)},
     mn:   {kind:'min', v:3},
     se:   {kind:'min', v:70},
     iod:  {kind:'min', v:150},
-    vita: {kind:'min', v: male ? 750 : 650},
+    vita: {kind:'min', v: mix(650, 750)},
     vitd: {kind:'min', v:15},
-    vite: {kind:'min', v: male ? 13 : 11},
+    vite: {kind:'min', v: mix(11, 13, 1)},
     vitk: {kind:'min', v:70},
-    vitc: {kind:'min', v: male ? 110 : 95},
+    vitc: {kind:'min', v: mix(95, 110)},
     b1:   {kind:'min', v: round1(0.1*MJ)},
     b2:   {kind:'min', v:1.6},
     b3:   {kind:'min', v: Math.round(1.6*MJ)},
     b5:   {kind:'min', v:5},
-    b6:   {kind:'min', v: male ? 1.7 : 1.6},
+    b6:   {kind:'min', v: mix(1.6, 1.7, 1)},
     biot: {kind:'min', v:40},
     fol:  {kind:'min', v:330},
     b12:  {kind:'min', v:4},
@@ -841,6 +866,20 @@ const DIET_STYLES = ['omnivore','flexitarian','pescatarian','vegetarian','vegan'
 const AIMS = ['muscle','fatloss','energy','digestion','fibre','lesssugar','lesssalt','veg','protein','heart','sleep','skin'];
 const FOCUS_CHOICES = ['fib','prot','vitd','fe','ca','mg','k','zn','b12','fol','vitc','o3ld','iod','se'];
 
+const PATTERNS = ['everything','littlemeat','pescatarian','vegetarian','vegan','carnivore'];
+const CONDITIONS = ['coeliac','lactose','kidney'];
+const FOOD_RULES = ['halal','kosher','nopork','nobeef','noalcohol'];
+const FOOD_PREFS = ['avoidgluten','lactosefreeproducts'];
+const HEALTH_FOCUS = ['fibre','lesssugar','lesssalt','veg','heart','digestion','mediterranean'];
+const SOFT_HINTS = ['energy','sleep','skin'];
+const DIET_GROUPS = {
+  meat: ['meat','beef','veal','pork','ham','bacon','chicken','turkey','duck','goose','lamb','mutton','venison','rabbit','mince','steak','ribeye','sirloin','brisket','sausage','salami','chorizo','prosciutto','pancetta','pepperoni','mortadella','pastrami','jerky','liver','gelatin','gelatine','lard','suet','bone broth','maso','hovězí','vepřové','kuřecí','kuře','krůtí','kachna','kachní','husa','jehněčí','telecí','zvěřina','králík','slanina','šunka','klobása','párek','párky','játra','želatina','sádlo'],
+  pork: ['pork','ham','bacon','prosciutto','pancetta','salami','chorizo','pepperoni','lard','gelatin','gelatine','vepř','vepřové','šunka','slanina','sádlo','želatina'],
+  beef: ['beef','veal','ribeye','sirloin','brisket','bresaola','hamburger','hovězí','telecí'],
+  alcohol: ['wine','beer','rum','vodka','gin','brandy','cognac','whisky','whiskey','liqueur','sake','mirin','sherry','vermouth','prosecco','champagne','cider','víno','pivo','slivovice','becherovka'],
+  honey: ['honey','honeycomb']
+};
+
 /* Phrases that contain an allergen word but are not that allergen.
    Removed from the text before matching, so they do not raise false alarms. */
 const EXCLUSION_FALSE_FRIENDS = {
@@ -854,12 +893,71 @@ const EXCLUSION_FALSE_FRIENDS = {
            'breadfruit','pitanga','winter spaghetti','spaghetti squash','potato flour','acorn flour','cottonseed flour','sesame flour','sunflower seed flour','carob flour','peanut flour','soy flour','arrowroot flour','millet flour','sorghum flour','tapioca flour','flounder','root beer','breadnut','chlebovnik','kukuricna krupice',
            'bramborova mouk','bramborove mouk','zaludova mouk','bavlnikova mouk','sezamova mouk','slunecnicova mouk','karobova mouk','arasidova mouk','sojova mouk',
            'marantova mouk','pohankova mouk','jahlova mouk','cirokova mouk','cirokove mouk','ryzove mouk'],
-  molluscs: ['oyster mushroom','scalloped','summer scallop','scallop squash'],
-  crustaceans: ['crabapple'],
+  molluscs: ['oyster mushroom','mushrooms oyster','vegetable oyster','scalloped','summer scallop','scallop squash'],
+  crustaceans: ['crabapple','krabic'],
   celery: ['cele ','celeho ','celemu ','cely ','cela ','celych ','celou ','celem ','celym '],
   lupin: ['lupink'],
-  soy: ['tamarind','non soy']
+  soy: ['tamarind','non soy'],
+  meat: ['coconut meat','meatless','meat substitute','meat free','plant based meat','vegan meat','vegetarian meat','gooseberr','lamb s lettuce','lambs lettuce','tofu steak','cauliflower steak','mushroom steak','celeriac steak','cabbage steak','vegan sausage','vegetarian sausage','meatless sausage','coconut bacon','tempeh bacon','vegan bacon','vegan mince','soy mince','plant based mince','cod liver','pepperoncin','sojove maso','kruton','steam','steak cut','steak fries','steakov','steak sauce','lambsquarter','grated meat','meat extender','bezmas','bacon meatless','bacon bits meatless','sausage meatless','frankfurter meatless','chicken meatless','egg duck','egg turkey','duck egg','turkey egg','vejce kachni','vejce kruti','sauce duck','duck sauce','kachni svestkova','meatballs meatless','parek bezmas','klobasa bezmas','masove kulicky bezmas','masovy nastavovac'],
+  pork: ['hamburger','pepperoncin','coconut bacon','tempeh bacon','vegan bacon','bacon meatless','bacon bits meatless','bezmas'],
+  alcohol: ['ginger','ginkgo','cider vinegar','wine vinegar','sherry vinegar','vinegar cider','vinegar red wine','vinegar white wine','rump'],
+  honey: ['honeydew']
 };
+
+function impliedExclusions(rec){
+  const F = (rec && rec.food) || {};
+  const out = [];
+  const push = (ids, label, type) => ids.forEach(id => out.push({id, label, type, syn: []}));
+  const P = F.pattern, o = F.patternOpts || {};
+  if (P === 'pescatarian') push(['meat'], t('fp_'+P), 'pattern');
+  if (P === 'vegetarian') push(['meat','fish','crustaceans','molluscs'].concat(o.noEggs?['egg']:[], o.noMilk?['milk']:[]), t('fp_'+P), 'pattern');
+  if (P === 'vegan') push(['meat','fish','crustaceans','molluscs','egg','milk','honey'], t('fp_'+P), 'pattern');
+  if ((F.conditions||[]).indexOf('coeliac') >= 0) push(['gluten'], t('fc_coeliac'), 'condition');
+  const R = {halal:['pork','alcohol'], kosher:['pork','crustaceans','molluscs'], nopork:['pork'], nobeef:['beef'], noalcohol:['alcohol']};
+  (F.rules||[]).forEach(r => { if (R[r]) push(R[r], t('fr_'+r), 'rule'); });
+  return out;
+}
+
+/* Convert old diet-style chips (rec.goals.dietStyle, rec.goals.aims)
+   to the new profile fields (rec.food.pattern, etc.).
+   Returns a deep copy; original is untouched. */
+function migrateDietV3(rec){
+  const r = deepCopy(rec);
+  if (r.food && r.food.pattern !== undefined) return r;
+  if (!r.food) r.food = {};
+  if (!r.goals) r.goals = {};
+  const ds = r.goals.dietStyle || [];
+  const aims = r.goals.aims || [];
+
+  // pattern
+  if (ds.includes('vegan')) r.food.pattern = 'vegan';
+  else if (ds.includes('vegetarian')) r.food.pattern = 'vegetarian';
+  else if (ds.includes('pescatarian')) r.food.pattern = 'pescatarian';
+  else if (ds.includes('flexitarian')) r.food.pattern = 'littlemeat';
+  else r.food.pattern = 'everything';
+
+  // patternOpts, conditions, rules
+  r.food.patternOpts = { noEggs: false, noMilk: false };
+  r.food.conditions = [];
+  r.food.rules = [];
+
+  // prefs
+  r.food.prefs = [];
+  if (ds.includes('glutenfree') && !(r.food.exclusions||[]).some(e => e.id === 'gluten'))
+    r.food.prefs.push('avoidgluten');
+  if (ds.includes('lactosefree')) r.food.prefs.push('lactosefreeproducts');
+
+  // goals.focus: aims that are in HEALTH_FOCUS (aims order), then mediterranean from ds
+  r.goals.focus = aims.filter(a => HEALTH_FOCUS.includes(a));
+  if (ds.includes('mediterranean') && !r.goals.focus.includes('mediterranean'))
+    r.goals.focus.push('mediterranean');
+
+  // goals.hints: aims that are in SOFT_HINTS
+  r.goals.hints = aims.filter(a => SOFT_HINTS.includes(a));
+
+  return r;
+}
+
 
 /* All exclusion words for the hard filter, folded for matching.
    Longer words are cut by one letter so Czech endings still match
@@ -867,13 +965,14 @@ const EXCLUSION_FALSE_FRIENDS = {
 function exclusionTerms(){
   const ex = (S.profile && S.profile.food && S.profile.food.exclusions) || [];
   const out = [];
-  ex.forEach(x => {
+  ex.concat(impliedExclusions(S.profile)).forEach(x => {
     /* a known allergen always carries the full, current list of other names */
     const known = x.id ? ALLERGENS.find(a => a.id === x.id) : null;
-    const words = [x.label].concat(x.syn || [], known ? known.syn.concat([known.cs, known.en]) : []).map(fold)
+    const group = x.id && DIET_GROUPS[x.id] ? DIET_GROUPS[x.id] : [];
+    const words = (x.type === 'pattern' || x.type === 'condition' || x.type === 'rule' ? [] : [x.label]).concat(x.syn || [], known ? known.syn.concat([known.cs, known.en]) : [], group).map(fold)
       .map(w => w.replace(/[^a-z0-9]+/g,' ').trim()).filter(w => w.length >= 3)
       .map(w => (w.length >= 5 && w.indexOf(' ') < 0) ? w.slice(0, -1) : w);
-    out.push({id: x.id || null, label: exclLabel(x), type: x.type, words});
+    out.push({id: x.id || null, label: (x.type === 'pattern' || x.type === 'condition' || x.type === 'rule') ? x.label : exclLabel(x), type: x.type, words});
   });
   return out;
 }

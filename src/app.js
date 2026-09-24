@@ -181,11 +181,12 @@ function bindEvents(){
     }
     else if (act.indexOf('pchip-') === 0){
       const field = act.slice(6);
-      const holder = field === 'cuisines' ? S.draft.food : S.draft.goals;
+      const holder = ['cuisines','conditions','rules','prefs'].indexOf(field) >= 0 ? S.draft.food : S.draft.goals;
       const arr = holder[field] || (holder[field] = []);
       const at = arr.indexOf(id);
       if (at >= 0) arr.splice(at, 1); else arr.push(id);
       b.setAttribute('aria-pressed', at >= 0 ? 'false' : 'true');
+      if (field === 'conditions') renderProfile();
     }
 
     /* diary */
@@ -290,9 +291,12 @@ function bindEvents(){
     }
     else if (el.name === 'person.activityLevel' || el.name === 'kitchen.timeWeekday' || el.name === 'kitchen.timeWeekend') setPath(S.draft, el.name, Number(v));
     else if (el.name === 'goals.macroSplit.preset'){ setPath(S.draft, el.name, v); renderProfile(); }
+    else if (el.name === 'food.pattern'){ setPath(S.draft, el.name, v); renderProfile(); }
+    else if (el.name.indexOf('food.patternOpts.') === 0){ setPath(S.draft, el.name, el.checked); renderProfile(); }
     else setPath(S.draft, el.name, v);
     updateProfilePreview();
   });
+  prof.addEventListener('toggle', (e) => { if (e.target.id === 'ftBox') S.ftOpen = e.target.open; }, true);
 
   /* settings inputs */
   const set = $('#s-settings');
