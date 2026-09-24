@@ -10,8 +10,9 @@ function blankProfile(){
     id:'profile', type:'profile', schema:2,
     person:{ sex:'', age:null, ageRecordedOn:null, heightCm:null, weightKg:null, activityLevel:2 },
     goals:{ direction:'maintain', macroSplit:{preset:'balanced', proteinPct:25, fatPct:30, carbPct:45},
-      dietStyle:[], aims:[], focusNutrients:[], notes:'', slots: deepCopy(DEFAULT_SLOTS) },
-    food:{ exclusions:[], cuisines:[], cuisineOther:'', dislikes:'' },
+      dietStyle:[], aims:[], focusNutrients:[], notes:'', slots: deepCopy(DEFAULT_SLOTS), focus:[], hints:[] },
+    food:{ exclusions:[], cuisines:[], cuisineOther:'', dislikes:'',
+      pattern:'everything', patternOpts:{noEggs:false, noMilk:false}, conditions:[], rules:[], prefs:[] },
     kitchen:{ timeWeekday:2, timeWeekend:3, equipment:[], budget:'bud3', mealPrep:{cookDaysPerWeek:3, batchServings:3} }
   };
 }
@@ -72,7 +73,7 @@ function slotPresetChips(G){
 }
 
 function renderProfile(){
-  const d = S.draft || (S.draft = S.profile ? mergeDefaults(deepCopy(S.profile), blankProfile()) : blankProfile());
+  const d = S.draft || (S.draft = S.profile ? mergeDefaults(migrateDietV3(S.profile), blankProfile()) : blankProfile());
   const P = d.person, G = d.goals, F = d.food, K = d.kitchen;
   const num = (path, id, label, attrs) => '<div class="field"><label for="'+id+'">'+esc(label)+'</label><input id="'+id+'" type="number" '+attrs+' data-bind="'+path+'" value="'+esc(getPath(d, path) == null ? '' : getPath(d, path))+'"></div>';
   let h = '<p class="muted">'+esc(t('p_intro'))+'</p><div class="orn"><i></i></div>';
@@ -105,15 +106,23 @@ function renderProfile(){
   h += '<div id="macroPreviewBox">' + previewParts(d).macro + '</div>';
   h += '</div>';
 
-  /* diet goals: new in v0.2 */
-  h += '<div class="card"><h3>'+esc(t('pg_h'))+'</h3><p class="tiny" style="margin-bottom:10px">'+esc(t('pg_intro'))+'</p>' +
-    '<p class="flabel">'+esc(t('pg_style'))+'</p>' + chipSet('pchip-dietStyle', DIET_STYLES, G.dietStyle, v => t('ds_'+v)) +
-    '<p class="flabel" style="margin-top:14px">'+esc(t('pg_aims'))+'</p>' + chipSet('pchip-aims', AIMS, G.aims, v => t('aim_'+v)) +
-    '<p class="flabel" style="margin-top:14px">'+esc(t('pg_focus'))+'</p>' + chipSet('pchip-focusNutrients', FOCUS_CHOICES, G.focusNutrients, nutLabel) +
-    '<div class="field" style="margin-top:14px"><label for="g-notes">'+esc(t('pg_notes'))+'</label><textarea id="g-notes" data-bind="goals.notes" placeholder="'+esc(t('pg_notes_ph'))+'">'+esc(G.notes||'')+'</textarea></div>' +
-    '<p class="flabel">'+esc(t('pg_slots'))+'</p>' + slotPresetChips(G) + '<div class="inline">' +
-      SLOTS.map(s => num('goals.slots.'+s, 'sl-'+s, t('slot_'+s)+' %', 'inputmode="numeric" min="0" max="80"')).join('') + '</div>' +
-    '<p class="tiny">'+esc(t('pg_slots_note'))+'</p>' +
+  /* What you eat card */
+  h += '<div class="card"><h3>' + esc(t('pw_h')) + '</h3><p class="tiny" style="margin-bottom:10px">' + esc(t('pw_intro')) + '</p><div class="opts">' +
+    PATTERNS.map(v => optRow('food.pattern', v, F.pattern === v, t('fp_' + v), t('fp_' + v + '_d'))).join('') + '</div>';
+  if (F.pattern === 'vegetarian'){
+    h += '<div class="opts two" style="margin-top:10px">' +
+      optRow('food.patternOpts.noEggs', '1', !!(F.patternOpts || {}).noEggs, t('fpo_noeggs'), '', true) +
+      optRow('food.patternOpts.noMilk', '1', !!(F.patternOpts || {}).noMilk, t('fpo_nomilk'), '', true) + '</div>';
+  }
+  if (F.pattern === 'carnivore'){
+    h += '<div class="notice warn" style="margin-top:10px">' + esc(t('fp_carnivore_warn')) + '</div>';
+  }
+  h += '</div>';
+
+  /* Meals through the day card */
+  h += '<div class="card"><h3>' + esc(t('pm_h')) + '</h3>' + slotPresetChips(G) + '<div class="inline">' +
+    SLOTS.map(s => num('goals.slots.'+s, 'sl-'+s, t('slot_'+s)+' %', 'inputmode="numeric" min="0" max="80"')).join('') + '</div>' +
+    '<p class="tiny">' + esc(t('pg_slots_note')) + '</p>' +
     '<div id="slotPreviewBox">' + previewParts(d).slots + '</div></div>';
 
   /* exclusions */
@@ -144,6 +153,29 @@ function renderProfile(){
     h += '<button class="chip" type="button" aria-pressed="'+(on?'true':'false')+'" data-act="excl-quick" data-id="'+a.id+'">'+esc(L(a))+'</button>';
   });
   h += '</div><div class="field" style="margin-top:14px"><label for="f-dis">'+esc(t('pf_dislikes'))+'</label><input id="f-dis" type="text" data-bind="food.dislikes" value="'+esc(F.dislikes||'')+'" placeholder="'+esc(t('pf_dislikes_ph'))+'"></div></div>';
+
+  /* Health conditions & Food rules card */
+  h += '<div class="card"><h3>' + esc(t('fc_h')) + '</h3>' +
+    chipSet('pchip-conditions', CONDITIONS, F.conditions || [], v => t('fc_' + v));
+  (F.conditions || []).forEach(function(c){
+    h += '<p class="tiny" style="margin-top:8px">' + esc(t('fc_note_' + c)) + '</p>';
+  });
+  h += '<p class="flabel" style="margin-top:14px">' + esc(t('fr_h')) + '</p>' +
+    chipSet('pchip-rules', FOOD_RULES, F.rules || [], v => t('fr_' + v)) +
+    '<p class="tiny" style="margin-top:8px">' + esc(t('fr_note')) + '</p></div>';
+
+  /* Fine-tune section */
+  h += '<details class="card" id="ftBox"' + (S.ftOpen ? ' open' : '') + '><summary><h3 style="display:inline">' + esc(t('ft_summary')) + '</h3></summary>' +
+    '<p class="flabel" style="margin-top:12px">' + esc(t('ft_focus')) + '</p>' +
+    chipSet('pchip-focus', HEALTH_FOCUS, G.focus || [], v => v === 'mediterranean' ? t('ds_mediterranean') : t('aim_' + v)) +
+    '<p class="flabel" style="margin-top:14px">' + esc(t('ft_hints')) + '</p>' +
+    chipSet('pchip-hints', SOFT_HINTS, G.hints || [], v => t('aim_' + v)) +
+    '<p class="flabel" style="margin-top:14px">' + esc(t('ft_prefs')) + '</p>' +
+    chipSet('pchip-prefs', FOOD_PREFS, F.prefs || [], v => t('pf_' + v)) +
+    '<p class="flabel" style="margin-top:14px">' + esc(t('pg_focus')) + '</p>' +
+    chipSet('pchip-focusNutrients', FOCUS_CHOICES, G.focusNutrients, nutLabel) +
+    '<div class="field" style="margin-top:14px"><label for="g-notes">'+esc(t('pg_notes'))+'</label><textarea id="g-notes" data-bind="goals.notes" placeholder="'+esc(t('pg_notes_ph'))+'">'+esc(G.notes||'')+'</textarea></div>' +
+    '</details>';
 
   h += '<div class="card"><h3>'+esc(t('p_cuisines'))+'</h3>' + chipSet('pchip-cuisines', CUISINES.map(c => c.id), F.cuisines, id => L(CUISINES.find(c => c.id === id))) +
     '<div class="field" style="margin-top:12px"><input type="text" data-bind="food.cuisineOther" value="'+esc(F.cuisineOther||'')+'" placeholder="'+esc(t('p_cuisine_free_ph'))+'"></div></div>';
