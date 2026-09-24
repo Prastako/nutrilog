@@ -7,7 +7,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F2EADC" id="metaThemeColor">
 <script>
-const VERSION = '0.2.3';
+const VERSION = '0.2.4';
 const SCHEMA = 2;
 </script>
 <meta name="mobile-web-app-capable" content="yes">
@@ -499,7 +499,7 @@ input[type=search],input[type=date]{width:100%;min-height:var(--tap);padding:11p
 
 <script>
 /* ============================================================
-   NutriLog 0.2.3. Built from src/ by tools/build.py.
+   NutriLog 0.2.4. Built from src/ by tools/build.py.
    Edit the files in src/, then run the build; do not edit this
    generated block by hand.
    ============================================================ */
@@ -1046,10 +1046,12 @@ Object.assign(STR.cs, {
 
   sp_today:'Doplňky dnes', sp_manage:'Spravovat', sp_none:'Zatím žádné doplňky.', sp_none_long:'Zatím tu nejsou žádné doplňky. Přidejte vlastní nebo začněte předvolbou a upravte hodnoty podle etikety.',
   sp_presets:'Rychlé předvolby', sp_presets_note:'Předvolby jsou běžné dávky. Vždy je porovnejte s etiketou svého výrobku.',
+  sp_ul_over:'Doplňky na tento den dávají dohromady {a} {u} (živina: {n}). Bezpečný horní limit EU z doplňků je {ul} {u} denně.',
   sp_new:'Nový doplněk', sp_edit:'Upravit doplněk', sp_name:'Název', sp_form:'Forma', sp_units:'Kusů na dávku', sp_unit_label:'Jednotka (nepovinné)', sp_unit_label_ph:'např. kapsle, odměrka 5 g',
   sp_per_unit:'Obsah jednoho kusu', sp_add_nut:'Živina', sp_iu:'Vitamin D v IU', sp_iu_q:'Kolik IU vitaminu D obsahuje jeden kus?',
   sp_extra:'Další látky (nepočítají se do živin)', sp_extra_ph:'např. Kreatin 5 g; Kurkumin 500 mg',
-  sp_days:'Dny', sp_time:'Kdy', sp_active:'Aktivní', sp_paused:'pozastaveno', sp_taken:'Zapsáno jako užité.', sp_untaken:'Zrušeno.',
+  sp_days:'Dny', sp_rep_days:'Vybrané dny', sp_rep_alt:'Obden', sp_rep_start:'První den',
+  sp_time:'Kdy', sp_active:'Aktivní', sp_paused:'pozastaveno', sp_taken:'Zapsáno jako užité.', sp_untaken:'Zrušeno.',
   sp_form_capsule:'kapsle', sp_form_tablet:'tableta', sp_form_softgel:'gelová kapsle', sp_form_powder:'prášek', sp_form_drops:'kapky', sp_form_liquid:'tekutina',
   sp_time_morning:'ráno', sp_time_noon:'v poledne', sp_time_evening:'večer', sp_time_any:'kdykoli',
 
@@ -1141,6 +1143,8 @@ Object.assign(STR.cs, {
   arch_synced:'Archiv načten, receptů: {n}.', arch_bad_file:'Tento soubor nevypadá jako archiv receptů.',
   b_format_note:'Formát zálohy je popsaný v souboru docs/DATA_FORMAT.md v repozitáři aplikace, aby ji mohly číst i další aplikace.',
   about_fooddb:'Databáze potravin',
+  off_credit:'Údaje o výrobcích z Open Food Facts ({link}), licence ODbL.',
+  about_products:'Údaje o výrobcích',
   dg_fooddb:'Databáze potravin', dg_fooddb_ok:'načtena, {n} potravin', dg_fooddb_no:'zatím nenačtena',
   ai_nokey_h:'Chybí klíč k Claudovi', ai_nokey_p:'Tahle funkce potřebuje klíč k API Anthropic. Vložte ho v Nastavení, v části Klíče k API.',
   ai_budget_h:'Měsíční rozpočet je vyčerpaný', ai_budget_p:'Tento měsíc je utraceno asi {spent} USD z rozpočtu {lim} USD. Pokračovat i tak?', ai_budget_go:'Pokračovat',
@@ -1176,10 +1180,12 @@ Object.assign(STR.en, {
 
   sp_today:'Supplements today', sp_manage:'Manage', sp_none:'No supplements yet.', sp_none_long:'No supplements yet. Add your own or start from a preset and adjust the values to your label.',
   sp_presets:'Quick presets', sp_presets_note:'Presets are common doses. Always check them against your product label.',
+  sp_ul_over:'Your supplements for this day add up to {a} {u} of {n}. The EU safe upper level from supplements is {ul} {u} a day.',
   sp_new:'New supplement', sp_edit:'Edit supplement', sp_name:'Name', sp_form:'Form', sp_units:'Units per dose', sp_unit_label:'Unit (optional)', sp_unit_label_ph:'e.g. capsule, 5 g scoop',
   sp_per_unit:'Contents of one unit', sp_add_nut:'Nutrient', sp_iu:'Vitamin D in IU', sp_iu_q:'How many IU of vitamin D in one unit?',
   sp_extra:'Other substances (not counted as nutrients)', sp_extra_ph:'e.g. Creatine 5 g; Curcumin 500 mg',
-  sp_days:'Days', sp_time:'When', sp_active:'Active', sp_paused:'paused', sp_taken:'Logged as taken.', sp_untaken:'Removed.',
+  sp_days:'Days', sp_rep_days:'Chosen days', sp_rep_alt:'Every other day', sp_rep_start:'First day',
+  sp_time:'When', sp_active:'Active', sp_paused:'paused', sp_taken:'Logged as taken.', sp_untaken:'Removed.',
   sp_form_capsule:'capsule', sp_form_tablet:'tablet', sp_form_softgel:'softgel', sp_form_powder:'powder', sp_form_drops:'drops', sp_form_liquid:'liquid',
   sp_time_morning:'morning', sp_time_noon:'midday', sp_time_evening:'evening', sp_time_any:'any time',
 
@@ -1271,6 +1277,8 @@ Object.assign(STR.en, {
   arch_synced:'Archive loaded: {n} recipes.', arch_bad_file:'This file does not look like a recipe archive.',
   b_format_note:'The backup format is described in docs/DATA_FORMAT.md in the app repository, so other apps can read it too.',
   about_fooddb:'Food database',
+  off_credit:'Product data from Open Food Facts ({link}), ODbL licence.',
+  about_products:'Product data',
   dg_fooddb:'Food database', dg_fooddb_ok:'loaded, {n} foods', dg_fooddb_no:'not loaded yet',
   ai_nokey_h:'Claude key missing', ai_nokey_p:'This needs an Anthropic API key. Paste it in Settings, under API keys.',
   ai_budget_h:'Monthly budget used up', ai_budget_p:'About {spent} USD of the {lim} USD budget is spent this month. Continue anyway?', ai_budget_go:'Continue',
@@ -1379,6 +1387,18 @@ function dateFromKey(key){
 function addDays(key, n){
   const d = dateFromKey(key); d.setDate(d.getDate()+n); return localDateKey(d);
 }
+/* Returns true when the number of calendar days from startKey to dateKey
+   is a multiple of every (including zero), so dateKey falls on a scheduled
+   day of the cycle.  Works for dates before startKey too.  Falls back to
+   true when startKey is missing or every is not a number >= 2. */
+function cycleDue(startKey, dateKey, every){
+  if (!startKey || typeof every !== 'number' || every < 2) return true;
+  const s = dateFromKey(startKey).getTime();
+  const d = dateFromKey(dateKey).getTime();
+  const dayMs = 24 * 60 * 60 * 1000;
+  const diff = Math.round((d - s) / dayMs);
+  return Math.abs(diff % every) === 0;
+}
 function localTime(d){
   const x = d || new Date();
   const p = n => String(n).padStart(2,'0');
@@ -1393,6 +1413,17 @@ function nowIso(d){
   const sign = off >= 0 ? '+' : '-';
   return localDateKey(x)+'T'+p(x.getHours())+':'+p(x.getMinutes())+':'+p(x.getSeconds())+
     sign+p(off/60)+':'+p(off%60);
+}
+/* Parse an ISO 8601 timestamp to milliseconds since epoch.
+   Returns 0 for null, undefined, empty, or unparseable input. */
+function isoMs(s){
+  if (!s || typeof s !== 'string') return 0;
+  const ms = Date.parse(s);
+  return Number.isFinite(ms) ? ms : 0;
+}
+/* Sort comparator for ISO 8601 timestamps (oldest first). */
+function cmpIso(a, b){
+  return isoMs(a) - isoMs(b);
 }
 
 /* UTF-8 safe base64. btoa alone throws on Czech diacritics. */
@@ -1808,6 +1839,24 @@ NUTRIENTS.forEach(n => { NUT[n.k] = n; });
 const NUT_KEYS = NUTRIENTS.map(n => n.k);
 /* EPA and DHA are also shown together, as the long chain omega 3. */
 const NUT_DERIVED = { o3ld: {cs:'Omega 3, EPA a DHA', en:'Omega 3, EPA and DHA', unit:'mg', from:['epa','dha'], scale:1000, grp:'fat'} };
+
+/* EU (EFSA) upper levels used to warn about supplements, in the units of
+   NUTRIENTS. Only supplements are counted, so the warning is a lower bound:
+   for most nutrients the limit covers food plus supplements; for magnesium
+   it covers supplements only. Iron has a safe level (40 mg), not an upper
+   level. Source: EFSA overview of upper levels, version 11, August 2025. */
+const SUPP_UL = {vitd:100, vita:3000, vite:300, b6:12, mg:250, zn:25, se:255, iod:600, ca:2500, fe:40};
+
+/* [{k, amount, ul}] for every SUPP_UL nutrient above its level, in SUPP_UL order. */
+function suppUlOver(nutrients){
+  if (!nutrients) return [];
+  const out = [];
+  for (const k of Object.keys(SUPP_UL)){
+    const v = nutrients[k];
+    if (typeof v === 'number' && isFinite(v) && v > SUPP_UL[k]) out.push({k, amount: v, ul: SUPP_UL[k]});
+  }
+  return out;
+}
 
 function nutLabel(k){ return NUT[k] ? L(NUT[k]) : (NUT_DERIVED[k] ? L(NUT_DERIVED[k]) : k); }
 function nutUnit(k){ return NUT[k] ? NUT[k].unit : (NUT_DERIVED[k] ? NUT_DERIVED[k].unit : ''); }
@@ -2270,7 +2319,7 @@ async function recentFoods(days, limit){
     const ref = e.source && e.source.ref;
     if (!ref || !(ref.startsWith('usda:') || ref.startsWith('food:'))) return;
     count[ref] = (count[ref] || 0) + 1;
-    if (!last[ref] || e.updatedAt > last[ref].updatedAt) last[ref] = e;
+    if (!last[ref] || cmpIso(e.updatedAt, last[ref].updatedAt) > 0) last[ref] = e;
   });
   const refs = Object.keys(count).sort((a,b) => count[b] - count[a]).slice(0, limit || 12);
   const out = [];
@@ -3787,7 +3836,7 @@ async function addSearchUI(body){
       try {
         const offs = await offSearch(q);
         offs.forEach((f,i) => FOOD_ROWS['o'+i] = {food:f});
-        box.innerHTML = offs.length ? '<p class="eyebrow">Open Food Facts</p>' + offs.map((f,i) => foodRow(f, 'o'+i)).join('') : '<p class="tiny">'+esc(t('fs_none'))+'</p>';
+        box.innerHTML = offs.length ? '<p class="eyebrow">Open Food Facts</p>' + offs.map((f,i) => foodRow(f, 'o'+i)).join('') + offCreditHtml() : '<p class="tiny">'+esc(t('fs_none'))+'</p>';
       } catch(err){ box.innerHTML = '<div class="notice bad">'+esc(String(err.message||err))+'</div>'; }
     });
     $('#estBtn').addEventListener('click', () => { $$('#addModes button').forEach(x => x.classList.toggle('on', x.getAttribute('data-mode')==='describe')); addMode('describe'); const ta = $('#dq'); if (ta) ta.value = q; });
@@ -3805,6 +3854,12 @@ async function addSearchUI(body){
 }
 let FOOD_ROWS = {};
 
+function offCreditHtml(){
+  const link = '<a href="https://world.openfoodfacts.org" target="_blank" rel="noopener">openfoodfacts.org</a>';
+  const parts = t('off_credit').split('{link}');
+  return '<p class="tiny offcredit">' + parts.map(esc).join(link) + '</p>';
+}
+
 function foodRow(f, key, grams){
   const k = f.per100 && f.per100.kcal;
   const src = f.kind === 'custom' ? t('fs_mine') : f.kind === 'off' ? 'OFF' : 'USDA';
@@ -3821,7 +3876,8 @@ function amountStep(food, grams){
   const ex = exclusionHits(food.en + ' ' + (food.cs||'') + ' ' + (food.ingredients||''));
   let h = '<div class="card flat" style="margin-top:12px"><h3>'+esc(foodName(food))+'</h3>' +
     '<p class="tiny">'+esc(t('am_per100'))+': '+esc(fmtNum(food.per100.kcal))+' kcal · '+esc(macroLine(food.per100))+'</p>' +
-    (food.nutriscore ? '<p class="tiny">Nutri-Score '+esc(food.nutriscore.toUpperCase())+(food.nova ? ' · NOVA '+esc(food.nova) : '')+'</p>' : '') + '</div>';
+    (food.nutriscore ? '<p class="tiny">Nutri-Score '+esc(food.nutriscore.toUpperCase())+(food.nova ? ' · NOVA '+esc(food.nova) : '')+'</p>' : '') +
+    (food.kind === 'off' ? offCreditHtml() : '') + '</div>';
   if (ex.length) h += '<div class="notice bad"><b>'+esc(t('rc_excl_h'))+'</b> '+esc(ex.map(x=>x.label).join(', '))+'</div>';
   h += '<div class="chips" style="margin:10px 0">' +
     ['100 g'].concat(portions.map(p => p.label)).map((lab, i) =>
@@ -4044,7 +4100,8 @@ const SUPP_PRESETS = [
   {key:'d1000', name:{cs:'Vitamin D3 1000 IU', en:'Vitamin D3 1000 IU'}, form:'capsule', per:{vitd:25}},
   {key:'d2000', name:{cs:'Vitamin D3 2000 IU', en:'Vitamin D3 2000 IU'}, form:'capsule', per:{vitd:50}},
   {key:'o3', name:{cs:'Omega 3 (rybí olej)', en:'Omega 3 (fish oil)'}, form:'capsule', per:{epa:0.18, dha:0.12}},
-  {key:'mg', name:{cs:'Hořčík 300 mg', en:'Magnesium 300 mg'}, form:'tablet', per:{mg:300}},
+  {key:'mg', name:{cs:'Hořčík 250 mg', en:'Magnesium 250 mg'}, form:'tablet', per:{mg:250}},
+  {key:'mg300', name:{cs:'Hořčík 300 mg', en:'Magnesium 300 mg'}, form:'tablet', per:{mg:300}, hidden:true},
   {key:'b12', name:{cs:'Vitamin B12 1000 µg', en:'Vitamin B12 1000 µg'}, form:'tablet', per:{b12:1000}},
   {key:'zn', name:{cs:'Zinek 15 mg', en:'Zinc 15 mg'}, form:'tablet', per:{zn:15}},
   {key:'c', name:{cs:'Vitamin C 500 mg', en:'Vitamin C 500 mg'}, form:'tablet', per:{vitc:500}},
@@ -4066,8 +4123,13 @@ function suppUnitLabel(s){
 const SUPP_NUT_CHOICES = ['vitd','epa','dha','mg','b12','zn','vitc','fe','iod','ca','k','se','vita','vite','vitk','b1','b2','b3','b5','b6','biot','fol','cu','mn','kcal','prot','fat','carb','fib'];
 
 function suppScheduledOn(s, dateKey){
-  const days = (s.schedule && s.schedule.days) || [0,1,2,3,4,5,6];
-  return s.active !== false && days.indexOf(dateFromKey(dateKey).getDay()) >= 0;
+  if (s.active === false) return false;
+  const sch = s.schedule;
+  if (sch && typeof sch.every === 'number' && sch.every >= 2){
+    return cycleDue(sch.start, dateKey, sch.every);
+  }
+  const days = (sch && sch.days) || [0,1,2,3,4,5,6];
+  return days.indexOf(dateFromKey(dateKey).getDay()) >= 0;
 }
 
 async function renderSuppChecklist(el, dateKey, showManage){
@@ -4075,8 +4137,20 @@ async function renderSuppChecklist(el, dateKey, showManage){
   const supps = (await recByType('supplement')).filter(s => s.active !== false);
   const intakes = await recByTypeDate('supplement_intake', dateKey, dateKey);
   if (!supps.length && !showManage){ el.innerHTML = ''; return; }
+
+  /* Upper level check: the day's planned doses plus intakes of supplements
+     not planned for that day. */
+  const dayTotals = {};
+  const addN = (n, f) => { for (const k in (n || {})){ const v = Number(n[k]) * f; if (isFinite(v)) dayTotals[k] = (dayTotals[k] || 0) + v; } };
+  supps.forEach(s => {
+    if (suppScheduledOn(s, dateKey)) addN(s.perUnit, Number(s.defaultUnits) || 1);
+    else intakes.filter(i => i.supplementId === s.id).forEach(i => addN(i.nutrients, 1));
+  });
+  const ulOver = suppUlOver(dayTotals);
+
   let h = '<div class="card"><div class="sheethead" style="align-items:center;margin-bottom:6px"><h3 style="flex:1">'+esc(t('sp_today'))+'</h3>' +
     '<button class="linkbtn" type="button" data-act="supp-manage">'+esc(t('sp_manage'))+'</button></div>';
+
   if (!supps.length) h += '<p class="tiny">'+esc(t('sp_none'))+'</p>';
   supps.forEach(s => {
     const taken = intakes.filter(i => i.supplementId === s.id);
@@ -4085,6 +4159,9 @@ async function renderSuppChecklist(el, dateKey, showManage){
     h += '<label class="ing supp"><input type="checkbox" data-supp="'+esc(s.id)+'" data-date="'+esc(dateKey)+'" '+(taken.length ? 'checked' : '')+'>' +
       '<span class="it">'+esc(suppName(s))+' <span class="tiny">'+esc(fmtQty(s.defaultUnits||1))+' × '+esc(suppUnitLabel(s) || t('sp_form_'+(s.form||'capsule')))+
       ((s.schedule && s.schedule.time) ? ' · '+esc(t('sp_time_'+s.schedule.time)) : '')+'</span></span></label>';
+  });
+  ulOver.forEach(o => {
+    h += '<div class="notice warn">'+esc(t('sp_ul_over', {a: fmtAmt(o.amount), u: nutUnit(o.k), n: nutLabel(o.k), ul: fmtAmt(o.ul)}))+'</div>';
   });
   h += '</div>';
   el.innerHTML = h;
@@ -4114,7 +4191,7 @@ async function openSuppManager(){
       '<span class="fm tiny">'+esc(per.join(', ') || '–')+'</span></button>';
   });
   b += '<p class="eyebrow" style="margin-top:16px">'+esc(t('sp_presets'))+'</p><div class="chips">' +
-    SUPP_PRESETS.map(p => '<button class="chip add" type="button" data-preset="'+p.key+'">+ '+esc(L(p.name))+'</button>').join('') + '</div>' +
+    SUPP_PRESETS.filter(p => !p.hidden).map(p => '<button class="chip add" type="button" data-preset="'+p.key+'">+ '+esc(L(p.name))+'</button>').join('') + '</div>' +
     '<p class="tiny" style="margin-top:8px">'+esc(t('sp_presets_note'))+'</p>';
   const sheet = openSheet(esc(t('sp_manage')), b, '<button class="btn" type="button" id="sNew">'+esc(t('sp_new'))+'</button>', {tall:true});
   $('#sNew').addEventListener('click', () => suppForm(null));
@@ -4134,6 +4211,7 @@ function suppForm(s){
   const isNew = !s || s._new || !s.id;
   s = s || {type:'supplement', name:'', form:'capsule', unitLabel:'', perUnit:{}, extra:[], defaultUnits:1, schedule:{days:[0,1,2,3,4,5,6], time:'morning'}, active:true};
   const rows = Object.keys(s.perUnit || {}).map(k => ({k, v: (k==='epa'||k==='dha') ? s.perUnit[k]*1000 : s.perUnit[k]}));
+  const isAltSaved = !!(s.schedule && s.schedule.every >= 2);
   const dayNames = S.lang === 'cs' ? ['Ne','Po','Út','St','Čt','Pá','So'] : ['Su','Mo','Tu','We','Th','Fr','Sa'];
   const nutRow = (r, i) => '<div class="inline" data-nr="'+i+'"><select data-nk>' +
       SUPP_NUT_CHOICES.map(k => '<option value="'+k+'"'+(k===r.k?' selected':'')+'>'+esc(nutLabel(k))+' ('+esc(k==='epa'||k==='dha' ? 'mg' : nutUnit(k))+')</option>').join('') +
@@ -4147,8 +4225,15 @@ function suppForm(s){
     '<div class="btnrow" style="margin:6px 0 12px"><button class="btn quiet" type="button" id="addNr">+ '+esc(t('sp_add_nut'))+'</button>' +
     '<button class="btn quiet" type="button" id="iuD">'+esc(t('sp_iu'))+'</button></div>' +
     '<div class="field"><label for="sx">'+esc(t('sp_extra'))+'</label><input id="sx" type="text" value="'+esc((s.extra||[]).map(x => x.name+' '+x.amount+' '+x.unit).join('; '))+'" placeholder="'+esc(t('sp_extra_ph'))+'"></div>' +
-    '<div class="field"><span class="flabel">'+esc(t('sp_days'))+'</span><div class="chips" id="sdays">' +
+    '<div class="field"><span class="flabel">'+esc(t('sp_days'))+'</span><div class="chips" id="srep">' +
+      [['days', t('sp_rep_days')],['alt', t('sp_rep_alt')]].map(x => '<button class="chip" type="button" data-rep="'+x[0]+'" aria-pressed="'+((isAltSaved ? 'alt' : 'days')===x[0])+'">'+esc(x[1])+'</button>').join('') + '</div></div>' +
+    '<div id="sdaysrow"'+(isAltSaved ? ' style="display:none"' : '')+'>' +
+    '<div class="field"><span class="flabel">'+esc(t('sp_rep_days'))+'</span><div class="chips" id="sdays">' +
       [1,2,3,4,5,6,0].map(d => '<button class="chip" type="button" data-day="'+d+'" aria-pressed="'+((s.schedule.days||[]).indexOf(d)>=0)+'">'+dayNames[d]+'</button>').join('') + '</div></div>' +
+    '</div>' +
+    '<div id="sstartrow"'+(isAltSaved ? '' : ' style="display:none"')+'>' +
+    '<div class="field"><label for="sstart">'+esc(t('sp_rep_start'))+'</label><input id="sstart" type="date" value="'+esc(s.schedule.start || localDateKey())+'"></div>' +
+    '</div>' +
     '<div class="field"><span class="flabel">'+esc(t('sp_time'))+'</span><div class="chips" id="stime">' +
       ['morning','noon','evening','any'].map(x => '<button class="chip" type="button" data-time="'+x+'" aria-pressed="'+((s.schedule.time||'any')===x)+'">'+esc(t('sp_time_'+x))+'</button>').join('') + '</div></div>' +
     '<label class="opt sq"><input type="checkbox" id="sact" '+(s.active !== false ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('sp_active'))+'</span></span></label>';
@@ -4165,6 +4250,12 @@ function suppForm(s){
   });
   $$('#sdays [data-day]').forEach(bt => bt.addEventListener('click', () => bt.setAttribute('aria-pressed', bt.getAttribute('aria-pressed') === 'true' ? 'false' : 'true')));
   $$('#stime [data-time]').forEach(bt => bt.addEventListener('click', () => $$('#stime [data-time]').forEach(x => x.setAttribute('aria-pressed', x === bt ? 'true' : 'false'))));
+  $$('#srep [data-rep]').forEach(bt => bt.addEventListener('click', () => {
+    $$('#srep [data-rep]').forEach(x => x.setAttribute('aria-pressed', x === bt ? 'true' : 'false'));
+    const isAlt = bt.getAttribute('data-rep') === 'alt';
+    $('#sdaysrow').style.display = isAlt ? 'none' : '';
+    $('#sstartrow').style.display = isAlt ? '' : 'none';
+  }));
   if (!isNew) $('#sDel').addEventListener('click', async () => { await recDelete(s.id); S.afterSheet = openSuppManager; closeSheet(); toast(t('lg_deleted')); });
   $('#sSave').addEventListener('click', async () => {
     const name = $('#sn').value.trim();
@@ -4181,10 +4272,17 @@ function suppForm(s){
     });
     const rec = Object.assign({}, s);
     delete rec._new;
+    const isAlt = ($$('#srep [data-rep]').find(x => x.getAttribute('aria-pressed') === 'true') || {getAttribute:() => 'days'}).getAttribute('data-rep') === 'alt';
+    const sch = {
+      days: $$('#sdays [data-day]').filter(x => x.getAttribute('aria-pressed') === 'true').map(x => Number(x.getAttribute('data-day'))),
+      time: ($$('#stime [data-time]').find(x => x.getAttribute('aria-pressed') === 'true') || {getAttribute:() => 'any'}).getAttribute('data-time')
+    };
+    if (isAlt){
+      sch.every = 2;
+      sch.start = $('#sstart').value || localDateKey();
+    }
     Object.assign(rec, {type:'supplement', name, form: $('#sf').value, unitLabel: $('#sul').value.trim(), defaultUnits: Number($('#su').value) || 1,
-      perUnit: per, extra, active: $('#sact').checked,
-      schedule: {days: $$('#sdays [data-day]').filter(x => x.getAttribute('aria-pressed') === 'true').map(x => Number(x.getAttribute('data-day'))),
-                 time: ($$('#stime [data-time]').find(x => x.getAttribute('aria-pressed') === 'true') || {getAttribute:() => 'any'}).getAttribute('data-time')}});
+      perUnit: per, extra, active: $('#sact').checked, schedule: sch});
     await recPut(rec);
     S.afterSheet = openSuppManager;
     closeSheet(); toast(t('lg_saved'));
@@ -4355,7 +4453,7 @@ const CHAT_TOOLS = [
 async function chatHistory(){
   const all = await recByType('chat_message');
   const thread = S.meta.chatThread || null;
-  return all.filter(m => (m.thread || null) === thread).sort((a,b) => a.createdAt < b.createdAt ? -1 : 1);
+  return all.filter(m => (m.thread || null) === thread).sort((a,b) => cmpIso(a.createdAt, b.createdAt));
 }
 
 function chatBubble(m){
@@ -4718,7 +4816,7 @@ async function renderReview(){
   h += '<label class="opt sq" style="margin:4px 0 12px"><input type="checkbox" id="rvSupp" '+(S.prefs.review.includeSupplements ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('rv_incl_supp'))+'</span></span></label>';
 
   /* Claude commentary */
-  const saved = (await recByType('summary')).filter(s => s.periodKey === P.range.key).sort((a,b) => a.updatedAt < b.updatedAt ? 1 : -1)[0];
+  const saved = (await recByType('summary')).filter(s => s.periodKey === P.range.key).sort((a,b) => cmpIso(b.updatedAt, a.updatedAt))[0];
   h += '<div class="card"><h3>'+esc(t('rv_ai_h'))+'</h3>' +
     (saved ? '<div class="aitext">'+mdLite(saved.text)+'</div><p class="tiny" style="margin-top:8px">'+esc(t('rv_ai_when', {d: fmtDateTime(saved.updatedAt)}))+'</p>' : '<p class="tiny">'+esc(t('rv_ai_p'))+'</p>') +
     '<div class="btnrow" style="margin-top:10px"><button class="btn quiet" type="button" data-act="rv-ai" id="rvAi">'+icon('chat')+esc(saved ? t('rv_ai_again') : t('rv_ai_btn'))+'</button></div></div>';
@@ -5496,6 +5594,7 @@ function renderSettings(){
     '<div class="kv"><span class="k">'+esc(t('about_version'))+'</span><span class="v num">'+esc(VERSION)+'</span></div>' +
     '<div class="kv"><span class="k">'+esc(t('about_schema'))+'</span><span class="v num">'+esc(SCHEMA)+'</span></div>' +
     '<div class="kv"><span class="k">'+esc(t('about_fooddb'))+'</span><span class="v tiny">USDA FoodData Central, SR Legacy</span></div>' +
+    '<div class="kv"><span class="k">'+esc(t('about_products'))+'</span><span class="v tiny">Open Food Facts (openfoodfacts.org), ODbL</span></div>' +
     '<div class="btnrow" style="margin-top:12px">' +
       '<button class="btn quiet" type="button" data-act="update-check">'+icon('refresh')+esc(t('about_update'))+'</button>' +
       (S.installPrompt ? '<button class="btn quiet" type="button" data-act="install">'+esc(t('about_install'))+'</button>' : '') +
