@@ -22,4 +22,5 @@ Read `docs/HANDOFF.md` first: status, decisions, open questions.
 - UI text lives in `src/strings.js`, which has a Czech table and an English table. Every new key goes into both. English text must not contain Czech words or accented letters.
 - Unit tests: `node --test` (files `test/*.test.mjs`, node:test; load src files with node:vm as `test/core.test.mjs` does). They must pass before you finish.
 - Your context is small (64k). Never read a whole file over 300 lines (`src/core.js`, `src/log.js`, `src/strings.js`, `src/settings.js`, `src/recipes.js`, `src/ai.js`). Use Grep to find the lines, then Read with offset and limit (at most 120 lines at a time).
+- Never Read `src/strings.js`, not even a range: its lines are very long and fill your memory. Use `grep -n` to find the one line you need, then Edit with the exact text from the grep output.
 - Finish with `REPORT.md`: what the user will see, files changed, test results.
