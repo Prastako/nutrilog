@@ -36,6 +36,26 @@ function setPath(o, path, value){
   x[parts[parts.length-1]] = value;
 }
 
+/* Live preview of macro and slot splits from splitPreview() */
+function previewParts(d){
+  const x = splitPreview(d);
+  if (!x) return { macro: '', slots: '' };
+  var macro = '<p class="tiny">' + esc(t('ms_preview', {kcal: fmtNum(x.kcal, 0), p: fmtNum(x.p, 0), pkg: fmtNum(x.pkg, 1), f: fmtNum(x.f, 0), c: fmtNum(x.c, 0)})) + '</p>';
+  if (x.fatHigh) macro += '<div class="notice warn">' + esc(t('ms_fat_high')) + '</div>';
+  if (x.pkg > 2.2) macro += '<div class="notice warn">' + esc(t('ms_prot_high')) + '</div>';
+  var list = x.slots.map(function(s){ return t('slot_'+s.slot) + ' ' + fmtNum(s.kcal, 0) + ' kcal'; });
+  var slots = '<p class="tiny">' + esc(t('slot_preview', {kcal: fmtNum(x.kcal, 0), list: list.join(', ')})) + '</p>';
+  return { macro, slots };
+}
+
+function updateProfilePreview(){
+  var x = previewParts(S.draft);
+  var mb = document.getElementById('macroPreviewBox');
+  if (mb) mb.innerHTML = x.macro;
+  var sb = document.getElementById('slotPreviewBox');
+  if (sb) sb.innerHTML = x.slots;
+}
+
 function renderProfile(){
   const d = S.draft || (S.draft = S.profile ? mergeDefaults(deepCopy(S.profile), blankProfile()) : blankProfile());
   const P = d.person, G = d.goals, F = d.food, K = d.kitchen;
@@ -67,6 +87,7 @@ function renderProfile(){
       num('goals.macroSplit.carbPct','c-c',t('macro_c')+' %','inputmode="numeric" min="0" max="70"') +
       '</div><p class="tiny" id="splitSum">'+esc(t('ms_sum',{n:sum}))+(sum!==100 ? ' '+esc(t('ms_sum_err')) : '')+'</p>';
   }
+  h += '<div id="macroPreviewBox">' + previewParts(d).macro + '</div>';
   h += '</div>';
 
   /* diet goals: new in v0.2 */
@@ -77,7 +98,8 @@ function renderProfile(){
     '<div class="field" style="margin-top:14px"><label for="g-notes">'+esc(t('pg_notes'))+'</label><textarea id="g-notes" data-bind="goals.notes" placeholder="'+esc(t('pg_notes_ph'))+'">'+esc(G.notes||'')+'</textarea></div>' +
     '<p class="flabel">'+esc(t('pg_slots'))+'</p><div class="inline">' +
       SLOTS.map(s => num('goals.slots.'+s, 'sl-'+s, t('slot_'+s)+' %', 'inputmode="numeric" min="0" max="80"')).join('') + '</div>' +
-    '<p class="tiny">'+esc(t('pg_slots_note'))+'</p></div>';
+    '<p class="tiny">'+esc(t('pg_slots_note'))+'</p>' +
+    '<div id="slotPreviewBox">' + previewParts(d).slots + '</div></div>';
 
   /* exclusions */
   h += '<div class="card"><h3>'+esc(t('p_allergy_h'))+'</h3>' +

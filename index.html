@@ -7,7 +7,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F2EADC" id="metaThemeColor">
 <script>
-const VERSION = '0.2.4';
+const VERSION = '0.2.5';
 const SCHEMA = 2;
 </script>
 <meta name="mobile-web-app-capable" content="yes">
@@ -499,7 +499,7 @@ input[type=search],input[type=date]{width:100%;min-height:var(--tap);padding:11p
 
 <script>
 /* ============================================================
-   NutriLog 0.2.4. Built from src/ by tools/build.py.
+   NutriLog 0.2.5. Built from src/ by tools/build.py.
    Edit the files in src/, then run the build; do not edit this
    generated block by hand.
    ============================================================ */
@@ -1127,6 +1127,10 @@ Object.assign(STR.cs, {
   pg_style:'Styl stravy', pg_aims:'O co mi jde', pg_focus:'Na které živiny se zaměřit', pg_notes:'Poznámky pro Clauda',
   pg_notes_ph:'Vlastními slovy: co vám dělá dobře a co ne, čemu se vyhýbáte, co chcete změnit.',
   pg_slots:'Rozdělení dne mezi jídla', pg_slots_note:'Procenta denní energie. Nemusí dávat přesně 100, přepočítají se.',
+  ms_preview:'Při středu vašeho cíle {kcal} kcal: bílkoviny asi {p} g ({pkg} g na kg váhy), tuky {f} g, sacharidy {c} g denně.',
+  ms_fat_high:'Tuky nad 35 % energie jsou mimo referenční rozmezí EU (20 až 35 %).',
+  ms_prot_high:'To je víc bílkovin, než většina lidí využije: i pro nabírání svalů stačí zhruba 1,6 až 2,2 g na kg.',
+  slot_preview:'Při {kcal} kcal denně: {list}. Určuje jen velikost návrhů jídel, denní cíl nemění.',
   ds_omnivore:'Jím všechno', ds_flexitarian:'Málo masa', ds_pescatarian:'Ryby ano, maso ne', ds_vegetarian:'Vegetariánská', ds_vegan:'Veganská',
   ds_mediterranean:'Středomořská', ds_lowcarb:'Méně sacharidů', ds_highprotein:'Hodně bílkovin', ds_glutenfree:'Bez lepku', ds_lactosefree:'Bez laktózy',
   aim_muscle:'Nabrat svaly', aim_fatloss:'Zhubnout tuk', aim_energy:'Víc energie přes den', aim_digestion:'Lepší trávení', aim_fibre:'Víc vlákniny',
@@ -1261,6 +1265,10 @@ Object.assign(STR.en, {
   pg_style:'Diet style', pg_aims:'What I am after', pg_focus:'Nutrients to focus on', pg_notes:'Notes for Claude',
   pg_notes_ph:'In your own words: what works for you and what does not, what you avoid, what you want to change.',
   pg_slots:'How the day splits between meals', pg_slots_note:'Percent of daily energy. They need not add up to exactly 100; they are rescaled.',
+  ms_preview:'At the middle of your target, {kcal} kcal: protein about {p} g ({pkg} g per kg of body weight), fat {f} g, carbohydrate {c} g a day.',
+  ms_fat_high:'Fat above 35 % of energy is outside the EU reference range (20 to 35 %).',
+  ms_prot_high:'That is more protein than most people can use: about 1.6 to 2.2 g per kg is enough even for building muscle.',
+  slot_preview:'At {kcal} kcal a day: {list}. This only sets the size of meal ideas; it does not change your daily target.',
   ds_omnivore:'I eat everything', ds_flexitarian:'Little meat', ds_pescatarian:'Fish yes, meat no', ds_vegetarian:'Vegetarian', ds_vegan:'Vegan',
   ds_mediterranean:'Mediterranean', ds_lowcarb:'Lower carb', ds_highprotein:'High protein', ds_glutenfree:'Gluten free', ds_lactosefree:'Lactose free',
   aim_muscle:'Build muscle', aim_fatloss:'Lose fat', aim_energy:'More energy through the day', aim_digestion:'Better digestion', aim_fibre:'More fibre',
@@ -1968,6 +1976,27 @@ function slotShares(){
   const out = {};
   SLOTS.forEach(k => out[k] = (Number(s[k])||0) / sum);
   return out;
+}
+
+function splitPreview(rec){
+  const g = computeTargets(rec);
+  if (!g) return null;
+  const kcal = g.mid;
+  const weight = Number(rec.person.weightKg);
+  const p = round5(kcal * g.split.p / 100 / 4);
+  const f = round5(kcal * g.split.f / 100 / 9);
+  const c = round5(kcal * g.split.c / 100 / 4);
+  const pkg = Math.round(p / weight * 10) / 10;
+  const fatHigh = g.split.f > 35;
+  const s = (rec.goals && rec.goals.slots) || DEFAULT_SLOTS;
+  const sum = SLOTS.reduce((a, k) => a + (Number(s[k]) || 0), 0) || 100;
+  const slots = [];
+  SLOTS.forEach(k => {
+    const share = (Number(s[k]) || 0) / sum;
+    if (share === 0) return;
+    slots.push({ slot: k, kcal: round10(kcal * share) });
+  });
+  return { kcal, p, f, c, pkg, fatHigh, slots };
 }
 
 /* ---------- 8. Reference values ----------
@@ -5260,6 +5289,26 @@ function setPath(o, path, value){
   x[parts[parts.length-1]] = value;
 }
 
+/* Live preview of macro and slot splits from splitPreview() */
+function previewParts(d){
+  const x = splitPreview(d);
+  if (!x) return { macro: '', slots: '' };
+  var macro = '<p class="tiny">' + esc(t('ms_preview', {kcal: fmtNum(x.kcal, 0), p: fmtNum(x.p, 0), pkg: fmtNum(x.pkg, 1), f: fmtNum(x.f, 0), c: fmtNum(x.c, 0)})) + '</p>';
+  if (x.fatHigh) macro += '<div class="notice warn">' + esc(t('ms_fat_high')) + '</div>';
+  if (x.pkg > 2.2) macro += '<div class="notice warn">' + esc(t('ms_prot_high')) + '</div>';
+  var list = x.slots.map(function(s){ return t('slot_'+s.slot) + ' ' + fmtNum(s.kcal, 0) + ' kcal'; });
+  var slots = '<p class="tiny">' + esc(t('slot_preview', {kcal: fmtNum(x.kcal, 0), list: list.join(', ')})) + '</p>';
+  return { macro, slots };
+}
+
+function updateProfilePreview(){
+  var x = previewParts(S.draft);
+  var mb = document.getElementById('macroPreviewBox');
+  if (mb) mb.innerHTML = x.macro;
+  var sb = document.getElementById('slotPreviewBox');
+  if (sb) sb.innerHTML = x.slots;
+}
+
 function renderProfile(){
   const d = S.draft || (S.draft = S.profile ? mergeDefaults(deepCopy(S.profile), blankProfile()) : blankProfile());
   const P = d.person, G = d.goals, F = d.food, K = d.kitchen;
@@ -5291,6 +5340,7 @@ function renderProfile(){
       num('goals.macroSplit.carbPct','c-c',t('macro_c')+' %','inputmode="numeric" min="0" max="70"') +
       '</div><p class="tiny" id="splitSum">'+esc(t('ms_sum',{n:sum}))+(sum!==100 ? ' '+esc(t('ms_sum_err')) : '')+'</p>';
   }
+  h += '<div id="macroPreviewBox">' + previewParts(d).macro + '</div>';
   h += '</div>';
 
   /* diet goals: new in v0.2 */
@@ -5301,7 +5351,8 @@ function renderProfile(){
     '<div class="field" style="margin-top:14px"><label for="g-notes">'+esc(t('pg_notes'))+'</label><textarea id="g-notes" data-bind="goals.notes" placeholder="'+esc(t('pg_notes_ph'))+'">'+esc(G.notes||'')+'</textarea></div>' +
     '<p class="flabel">'+esc(t('pg_slots'))+'</p><div class="inline">' +
       SLOTS.map(s => num('goals.slots.'+s, 'sl-'+s, t('slot_'+s)+' %', 'inputmode="numeric" min="0" max="80"')).join('') + '</div>' +
-    '<p class="tiny">'+esc(t('pg_slots_note'))+'</p></div>';
+    '<p class="tiny">'+esc(t('pg_slots_note'))+'</p>' +
+    '<div id="slotPreviewBox">' + previewParts(d).slots + '</div></div>';
 
   /* exclusions */
   h += '<div class="card"><h3>'+esc(t('p_allergy_h'))+'</h3>' +
@@ -5966,6 +6017,7 @@ function bindEvents(){
     const el = e.target;
     if (el.hasAttribute('data-bind')){
       setPath(S.draft, el.getAttribute('data-bind'), el.value);
+      if (/^(goals\.macroSplit\.|goals\.slots\.|person\.)/.test(el.getAttribute('data-bind'))) updateProfilePreview();
       if (el.getAttribute('data-bind').indexOf('goals.macroSplit.') === 0){
         const m = S.draft.goals.macroSplit;
         const sum = Number(m.proteinPct)+Number(m.fatPct)+Number(m.carbPct);
@@ -5993,6 +6045,7 @@ function bindEvents(){
     else if (el.name === 'person.activityLevel' || el.name === 'kitchen.timeWeekday' || el.name === 'kitchen.timeWeekend') setPath(S.draft, el.name, Number(v));
     else if (el.name === 'goals.macroSplit.preset'){ setPath(S.draft, el.name, v); renderProfile(); }
     else setPath(S.draft, el.name, v);
+    updateProfilePreview();
   });
 
   /* settings inputs */

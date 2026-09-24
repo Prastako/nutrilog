@@ -258,6 +258,7 @@ function bindEvents(){
     const el = e.target;
     if (el.hasAttribute('data-bind')){
       setPath(S.draft, el.getAttribute('data-bind'), el.value);
+      if (/^(goals\.macroSplit\.|goals\.slots\.|person\.)/.test(el.getAttribute('data-bind'))) updateProfilePreview();
       if (el.getAttribute('data-bind').indexOf('goals.macroSplit.') === 0){
         const m = S.draft.goals.macroSplit;
         const sum = Number(m.proteinPct)+Number(m.fatPct)+Number(m.carbPct);
@@ -285,6 +286,7 @@ function bindEvents(){
     else if (el.name === 'person.activityLevel' || el.name === 'kitchen.timeWeekday' || el.name === 'kitchen.timeWeekend') setPath(S.draft, el.name, Number(v));
     else if (el.name === 'goals.macroSplit.preset'){ setPath(S.draft, el.name, v); renderProfile(); }
     else setPath(S.draft, el.name, v);
+    updateProfilePreview();
   });
 
   /* settings inputs */
