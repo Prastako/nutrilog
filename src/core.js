@@ -826,12 +826,15 @@ const FOCUS_CHOICES = ['fib','prot','vitd','fe','ca','mg','k','zn','b12','fol','
    Removed from the text before matching, so they do not raise false alarms. */
 const EXCLUSION_FALSE_FRIENDS = {
   milk: ['coconut milk','almond milk','oat milk','soy milk','soya milk','rice milk','peanut butter','cocoa butter','almond butter','nut butter','cashew butter','apple butter','cream of tartar','coconut cream',
-         'kokosove mleko','mandlove mleko','ovesne mleko','sojove mleko','ryzove mleko','arasidove maslo','kakaove maslo','mandlove maslo','kokosova smetana','syrup','sirup','butternut'],
-  egg: ['eggplant','egg noodles free'],
+         'kokosove mleko','mandlove mleko','ovesne mleko','sojove mleko','ryzove mleko','arasidove maslo','kakaove maslo','mandlove maslo','kokosova smetana','syrup','sirup','butternut','syrah','butterbur','butterhead','fruit butter','custard apple'],
+  egg: ['eggplant','egg noodles free','custard apple'],
   nuts: ['nutmeg','butternut','coconut','muskatovy orisek','muskatovy'],
   fish: ['fish sauce free'],
-  gluten: ['gluten free soy sauce','gluten free','bez lepku','buckwheat','pohanka','rice flour','ryzova mouka','corn flour','kukuricna mouka','almond flour','mandlova mouka','coconut flour','chickpea flour','cizrnova mouka','rice noodles','ryzove nudle','glass noodles','sklenene nudle','corn tortilla','kukuricna tortilla','breast','breakfast','paste','pastinak','pastrami'],
-  molluscs: ['oyster mushroom']
+  gluten: ['gluten free soy sauce','gluten free','bez lepku','buckwheat flour','buckwheat','pohanka','rice flour','ryzova mouka','corn flour','kukuricna mouka','almond flour','mandlova mouka','coconut flour','chickpea flour','cizrnova mouka','rice noodles','ryzove nudle','glass noodles','sklenene nudle','corn tortilla','kukuricna tortilla','breast','breakfast','paste','pastinak','pastrami',
+           'breadfruit','pitanga','winter spaghetti','spaghetti squash','potato flour','acorn flour','cottonseed flour','sesame flour','sunflower seed flour','carob flour','peanut flour','soy flour','arrowroot flour','millet flour','sorghum flour','tapioca flour'],
+  molluscs: ['oyster mushroom','scalloped','summer scallop','scallop squash'],
+  crustaceans: ['crabapple'],
+  soy: ['tamarind','non soy']
 };
 
 /* All exclusion words for the hard filter, folded for matching.

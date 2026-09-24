@@ -179,4 +179,68 @@ describe('exclusionHits false negatives', () => {
   it("nuts 'nutmeg'", () => {
     assert.ok(!hit('nuts', 'nutmeg'));
   });
+
+  it("gluten 'Breadfruit, raw' is not flagged", () => {
+    assert.ok(!hit('gluten', 'Breadfruit, raw'));
+  });
+
+  it("gluten 'Squash, winter, spaghetti, raw' is not flagged", () => {
+    assert.ok(!hit('gluten', 'Squash, winter, spaghetti, raw'));
+  });
+
+  it("gluten 'Potato flour' is not flagged", () => {
+    assert.ok(!hit('gluten', 'Potato flour'));
+  });
+
+  it("gluten 'Buckwheat flour, whole-groat' is not flagged", () => {
+    assert.ok(!hit('gluten', 'Buckwheat flour, whole-groat'));
+  });
+
+  it("gluten 'Pitanga, (surinam-cherry), raw' is not flagged", () => {
+    assert.ok(!hit('gluten', 'Pitanga, (surinam-cherry), raw'));
+  });
+
+  it("crustaceans 'Crabapples, raw' is not flagged", () => {
+    assert.ok(!hit('crustaceans', 'Crabapples, raw'));
+  });
+
+  it("egg 'Custard-apple, raw' is not flagged", () => {
+    assert.ok(!hit('egg', 'Custard-apple, raw'));
+  });
+
+  it("milk 'Custard-apple, raw' is not flagged", () => {
+    assert.ok(!hit('milk', 'Custard-apple, raw'));
+  });
+
+  it("milk 'Lettuce, butterhead, raw' is not flagged", () => {
+    assert.ok(!hit('milk', 'Lettuce, butterhead, raw'));
+  });
+
+  it("milk 'Butterbur, raw' is not flagged", () => {
+    assert.ok(!hit('milk', 'Butterbur, raw'));
+  });
+
+  it("milk 'wine, table, red, Syrah' is not flagged", () => {
+    assert.ok(!hit('milk', 'wine, table, red, Syrah'));
+  });
+
+  it("soy 'Tamarinds, raw' is not flagged", () => {
+    assert.ok(!hit('soy', 'Tamarinds, raw'));
+  });
+
+  it("molluscs 'Potatoes, scalloped' is not flagged", () => {
+    assert.ok(!hit('molluscs', 'Potatoes, scalloped'));
+  });
+
+  it("molluscs 'Squash, summer, scallop, raw' is not flagged", () => {
+    assert.ok(!hit('molluscs', 'Squash, summer, scallop, raw'));
+  });
+
+  it("gluten 'Oat flour' is still flagged", () => {
+    assert.ok(hit('gluten', 'Oat flour, partially debranned'));
+  });
+
+  it("molluscs 'Scallops, raw' is still flagged", () => {
+    assert.ok(hit('molluscs', 'Mollusks, scallop, raw'));
+  });
 });
