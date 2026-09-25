@@ -347,9 +347,20 @@ async function recDelete(id){
 
 /* ---------- 4. Application state ---------- */
 
+const LOOKS = [
+  {id:'ember',  name:'Ember',  light:{ground:'#F1E8DA'}, dark:{ground:'#141110', ink:'#EEE3D2', accent:'#D9A066'}},
+  {id:'lichen', name:'Lichen', light:{ground:'#ECEDE2'}, dark:{ground:'#0F1411', ink:'#E3E6D8', accent:'#9FBF9C'}},
+  {id:'ash',    name:'Ash',    light:{ground:'#ECEAE6'}, dark:{ground:'#15161A', ink:'#E8E4DE', accent:'#CFA3A0'}},
+];
+function lookOf(id) {
+  const entry = LOOKS.find(l => l.id === id);
+  return entry || LOOKS[2]; // Ash as fallback
+}
+
 const DEFAULT_PREFS = {
   lang: 'en',
   theme: 'device',
+  look: 'ash',
   models: { chat:'claude-sonnet-5', vision:'claude-sonnet-5', analysis:'claude-opus-5' },
   prices: {
     'claude-sonnet-5': { in: 2, out: 10 },
@@ -385,6 +396,7 @@ const DEFAULT_META = {
 const S = {
   lang: 'en',
   theme: 'device',
+  look: 'ash',
   screen: 'today',
   profile: null,          /* the profile record (schema 2) */
   prefs: deepCopy(DEFAULT_PREFS),
@@ -430,6 +442,7 @@ async function loadState(){
   }
   S.lang    = S.prefs.lang;
   S.theme   = S.prefs.theme;
+  S.look    = lookOf(S.prefs.look).id;
   S.secrets.anthropic = await secretGet('anthropic');
   S.secrets.github    = await secretGet('github');
   if (!S.meta.installedAt){ S.meta.installedAt = nowIso(); await saveMeta(); }
@@ -442,7 +455,7 @@ async function loadState(){
   }
 }
 
-async function savePrefs(){ S.prefs.lang = S.lang; S.prefs.theme = S.theme; await kvSet('prefs', S.prefs); }
+async function savePrefs(){ S.prefs.lang = S.lang; S.prefs.theme = S.theme; S.prefs.look = S.look; await kvSet('prefs', S.prefs); }
 async function saveMeta(){ await kvSet('meta', S.meta); }
 
 /* ---------- 5. Migration from schema 1 (v0.1) ----------
