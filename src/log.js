@@ -176,11 +176,11 @@ function openAddSheet(slot, date){
   ADD.date = date || S.logDate || localDateKey();
   ADD.food = null;
   const modes = ['search','scan','photo','describe','recipe','manual'];
-  const b = '<div class="seg small" id="addModes">' + modes.map(m =>
-      '<button type="button" data-mode="'+m+'" class="'+(m==='search'?'on':'')+'">'+esc(t('am_'+m))+'</button>').join('') + '</div>' +
+  const b = (quickOn() ? '' : '<div class="seg small" id="addModes">' + modes.map(m =>
+      '<button type="button" data-mode="'+m+'" class="'+(m==='search'?'on':'')+'">'+esc(t('am_'+m))+'</button>').join('') + '</div>') +
     '<div id="addBody"></div>';
   const sheet = openSheet(esc(t('add_title', {slot: t('slot_'+ADD.slot).toLowerCase()})), b, null, {tall:true});
-  $('#addModes').addEventListener('click', e => {
+  if (!quickOn()) $('#addModes').addEventListener('click', e => {
     const bt = e.target.closest('[data-mode]');
     if (!bt) return;
     if (bt.getAttribute('data-mode') === 'photo'){ closeSheet(); openPhotoSheet({slot: ADD.slot, date: ADD.date}); return; }
