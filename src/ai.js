@@ -204,8 +204,18 @@ async function buildContext(opts){
   if (!P || !P.person){ lines.push('The person has not filled in a profile yet.'); return lines.join('\n'); }
   const p = P.person, G = P.goals || {}, F = P.food || {}, K = P.kitchen || {};
   const g = computeTargets(P);
-  lines.push('PROFILE: ' + [p.sex === 'female' ? 'female physiology' : 'male physiology', p.age + ' years', p.heightCm + ' cm', p.weightKg + ' kg',
-    'activity level ' + p.activityLevel + ' of 4', 'direction: ' + (G.direction || 'maintain')].join(', '));
+  const parts = [];
+  if (p.age != null && p.age !== '') parts.push(p.age + ' years');
+  if (Number(p.heightCm) > 0) parts.push(p.heightCm + ' cm'); else parts.push('height not given');
+  if (p.weightKg != null && p.weightKg !== '') parts.push(p.weightKg + ' kg');
+  const bf = Number(p.bodyFatPct);
+  if (bf >= 3 && bf <= 60) parts.push(bf + ' % body fat');
+  if (p.periods === 'yes') parts.push('has periods (iron need 16 mg)');
+  const d = p.activityDetail;
+  if (d && d.on === true) { var b = Number(d.base); if (b !== 1 && b !== 2 && b !== 3 && b !== 4) b = 1; parts.push('daily life level ' + b + ' of 4' + (g ? ' plus training about ' + g.training + ' kcal a day' : '')); }
+  else if (p.activityLevel != null && p.activityLevel !== '') parts.push('activity level ' + p.activityLevel + ' of 4');
+  parts.push('direction: ' + (G.direction || 'maintain'));
+  lines.push('PROFILE (no sex given; do not assume one): ' + parts.join(', '));
   if (g) lines.push('DAILY TARGETS (ranges): energy ' + g.low + ' to ' + g.high + ' kcal; protein ' + g.macros.p.low + ' to ' + g.macros.p.high +
     ' g; fat ' + g.macros.f.low + ' to ' + g.macros.f.high + ' g; carbohydrate ' + g.macros.c.low + ' to ' + g.macros.c.high + ' g; fibre at least 25 g.');
   const shares = slotShares();
