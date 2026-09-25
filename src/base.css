@@ -26,7 +26,7 @@
 html[data-look="ember"]{
   --ground:#F1E8DA; --surface:#F8F2E7; --surface2:#E8DDC8;
   --ink:#33291E; --ink2:#6E5F4B; --ink3:#9C8A70; --accent:#A9702F; --ornament:#8F7C61;
-  --font-display:'Italiana', Georgia, 'Times New Roman', serif;
+  --font-display:'Beaufort', Georgia, 'Times New Roman', serif;
   --font-body:'Jost', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --display-weight:400; --display-style:normal; --display-variation:normal;
 }
