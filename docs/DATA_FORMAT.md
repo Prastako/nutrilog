@@ -21,8 +21,8 @@ reading NutriLog's code.
   ("coverage") before judging a nutrient.
 - **Deletes are tombstones.** A deleted record keeps its id with
   `deleted: true`, so a sync can see that it was removed.
-- **App settings are not data.** Theme, language, keys and backup settings live
-  apart from records and are never shared.
+- **App settings are not data.** Look (`look`: ember, lichen or ash; default ash, a missing or unknown value reads as ash), theme, language, keys and backup settings live
+  apart from records and are never shared. They travel in exports and backups as kv `prefs`.
 
 ## 2. The record envelope
 
