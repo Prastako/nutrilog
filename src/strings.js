@@ -828,3 +828,27 @@ Object.assign(STR.en, {
   ai_budget_h:'Monthly budget used up', ai_budget_p:'About {spent} USD of the {lim} USD budget is spent this month. Continue anyway?', ai_budget_go:'Continue',
   ai_working:'Working…', ai_working_long:'Claude is writing recipes; this usually takes 20 to 60 seconds.', ai_bad_reply:'Claude replied in an unexpected shape. Please try again.'
 });
+
+/* ---------- activity detail: daily life plus training ---------- */
+Object.assign(STR.cs, {
+  ad_toggle:'Popsat týden podrobně (běžný den a trénink zvlášť)',
+  ad_note:'Jednoduché úrovně výše zahrnují trénink; tady se běžný den a trénink počítají zvlášť, takže vyberte úroveň běžného dne bez tréninku.',
+  ad_base:'Běžný den bez tréninku',
+  ad_b1:'Převážně sedím (méně než asi 5 000 kroků denně)', ad_b2:'Sedím, ale docela dost chodím', ad_b3:'Velkou část dne jsem na nohou', ad_b4:'Fyzicky náročná práce',
+  ad_sessions:'Tréninků týdně', ad_minutes:'Minut na trénink', ad_type:'Hlavní druh tréninku',
+  at_strength:'Silový trénink', at_heavy:'Těžké zvedání, vysoké úsilí', at_cycling:'Kolo, střední tempo', at_cyclinghard:'Kolo, ostře',
+  at_circuits:'Kruhový trénink', at_hiit:'Intervalový trénink (HIIT)', at_climbing:'Lezení (bouldering nebo stěna)', at_yoga:'Jóga',
+  ad_att:'Jak často plán opravdu dodržím', aa_always:'Skoro vždy', aa_usually:'Většinou', aa_sometimes:'Občas',
+  ad_result:'Trénink přidá v průměru asi {kcal} kcal denně.'
+});
+Object.assign(STR.en, {
+  ad_toggle:'Describe my week in detail (daily life and training separately)',
+  ad_note:'The simple levels above include training; here daily life and training are counted separately, so pick the daily life level without training.',
+  ad_base:'Daily life, without training',
+  ad_b1:'Mostly sitting (under about 5,000 steps a day)', ad_b2:'Sitting, but I walk a fair bit', ad_b3:'On my feet much of the day', ad_b4:'Physically hard work',
+  ad_sessions:'Training sessions a week', ad_minutes:'Minutes per session', ad_type:'Main kind of training',
+  at_strength:'Strength training', at_heavy:'Heavy lifting, hard effort', at_cycling:'Cycling, moderate', at_cyclinghard:'Cycling, hard',
+  at_circuits:'Circuit training', at_hiit:'Interval training (HIIT)', at_climbing:'Climbing (bouldering or wall)', at_yoga:'Yoga',
+  ad_att:'How often the plan really happens', aa_always:'Almost always', aa_usually:'Usually', aa_sometimes:'Sometimes',
+  ad_result:'Training adds about {kcal} kcal a day on average.'
+});
