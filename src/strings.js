@@ -896,3 +896,35 @@ Object.assign(STR.en, {
   qm_offer:'Small screen. Turn on Quick mode with food logging only?', qm_offer_yes:'Turn on', qm_offer_no:'Keep the full app',
   qm_shortcut:'Quick log', qm_energy:'{kcal} of {lo} to {hi} kcal', qm_same:'Same as yesterday', qm_full:'Full app', t_quick:'Log'
 });
+
+/* ---------- texts without the assistant's name (Jan 2026-09-25) ---------- */
+Object.assign(STR.cs, {
+  fs_est:'Nechat odhadnout', orig_claude:'Návrh', rc_ask:'Zeptat se', rc_src_claude:'Návrh ({m})',
+  or_note:'Živiny se zatím nepočítají; můžete se na ně zeptat v chatu.',
+  sg_norecipes:'Zatím tu nejsou recepty. Nové nápady fungují i bez archivu.', sg_ai_btn:'Nové nápady',
+  sg_ai_p:'Tři různé recepty na {slot} podle profilu, toho, co jste dnes snědl, a spíže.',
+  ph_intro:'Jídlo na talíři, výrobek nebo tabulka nutričních hodnot. Fotka se přečte a porovná s vaším profilem a dneškem.',
+  ph_working:'Prohlížím fotku, obvykle to trvá 5 až 20 sekund.',
+  pt_note:'Co máte doma. Počítá se s tím v návrzích i v chatu a seznam se sám upraví, když napíšete, co jste koupil nebo co došlo.',
+  rv_ai_h:'Rozbor', rv_ai_p:'Odešlou se jen spočítaná čísla za období (ne celý deník) a vrátí se konkrétní doporučení.',
+  pg_notes:'Poznámky k návrhům', fp_littlemeat_d:'Maso jen občas. Nic se neskrývá, maso zůstává střídmé.',
+  fc_note_lactose:'Alergie na mléko není totéž co nesnášenlivost laktózy. Většina lidí s nesnášenlivostí laktózy snese najednou asi 12 g laktózy (zhruba sklenici mléka), proto se mléčné výrobky neskrývají; návrhy drží menší porce nebo volí bezlaktózové výrobky.',
+  fc_note_kidney:'Při onemocnění ledvin potřebují cíle bílkovin radu lékaře; návrhy s tím počítají.',
+  bud_label:'Měsíční rozpočet v USD (0 = bez hlídání)', arch_starter_d:'Tucet úvodních receptů, aby návrhy fungovaly už před prvním archivem.',
+  ai_nokey_h:'Chybí klíč', ai_working_long:'Píšu recepty, trvá to obvykle 20 až 60 sekund.', ai_bad_reply:'Odpověď přišla v nečekaném tvaru. Zkuste to znovu.'
+});
+Object.assign(STR.en, {
+  fs_est:'Estimate it', orig_claude:'Suggested', rc_ask:'Ask', rc_src_claude:'Suggested ({m})',
+  or_note:'Nutrients are not computed yet; you can ask in the chat.',
+  sg_norecipes:'No recipes yet. New ideas work without the archive.', sg_ai_btn:'New ideas',
+  sg_ai_p:'Three different {slot} recipes based on your profile, what you ate today and your pantry.',
+  ph_intro:'A plate of food, a product or a nutrition table. The photo is read and compared with your profile and today.',
+  ph_working:'Looking at the photo; this usually takes 5 to 20 seconds.',
+  pt_note:'What you have at home. Used for suggestions and in the chat, and updated when you say what you bought or ran out of.',
+  rv_ai_h:'Review', rv_ai_p:'Only the computed numbers for the period are sent (not the whole diary), and concrete advice comes back.',
+  pg_notes:'Notes for suggestions', fp_littlemeat_d:'Meat now and then. Nothing is hidden; meat stays modest.',
+  fc_note_lactose:'Milk allergy is not the same as lactose intolerance. Most people with lactose intolerance handle up to about 12 g of lactose at a time (roughly a glass of milk), so milk products are not hidden; suggestions keep portions small or pick lactose-free products.',
+  fc_note_kidney:'With kidney disease, protein targets need advice from your doctor; suggestions take it into account.',
+  bud_label:'Monthly budget in USD (0 = no check)', arch_starter_d:'A dozen starter recipes so suggestions work before the first archive.',
+  ai_nokey_h:'Key missing', ai_working_long:'Writing recipes; this usually takes 20 to 60 seconds.', ai_bad_reply:'The reply came in an unexpected shape. Please try again.'
+});
