@@ -18,7 +18,6 @@ with sync_playwright() as p:
     page.evaluate("S.draft=null; go('profile')"); page.wait_for_timeout(600)
     mp = lambda: page.inner_text('#macroPreviewBox'); sp = lambda: page.inner_text('#slotPreviewBox')
     ok(mp().strip()=='' and sp().strip()=='', 'blank profile: no preview')
-    page.click('label.opt:has(input[name="person.sex"][value="male"])')
     page.fill('#f-age','28'); page.fill('#f-height','180'); page.fill('#f-weight','75'); page.wait_for_timeout(300)
     m1 = mp(); s1 = sp(); print(m1); print(s1)
     mid = page.evaluate("computeTargets(S.draft).mid")
