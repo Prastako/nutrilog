@@ -8,7 +8,7 @@
 function blankProfile(){
   return {
     id:'profile', type:'profile', schema:2,
-    person:{ sex:'', age:null, ageRecordedOn:null, heightCm:null, weightKg:null, activityLevel:2 },
+    person:{ sex:'', age:null, ageRecordedOn:null, heightCm:null, weightKg:null, bodyFatPct:null, periods:'skip', activityLevel:2 },
     goals:{ direction:'maintain', macroSplit:{preset:'balanced', proteinPct:25, fatPct:30, carbPct:45},
       dietStyle:[], aims:[], focusNutrients:[], notes:'', slots: deepCopy(DEFAULT_SLOTS), focus:[], hints:[] },
     food:{ exclusions:[], cuisines:[], cuisineOther:'', dislikes:'',
@@ -79,12 +79,13 @@ function renderProfile(){
   let h = '<p class="muted">'+esc(t('p_intro'))+'</p><div class="orn"><i></i></div>';
 
   h += '<div class="card"><h3>'+esc(t('p_basics'))+'</h3>';
-  h += '<div class="field"><span class="flabel">'+esc(t('p_sex'))+'</span><div class="opts two">' +
-       optRow('person.sex','male',P.sex==='male',t('p_male')) + optRow('person.sex','female',P.sex==='female',t('p_female')) +
-       '</div><p class="tiny" style="margin-top:6px">'+esc(t('p_sex_note'))+'</p></div>';
   h += '<div class="inline">' + num('person.age','f-age',t('p_age')+' ('+t('p_years')+')','inputmode="numeric" min="10" max="100"') +
-       num('person.heightCm','f-height',t('p_height')+' ('+t('p_cm')+')','inputmode="numeric" min="100" max="250"') +
-       num('person.weightKg','f-weight',t('p_weight')+' ('+t('p_kg')+')','inputmode="decimal" step="0.1" min="30" max="300"') + '</div></div>';
+       num('person.heightCm','f-height',t('p_height')+' ('+t('p_cm')+', '+t('p_optional')+')','inputmode="numeric" min="100" max="250"') +
+       num('person.weightKg','f-weight',t('p_weight')+' ('+t('p_kg')+')','inputmode="decimal" step="0.1" min="30" max="300"') + '</div>';
+  h += num('person.bodyFatPct','f-bf',t('p_bf'),'inputmode="decimal" step="0.5" min="3" max="60"');
+  h += '<p class="tiny" style="margin-top:6px">'+esc(t('p_bf_note'))+'</p>';
+  h += '<p class="tiny" style="margin-top:10px">'+esc(t('p_energy_note'))+'</p>';
+  h += '</div>';
 
   h += '<div class="card"><h3>'+esc(t('p_direction'))+'</h3><div class="opts">' +
        ['lose','maintain','gain'].map(v => optRow('goals.direction', v, G.direction===v, t('dir_'+v), t('dir_'+v+'_d'))).join('') + '</div></div>';
@@ -165,8 +166,14 @@ function renderProfile(){
     '<p class="tiny" style="margin-top:8px">' + esc(t('fr_note')) + '</p></div>';
 
   /* Fine-tune section */
+  const cur = (P.periods === 'yes' || P.periods === 'no' || P.periods === 'skip') ? P.periods : 'skip';
   h += '<details class="card" id="ftBox"' + (S.ftOpen ? ' open' : '') + '><summary><h3 style="display:inline">' + esc(t('ft_summary')) + '</h3></summary>' +
-    '<p class="flabel" style="margin-top:12px">' + esc(t('ft_focus')) + '</p>' +
+    '<p class="flabel" style="margin-top:12px">' + esc(t('p_periods')) + '</p><div class="opts">' +
+    optRow('person.periods','yes',cur==='yes',t('p_periods_yes')) +
+    optRow('person.periods','no',cur==='no',t('p_periods_no')) +
+    optRow('person.periods','skip',cur==='skip',t('p_periods_skip')) +
+    '</div><p class="tiny" style="margin-top:6px">' + esc(t('p_periods_note')) + '</p>' +
+    '<p class="flabel" style="margin-top:14px">' + esc(t('ft_focus')) + '</p>' +
     chipSet('pchip-focus', HEALTH_FOCUS, G.focus || [], v => v === 'mediterranean' ? t('ds_mediterranean') : t('aim_' + v)) +
     '<p class="flabel" style="margin-top:14px">' + esc(t('ft_hints')) + '</p>' +
     chipSet('pchip-hints', SOFT_HINTS, G.hints || [], v => t('aim_' + v)) +
@@ -205,14 +212,13 @@ function renderProfile(){
 function profileMissing(d){
   const miss = [];
   const P = d.person, G = d.goals;
-  if (!P.sex) miss.push(t('p_sex'));
   if (!P.age) miss.push(t('p_age'));
-  if (!P.heightCm) miss.push(t('p_height'));
   if (!P.weightKg) miss.push(t('p_weight'));
   const inRange = (v,a,b) => Number(v) >= a && Number(v) <= b;
   if (P.age && !inRange(P.age,10,100)) miss.push(t('p_age')+' (10 '+t('range_to')+' 100)');
   if (P.heightCm && !inRange(P.heightCm,100,250)) miss.push(t('p_height')+' (100 '+t('range_to')+' 250)');
   if (P.weightKg && !inRange(P.weightKg,30,300)) miss.push(t('p_weight')+' (30 '+t('range_to')+' 300)');
+  if (P.bodyFatPct != null && P.bodyFatPct !== '' && !inRange(P.bodyFatPct,3,60)) miss.push(t('p_bf')+' (3 '+t('range_to')+' 60)');
   if (G.macroSplit.preset === 'custom'){
     const sum = Number(G.macroSplit.proteinPct)+Number(G.macroSplit.fatPct)+Number(G.macroSplit.carbPct);
     if (sum !== 100) miss.push(t('ms_sum_err'));
@@ -225,7 +231,8 @@ async function saveProfile(){
   const miss = profileMissing(d);
   if (miss.length){ toast(t('p_missing', {list: miss.join(', ')}), 5000); return; }
   const rec = deepCopy(d);
-  ['age','heightCm','weightKg','activityLevel'].forEach(k => { rec.person[k] = rec.person[k] === '' || rec.person[k] == null ? null : Number(rec.person[k]); });
+  ['age','heightCm','weightKg','bodyFatPct','activityLevel'].forEach(k => { rec.person[k] = rec.person[k] === '' || rec.person[k] == null ? null : Number(rec.person[k]); });
+  if (rec.person.periods !== 'yes' && rec.person.periods !== 'no' && rec.person.periods !== 'skip') { rec.person.periods = 'skip'; }
   ['proteinPct','fatPct','carbPct'].forEach(k => { rec.goals.macroSplit[k] = Number(rec.goals.macroSplit[k]); });
   SLOTS.forEach(s => { rec.goals.slots[s] = Number(rec.goals.slots[s]) || 0; });
   rec.kitchen.timeWeekday = Number(rec.kitchen.timeWeekday); rec.kitchen.timeWeekend = Number(rec.kitchen.timeWeekend);
