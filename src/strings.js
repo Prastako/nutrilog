@@ -852,3 +852,7 @@ Object.assign(STR.en, {
   ad_att:'How often the plan really happens', aa_always:'Almost always', aa_usually:'Usually', aa_sometimes:'Sometimes',
   ad_result:'Training adds about {kcal} kcal a day on average.'
 });
+
+/* ---------- looks ---------- */
+Object.assign(STR.cs, { set_lookpick:'Vzhled' });
+Object.assign(STR.en, { set_lookpick:'Look' });

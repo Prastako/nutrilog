@@ -396,6 +396,11 @@ function renderSettings(){
   const P = S.prefs;
   let h = '';
   h += '<div class="card"><h3>'+esc(t('set_look'))+'</h3>' +
+    '<div class="field"><span class="flabel">'+esc(t('set_lookpick'))+'</span><div class="looks">' +
+      LOOKS.map(l => '<button class="looktile" type="button" data-act="look" data-v="'+l.id+'" aria-pressed="'+(lookOf(S.look).id===l.id)+'" style="background:'+l.dark.ground+';color:'+l.dark.ink+';--lk-accent:'+l.dark.accent+'">' +
+        '<span class="lk-dots"><i style="background:'+l.dark.ground+'"></i><i style="background:'+l.dark.ink+'"></i><i style="background:'+l.dark.accent+'"></i></span>' +
+        '<span class="lk-name">'+esc(l.name)+'</span></button>').join('') +
+    '</div></div>' +
     '<div class="field"><span class="flabel">'+esc(t('set_theme'))+'</span><div class="chips">' +
       ['device','light','dark'].map(v => '<button class="chip" type="button" data-act="theme" data-v="'+v+'" aria-pressed="'+(S.theme===v)+'">'+esc(t('th_'+v))+'</button>').join('') +
     '</div></div>' +
