@@ -365,6 +365,7 @@ function bindEvents(){
   /* coming back to the app after midnight shows the new day */
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible' && (S.screen === 'today' || S.screen === 'log') && !S.sheetOpen) renderScreen(S.screen);
+    if (document.visibilityState === 'visible') syncRun('foreground');
   });
 }
 
@@ -423,6 +424,7 @@ async function boot(){
   const known = TABS.map(x => x.id).concat(['profile','settings']);
   go(known.indexOf(hash) >= 0 ? hash : 'today', false);
   try { history.replaceState({screen:S.screen}, '', '#'+S.screen); } catch(e){}
+  syncRun('app open');
 
   requestPersist();
   registerSW();

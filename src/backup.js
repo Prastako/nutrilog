@@ -255,6 +255,7 @@ function renderBackupBar(){
   const b = S.meta.backup;
   const hasData = !!S.profile;
   let cls = 'bar', html = '';
+  if (typeof syncFresh === 'function' && syncFresh()){ bar.className = 'bar hide'; bar.innerHTML = ''; return; }
   if (!backupConfigured()){
     if (hasData) cls += ' bad';
     html = '<div>' + esc(hasData ? t('bar_unconf_data') : t('bar_unconf_new')) + '</div>' +
