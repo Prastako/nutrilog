@@ -172,3 +172,24 @@ main{padding-left:32px;padding-right:32px}
 #btnBack,#btnSettings{position:absolute;top:calc(env(safe-area-inset-top) + 14px)}
 #btnBack{left:12px}
 #btnSettings{right:12px}
+
+/* ---------- wide screens (brief layout-wide): side rail, content up to 1080 px, two columns, sheets as dialogs ---------- */
+@media (min-width: 900px){
+  body{padding-left:92px}
+  #app{max-width:1080px}
+  main{padding-bottom:40px}
+  #tabbar{top:0;bottom:0;left:0;right:auto;width:92px;transform:none;
+    grid-template-columns:1fr;grid-auto-rows:min-content;align-content:start;gap:6px;
+    padding:calc(env(safe-area-inset-top) + 14px) 8px 14px;
+    border:0;border-right:1px solid var(--card-edge);border-radius:0}
+  #tabbar .tab{padding:10px 2px 8px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:0 20px;align-items:start}
+  .cols > .col{min-width:0}
+  #s-review.on{display:grid;grid-template-columns:1fr 1fr;gap:0 20px;align-items:start}
+  #s-review > *{min-width:0}
+  #s-review > .seg, #s-review > .daynav, #s-review > .daynav + .card, #s-review > label.opt, #s-review > .card:last-child{grid-column:1 / -1}
+  #s-review > #rvAdd:empty{display:none}
+  #s-profile, #s-settings{max-width:640px;margin-left:auto;margin-right:auto}
+  .sheetbg{align-items:flex-start;padding:6vh 16px 16px}
+  .sheet{max-width:560px;border-radius:var(--r-lg);border:1px solid var(--card-edge);padding-bottom:20px}
+}
