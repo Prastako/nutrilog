@@ -89,6 +89,12 @@ def anthropic(route, request):
 errors = []
 def shot(page, name):
     page.screenshot(path=os.path.join(SHOTS, name + '.png'), full_page=False)
+def open_add(page, mode=None):
+    # opens the add sheet from the visible meal "+" of the current time slot
+    slot = page.evaluate('guessSlot()')
+    page.click('[data-act="add-food"][data-slot="%s"]:visible' % slot); page.wait_for_timeout(400)
+    if mode:
+        page.click('#addModes button[data-mode="%s"]' % mode); page.wait_for_timeout(400)
 
 with sync_playwright() as p:
     b = p.chromium.launch()
@@ -135,8 +141,7 @@ with sync_playwright() as p:
     print('migration ok:', prof['person'], prof['goals']['macroSplit'])
 
     # --- add food by search
-    page.click('#fab'); page.wait_for_timeout(300)
-    page.click('[data-fab="add"]'); page.wait_for_timeout(400)
+    open_add(page)
     page.fill('#fq', 'kuřecí prsa'); page.wait_for_timeout(1500)
     shot(page, '02_search')
     first = page.locator('#fres .frow').first
@@ -147,20 +152,20 @@ with sync_playwright() as p:
     page.click('#amSave'); page.wait_for_timeout(800)
 
     # oats search in Czech
-    page.click('#fab'); page.wait_for_timeout(300); page.click('[data-fab="add"]'); page.wait_for_timeout(300)
+    open_add(page)
     page.fill('#fq', 'ovesné vločky'); page.wait_for_timeout(1200)
     print('oats result:', page.locator('#fres .frow').first.inner_text().replace('\n', ' | '))
     page.locator('#fres .frow').first.click(); page.wait_for_timeout(300); page.click('#amSave'); page.wait_for_timeout(600)
 
     # --- describe with Claude (mocked)
     page.evaluate("async () => { S.secrets.anthropic = 'sk-test'; await secretSet('anthropic','sk-test'); }")
-    page.click('#fab'); page.wait_for_timeout(300); page.click('[data-fab="describe"]'); page.wait_for_timeout(400)
+    open_add(page, 'describe')
     page.fill('#dq', 'dvě vejce na másle a rohlík'); page.click('#dqGo'); page.wait_for_timeout(1200)
     shot(page, '04_describe')
     page.click('#dqSave'); page.wait_for_timeout(800)
 
     # --- barcode lookup through Open Food Facts (real network)
-    page.click('#fab'); page.wait_for_timeout(300); page.click('[data-fab="scan"]'); page.wait_for_timeout(600)
+    open_add(page, 'scan')
     page.fill('#scanCode', '5449000000996'); page.click('#scanGo'); page.wait_for_timeout(6000)
     shot(page, '05_barcode')
     if page.locator('#amSave').count():
@@ -208,7 +213,7 @@ with sync_playwright() as p:
 
     # --- photo (mocked)
     page.click('#tabbar [data-go="today"]'); page.wait_for_timeout(600)
-    page.click('#fab'); page.wait_for_timeout(300); page.click('[data-fab="photo"]'); page.wait_for_timeout(400)
+    open_add(page, 'photo')
     page.set_input_files('#phFile', os.path.join(V02, 'icon-512.png')); page.wait_for_timeout(800)
     page.click('#phGo'); page.wait_for_timeout(1500)
     shot(page, '13_photo')
