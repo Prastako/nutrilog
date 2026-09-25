@@ -1,6 +1,6 @@
 // Sync engine — pulls and pushes records through the sync server
 
-const SYNC_URL = 'https://REPLACE-ME.val.run';
+const SYNC_URL = 'https://jrajmont--01a0d84f9098771d83cd77326fa78d80.web.val.run';
 const SYNC_BATCH = 200;
 const SYNC_DELAY_MS = 5000;
 let syncTimer = null;
