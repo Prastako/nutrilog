@@ -12,12 +12,14 @@ function syncCardInner() {
   const joined = !!S.secrets.sync;
   let h = '<h3>' + esc(t('sy_title')) + '</h3>';
   h += '<p class="tiny" id="syncState">' + esc(syncStateText()) + '</p>';
+  h += '<p class="tiny">' + esc(t('sy_link_is_key')) + '</p>';
   h += '<div class="btnrow">';
   if (joined) {
     h += '<button class="btn quiet" type="button" data-sync="now">' + esc(t('sy_now')) + '</button>';
   }
   h += '<button class="btn quiet" type="button" data-sync="join">' + esc(t('sy_join')) + '</button>';
   if (joined) {
+    h += '<button class="btn quiet" type="button" data-sync="share">' + esc(t('sy_share')) + '</button>';
     h += '<button class="btn quiet" type="button" data-sync="leave">' + esc(t('sy_leave')) + '</button>';
   }
   h += '</div>';
@@ -51,6 +53,7 @@ function bindSyncCard() {
     if (action == 'join') openJoinSheet('');
     else if (action == 'leave') await syncLeave();
     else if (action == 'now') await syncRun('now', true);
+    else if (action == 'share') await openShareSheet();
   });
 }
 

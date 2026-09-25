@@ -349,10 +349,17 @@ function bindEvents(){
   });
 
   window.addEventListener('popstate', (e) => {
+    if ((location.hash || '').indexOf('#join=') === 0) return;
     if (S.swallowPop){ S.swallowPop = false; refreshScreenSoon(); return; }
     if (S.sheetOpen){ closeSheet(true); return; }
     const scr = (e.state && e.state.screen) || 'today';
     go(scr, false);
+  });
+  window.addEventListener('hashchange', () => {
+    const h = location.hash || '';
+    if (h.indexOf('#join=') !== 0) return;
+    try { history.replaceState({screen:S.screen}, '', '#'+S.screen); } catch(e){}
+    syncHandleJoinLink(syncKeyFromInput(h));
   });
   window.addEventListener('online', () => {
     if (S.meta.backup.state === 'offline' || S.meta.backup.state === 'error') runBackup('back online');
@@ -425,6 +432,7 @@ async function boot(){
   go(known.indexOf(hash) >= 0 ? hash : 'today', false);
   try { history.replaceState({screen:S.screen}, '', '#'+S.screen); } catch(e){}
   syncRun('app open');
+  if (hash.indexOf('join=') === 0) syncHandleJoinLink(syncKeyFromInput('#' + hash));
 
   requestPersist();
   registerSW();
