@@ -231,3 +231,51 @@ body.quickmode :focus-visible{outline:2px solid var(--accent);outline-offset:2px
   box-shadow:0 0 8px var(--glow-strong),0 0 18px var(--glow-soft)}
 .rend{position:absolute;top:-6px;width:14px;height:14px;margin-left:-7px;pointer-events:none}
 .macro .m .rbar{margin-top:10px}
+
+/* ---------- ornaments (brief reskin-ornaments): drawn shapes from #ornDefs with a faint chromatic split ---------- */
+#ornDefs .f{fill:currentColor;stroke:none}
+#ornDefs .soft{opacity:.55}
+#ornDefs .softer{opacity:.3}
+.ornsvg{display:block;overflow:visible;color:var(--ornament);stroke:currentColor;fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;
+  filter:drop-shadow(0 0 2.5px var(--glow-strong)) drop-shadow(0 0 7px var(--glow-soft));pointer-events:none}
+.ornsvg .ca{mix-blend-mode:multiply;opacity:.25}
+.ornsvg .ca.r{color:#E0322F;transform:translate(-.55px,.1px);animation:orn-jit-r 7s steps(1,end) infinite}
+.ornsvg .ca.c{color:#1E9EC4;transform:translate(.55px,-.1px);animation:orn-jit-c 7s steps(1,end) infinite}
+html[data-theme="dark"] .ornsvg .ca{mix-blend-mode:screen;opacity:.3}
+html[data-theme="dark"] .ornsvg .ca.r{color:#FF5F5F}
+html[data-theme="dark"] .ornsvg .ca.c{color:#4FD8FF}
+@media (prefers-color-scheme: dark){
+  html[data-theme="device"] .ornsvg .ca{mix-blend-mode:screen;opacity:.3}
+  html[data-theme="device"] .ornsvg .ca.r{color:#FF5F5F}
+  html[data-theme="device"] .ornsvg .ca.c{color:#4FD8FF}
+}
+.ornsvg.o-star .ca{opacity:.22}
+@keyframes orn-jit-r{0%,91%{transform:translate(-.55px,.1px)}92%{transform:translate(-1.6px,.4px)}94%{transform:translate(.3px,-.2px)}95.5%{transform:translate(-.55px,.1px)}}
+@keyframes orn-jit-c{0%,91%{transform:translate(.55px,-.1px)}92%{transform:translate(1.5px,-.5px)}94%{transform:translate(-.3px,.3px)}95.5%{transform:translate(.55px,-.1px)}}
+@media (prefers-reduced-motion: reduce){.ornsvg .ca{animation:none}}
+.topbar .hdr-orn .ornsvg{width:262px;height:34px;max-width:100%}
+.orn > i{display:flex;align-items:center;justify-content:center}
+.orn > i .ornsvg{width:140px;height:20px}
+.btn:not(.ghost):not(.quiet):not(.danger){position:relative;padding-left:36px;padding-right:36px}
+.btn .o-corner{position:absolute;width:20px;height:20px}
+.btn .o-corner.tl{top:7px;left:8px}
+.btn .o-corner.tr{top:7px;right:8px;transform:scaleX(-1)}
+.btn .o-corner.bl{bottom:7px;left:8px;transform:scaleY(-1)}
+.btn .o-corner.br{bottom:7px;right:8px;transform:scale(-1,-1)}
+#tabbar .tab .dot{display:flex;align-items:flex-start;justify-content:center}
+#tabbar .tab .dot .ornsvg{display:none;width:12px;height:12px;color:var(--accent)}
+#tabbar .tab[aria-current="page"] .dot .ornsvg{display:block}
+.band > .rbar > .rend .ornsvg{width:14px;height:14px;color:var(--accent)}
+.topbar .wm{position:absolute;left:50%;top:-70px;width:220px;height:220px;transform:translateX(-50%);opacity:.06;color:var(--ink);
+  stroke:currentColor;fill:none;pointer-events:none;z-index:-1}
+main{position:relative}
+.orn-cols{position:absolute;top:0;bottom:0;left:14px;right:14px;pointer-events:none}
+.orn-cols > span{position:absolute;top:0;bottom:0;width:18px}
+.orn-cols > .l{left:0}
+.orn-cols > .r{right:0}
+.orn-cols .ornsvg{position:sticky;top:calc(50vh - 128px);width:18px;height:256px}
+.orn-cols > .r .ornsvg{transform:rotate(180deg)}
+.looktile .lk-mini{display:block;width:60px;height:16px;margin:0 auto 6px;color:var(--lk-accent);stroke:currentColor;fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;
+  filter:drop-shadow(0 0 2.5px color-mix(in srgb, var(--lk-accent) 45%, transparent)) drop-shadow(0 0 7px color-mix(in srgb, var(--lk-accent) 18%, transparent));pointer-events:none}
+@media (max-width: 359.98px){ .orn-cols{display:none} }
+body.quickmode .orn-cols, body.quickmode .topbar .wm, body.quickmode .o-corner, body.quickmode .rend .ornsvg, body.quickmode #tabbar .dot .ornsvg{display:none}
