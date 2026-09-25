@@ -365,6 +365,8 @@ function bindEvents(){
     if (S.meta.backup.state === 'offline' || S.meta.backup.state === 'error') runBackup('back online');
   });
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+  window.matchMedia('(min-width: 900px)').addEventListener('change', () => { if (!S.sheetOpen && (S.screen === 'today' || S.screen === 'log')) renderScreen(S.screen); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && S.sheetOpen) closeSheet(); });
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault(); S.installPrompt = e;
     if (S.screen === 'settings') renderSettings();
