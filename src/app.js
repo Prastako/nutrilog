@@ -22,6 +22,7 @@ function renderTabs(){
 }
 
 function go(screen, push){
+  if (quickOn() && ['quick','settings','profile'].indexOf(screen) < 0) screen = 'quick';
   if (S.sheetOpen) closeSheet(true);
   S.screen = screen;
   $$('.screen').forEach(s => s.classList.remove('on'));
@@ -46,6 +47,7 @@ function goBack(){
 function headerLabel(){
   if (S.screen === 'today') return fmtLongDate(dateFromKey(localDateKey()));
   if (S.screen === 'log') return fmtLongDate(dateFromKey(S.logDate || localDateKey()));
+  if (S.screen === 'quick') return fmtShortDate(localDateKey());
   return t('t_' + S.screen);
 }
 
@@ -56,6 +58,7 @@ function refreshChrome(){
   $('#screenTitle').textContent = headerLabel();
 
   document.body.classList.toggle('chatmode', S.screen === 'chat');
+  document.body.classList.toggle('quickmode', quickOn());
 }
 
 function renderScreen(name){
@@ -67,6 +70,7 @@ function renderScreen(name){
   else if (name === 'review') renderReview();
   else if (name === 'profile') renderProfile();
   else if (name === 'settings') renderSettings();
+  else if (name === 'quick') renderQuick();
 }
 
 function renderAll(){
@@ -119,6 +123,7 @@ function openFabSheet(){
 /* ---------- Events ---------- */
 
 function bindEvents(){
+  bindQuick();
   $('#btnBack').addEventListener('click', goBack);
   $('#btnSettings').addEventListener('click', () => go('settings'));
 
@@ -373,7 +378,7 @@ function bindEvents(){
   });
   /* coming back to the app after midnight shows the new day */
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && (S.screen === 'today' || S.screen === 'log') && !S.sheetOpen) renderScreen(S.screen);
+    if (document.visibilityState === 'visible' && (S.screen === 'today' || S.screen === 'log' || S.screen === 'quick') && !S.sheetOpen) renderScreen(S.screen);
     if (document.visibilityState === 'visible') syncRun('foreground');
   });
 }
@@ -430,11 +435,13 @@ async function boot(){
   await loadRecipes();
 
   const hash = (location.hash || '').replace('#','');
-  const known = TABS.map(x => x.id).concat(['profile','settings']);
+  if (hash === 'quick' && !quickOn()){ S.prefs.quickMode = 'on'; S.prefs.quickModeAsked = true; await savePrefs(); }
+  const known = TABS.map(x => x.id).concat(['profile','settings','quick']);
   go(known.indexOf(hash) >= 0 ? hash : 'today', false);
   try { history.replaceState({screen:S.screen}, '', '#'+S.screen); } catch(e){}
   syncRun('app open');
   if (hash.indexOf('join=') === 0) syncHandleJoinLink(syncKeyFromInput('#' + hash));
+  else maybeOfferQuick();
 
   requestPersist();
   registerSW();
