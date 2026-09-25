@@ -473,6 +473,7 @@ function renderSettings(){
     '<div class="kv"><span class="k">'+esc(t('usage_cost'))+'</span><span class="v num">'+esc(fmtNum(cost,2))+' USD</span></div>' +
     '<div class="btnrow" style="margin-top:8px"><button class="btn quiet" type="button" data-act="usage-reset">'+esc(t('usage_reset'))+'</button></div></div>';
 
+  h += syncCardHtml();
   h += '<div class="card"><h3>'+esc(t('set_data_h'))+'</h3><div id="backupPanel"></div>' +
     '<div class="btnrow" style="margin-top:12px">' +
       '<button class="btn quiet" type="button" data-act="backup-now">'+icon('cloud')+esc(t('b_run_now'))+'</button>' +
@@ -518,6 +519,7 @@ function renderSettings(){
     '</div>';
 
   $('#s-settings').innerHTML = h;
+  bindSyncCard();
   renderBackupPanel();
   fillStorageInfo();
   fillSnapshots();

@@ -856,3 +856,21 @@ Object.assign(STR.en, {
 /* ---------- looks ---------- */
 Object.assign(STR.cs, { set_lookpick:'Vzhled' });
 Object.assign(STR.en, { set_lookpick:'Look' });
+
+/* ---------- sync ---------- */
+Object.assign(STR.cs, {
+  sy_title:'Synchronizace', sy_off:'Nepřipojeno. Data jsou jen v tomto zařízení.', sy_on:'Profil {name}, poslední synchronizace {when}',
+  sy_offline:'Offline, synchronizace počká.', sy_err:'Synchronizace selhala: {msg}', sy_revoked:'Klíč už neplatí. Připojte se znovu odkazem.',
+  sy_join:'Připojit se odkazem', sy_join_ph:'Vložte odkaz nebo klíč', sy_join_confirm:'Připojit se k profilu {name}?',
+  sy_join_merge:'Data v tomto zařízení se přidají do profilu.', sy_join_switch:'Opustíte současný profil a data v zařízení se nahradí.',
+  sy_leave:'Opustit profil', sy_leave_note:'Data zůstanou v zařízení i na serveru.', sy_now:'Synchronizovat teď',
+  sy_url:'Adresa serveru', sy_advanced:'Pokročilé'
+});
+Object.assign(STR.en, {
+  sy_title:'Sync', sy_off:'Not joined. Data lives on this device only.', sy_on:'Profile {name}, last sync {when}',
+  sy_offline:'Offline, sync will wait.', sy_err:'Sync failed: {msg}', sy_revoked:'The key no longer works. Join again with a link.',
+  sy_join:'Join with a link', sy_join_ph:'Paste the link or the key', sy_join_confirm:'Join the profile {name}?',
+  sy_join_merge:'The data on this device will be added to the profile.', sy_join_switch:'You will leave the current profile and the data on this device will be replaced.',
+  sy_leave:'Leave this profile', sy_leave_note:'Data stays on this device and on the server.', sy_now:'Sync now',
+  sy_url:'Server address', sy_advanced:'Advanced'
+});
