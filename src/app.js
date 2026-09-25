@@ -22,7 +22,10 @@ function renderTabs(){
 }
 
 function go(screen, push){
-  if (quickOn() && ['quick','settings','profile'].indexOf(screen) < 0) screen = 'quick';
+  if (quickOn() && ['quick','settings','profile'].indexOf(screen) < 0){
+    screen = 'quick';
+    if (push === false){ try { history.replaceState({screen:'quick'}, '', '#quick'); } catch(e){} }
+  }
   if (S.sheetOpen) closeSheet(true);
   S.screen = screen;
   $$('.screen').forEach(s => s.classList.remove('on'));

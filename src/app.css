@@ -215,3 +215,4 @@ body.quickmode :focus-visible{outline:2px solid var(--accent);outline-offset:2px
 #s-quick .qm-entry .en{flex:1;min-width:0;overflow-wrap:anywhere}
 #s-quick .qm-same{margin:6px 0 0 12px}
 #s-quick .qm-full{margin:18px 0 8px}
+@media (max-width: 359.98px){ .linkbtn{min-height:40px} }
