@@ -8,7 +8,7 @@
 function blankProfile(){
   return {
     id:'profile', type:'profile', schema:2,
-    person:{ sex:'', age:null, ageRecordedOn:null, heightCm:null, weightKg:null, bodyFatPct:null, periods:'skip', activityLevel:2 },
+    person:{ sex:'', age:null, ageRecordedOn:null, heightCm:null, weightKg:null, bodyFatPct:null, periods:'skip', activityLevel:2, activityDetail:{ on:false, base:1, sessions:0, minutes:60, type:'strength', attendance:'usually' } },
     goals:{ direction:'maintain', macroSplit:{preset:'balanced', proteinPct:25, fatPct:30, carbPct:45},
       dietStyle:[], aims:[], focusNutrients:[], notes:'', slots: deepCopy(DEFAULT_SLOTS), focus:[], hints:[] },
     food:{ exclusions:[], cuisines:[], cuisineOther:'', dislikes:'',
@@ -49,7 +49,16 @@ function previewParts(d){
   return { macro, slots };
 }
 
+const AD_TYPES = ['strength','heavy','cycling','cyclinghard','circuits','hiit','climbing','yoga'];
+function adResultText(d){
+  var a = d.person.activityDetail || {};
+  var n = Math.round(Math.round(trainingPerDay(Object.assign({}, a, {on:true}), d.person.weightKg) * 1e6) / 1e6);
+  return t('ad_result', {kcal: n});
+}
+
 function updateProfilePreview(){
+  var box = document.getElementById('adResultBox');
+  if (box) box.textContent = adResultText(S.draft);
   var x = previewParts(S.draft);
   var mb = document.getElementById('macroPreviewBox');
   if (mb) mb.innerHTML = x.macro;
@@ -90,9 +99,41 @@ function renderProfile(){
   h += '<div class="card"><h3>'+esc(t('p_direction'))+'</h3><div class="opts">' +
        ['lose','maintain','gain'].map(v => optRow('goals.direction', v, G.direction===v, t('dir_'+v), t('dir_'+v+'_d'))).join('') + '</div></div>';
 
-  h += '<div class="card"><h3>'+esc(t('p_activity'))+'</h3><p class="tiny" style="margin-bottom:9px">'+esc(t('p_activity_note'))+'</p><div class="opts">';
-  ACTIVITY.forEach(a => { h += optRow('person.activityLevel', String(a.id), Number(P.activityLevel)===a.id, t(a.k+'_t'), t(a.k+'_d')); });
-  h += '</div></div>';
+  var AD = P.activityDetail || {};
+  var on = AD.on === true;
+  h += '<div class="card"><h3>'+esc(t('p_activity'))+'</h3><p class="tiny" style="margin-bottom:9px">'+esc(t('p_activity_note'))+'</p>';
+  if (!on){
+    h += '<div class="opts">';
+    ACTIVITY.forEach(a => { h += optRow('person.activityLevel', String(a.id), Number(P.activityLevel)===a.id, t(a.k+'_t'), t(a.k+'_d')); });
+    h += '</div>';
+  }
+  h += '<div class="opts" style="margin-top:10px"><label class="opt sq"><input type="checkbox" role="switch" name="person.activityDetail.on" value="1"' + (on ? ' checked' : '') + '><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('ad_toggle'))+'</span></span></label></div>';
+  if (on){
+    h += '<p class="tiny" style="margin-top:10px">'+esc(t('ad_note'))+'</p>';
+    var b = Number(AD.base);
+    if (b < 1 || b > 4) b = 1;
+    h += '<p class="flabel" style="margin-top:12px">'+esc(t('ad_base'))+'</p><div class="opts">';
+    for (var n = 1; n <= 4; n++) { h += optRow('person.activityDetail.base', String(n), b === n, t('ad_b'+n)); }
+    h += '</div>';
+    h += '<div class="inline" style="margin-top:12px">' +
+      num('person.activityDetail.sessions','ad-sessions',t('ad_sessions'),'inputmode="numeric" step="1" min="0" max="14"') +
+      num('person.activityDetail.minutes','ad-minutes',t('ad_minutes'),'inputmode="numeric" step="5" min="10" max="240"') + '</div>';
+    var ty = AD.type;
+    if (AD_TYPES.indexOf(ty) === -1) ty = 'strength';
+    h += '<div class="field"><label for="ad-type">'+esc(t('ad_type'))+'</label><select id="ad-type" data-bind="person.activityDetail.type">';
+    for (var ti = 0; ti < AD_TYPES.length; ti++) {
+      var k = AD_TYPES[ti];
+      h += '<option value="'+k+'"'+(k === ty ? ' selected' : '')+'>'+esc(t('at_'+k))+'</option>';
+    }
+    h += '</select></div>';
+    var at = AD.attendance;
+    if (at !== 'always' && at !== 'usually' && at !== 'sometimes') at = 'usually';
+    h += '<p class="flabel" style="margin-top:12px">'+esc(t('ad_att'))+'</p><div class="opts">';
+    ['always','usually','sometimes'].forEach(function(v) { h += optRow('person.activityDetail.attendance', v, v === at, t('aa_'+v)); });
+    h += '</div>';
+    h += '<p class="tiny" id="adResultBox" style="margin-top:10px">'+esc(adResultText(d))+'</p>';
+  }
+  h += '</div>';
 
   h += '<div class="card"><h3>'+esc(t('p_macro'))+'</h3><div class="opts">' +
        ['balanced','protein','lowcarb','custom'].map(v => optRow('goals.macroSplit.preset', v, G.macroSplit.preset===v, t('ms_'+v), t('ms_'+v+'_d'))).join('') + '</div>';
@@ -223,6 +264,12 @@ function profileMissing(d){
     const sum = Number(G.macroSplit.proteinPct)+Number(G.macroSplit.fatPct)+Number(G.macroSplit.carbPct);
     if (sum !== 100) miss.push(t('ms_sum_err'));
   }
+  if (P.activityDetail && P.activityDetail.on === true){
+    var adS = P.activityDetail.sessions;
+    if (adS != null && adS !== '' && !(Number(adS) >= 0 && Number(adS) <= 14)) miss.push(t('ad_sessions')+' (0 '+t('range_to')+' 14)');
+    var adM = P.activityDetail.minutes;
+    if (adM != null && adM !== '' && !(Number(adM) >= 10 && Number(adM) <= 240)) miss.push(t('ad_minutes')+' (10 '+t('range_to')+' 240)');
+  }
   return miss;
 }
 
@@ -233,6 +280,14 @@ async function saveProfile(){
   const rec = deepCopy(d);
   ['age','heightCm','weightKg','bodyFatPct','activityLevel'].forEach(k => { rec.person[k] = rec.person[k] === '' || rec.person[k] == null ? null : Number(rec.person[k]); });
   if (rec.person.periods !== 'yes' && rec.person.periods !== 'no' && rec.person.periods !== 'skip') { rec.person.periods = 'skip'; }
+  if (rec.person.activityDetail){
+    var ad = rec.person.activityDetail;
+    ad.on = ad.on === true;
+    ad.base = Number(ad.base);
+    if (ad.base < 1 || ad.base > 4) ad.base = 1;
+    if (ad.sessions === '' || ad.sessions == null) ad.sessions = 0; else ad.sessions = Number(ad.sessions);
+    if (ad.minutes === '' || ad.minutes == null) ad.minutes = 60; else ad.minutes = Number(ad.minutes);
+  }
   ['proteinPct','fatPct','carbPct'].forEach(k => { rec.goals.macroSplit[k] = Number(rec.goals.macroSplit[k]); });
   SLOTS.forEach(s => { rec.goals.slots[s] = Number(rec.goals.slots[s]) || 0; });
   rec.kitchen.timeWeekday = Number(rec.kitchen.timeWeekday); rec.kitchen.timeWeekend = Number(rec.kitchen.timeWeekend);
