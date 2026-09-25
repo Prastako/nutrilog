@@ -280,7 +280,7 @@ describe('computeTargets', () => {
   });
 
   describe('floor binding', () => {
-    const p = profile('female', 35, 160, 40, 1, 'lose');
+    const p = profile('female', 35, 160, 35, 1, 'lose');
 
     it('floorBinding is true for small person losing weight', () => {
       const result = computeTargets(p);
