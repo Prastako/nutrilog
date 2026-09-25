@@ -432,6 +432,7 @@ async function requestPersist(){
 async function boot(){
   await loadState();
   applyTheme();
+  initOrnaments();
   document.documentElement.setAttribute('lang', S.lang);
   bindEvents();
   await ensureStarterRecipes();
