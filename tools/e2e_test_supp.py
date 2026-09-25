@@ -16,6 +16,12 @@ def off(route, req):
     route.fulfill(status=200, content_type='application/json', headers={'access-control-allow-origin':'*'}, body=json.dumps(body))
 fails = []
 def ok(c, m): print(('PASS ' if c else 'FAIL ') + m); (None if c else fails.append(m))
+def open_add(page, mode=None):
+    # opens the add sheet from the visible meal "+" of the current time slot
+    slot = page.evaluate('guessSlot()')
+    page.click('[data-act="add-food"][data-slot="%s"]:visible' % slot); page.wait_for_timeout(400)
+    if mode:
+        page.click('#addModes button[data-mode="%s"]' % mode); page.wait_for_timeout(400)
 errors = []
 with sync_playwright() as p:
     b = p.chromium.launch()
@@ -45,7 +51,7 @@ with sync_playwright() as p:
     ok('+ Magnesium 250 mg' in chips and not any('300' in c for c in chips), 'preset chips: ' + ', '.join(c for c in chips if 'agnes' in c))
     shot('u2_supp_manager'); page.click('[data-sheet-close]'); page.wait_for_timeout(300)
     # barcode found
-    page.click('#fab'); page.wait_for_timeout(300); page.click('[data-fab="scan"]'); page.wait_for_timeout(600)
+    open_add(page, 'scan')
     page.fill('#scanCode', PROD['code']); page.click('#scanGo'); page.wait_for_timeout(1500)
     s = page.inner_text('.sheet')
     ok('Product data from Open Food Facts' in s and 'ODbL' in s, 'credit on barcode amount screen')
@@ -54,7 +60,7 @@ with sync_playwright() as p:
     for _ in range(3):
         if page.locator('[data-sheet-close]').count(): page.locator('[data-sheet-close]').first.click(); page.wait_for_timeout(300)
     # product search
-    page.click('#fab'); page.wait_for_timeout(300); page.click('[data-fab="add"]'); page.wait_for_timeout(400)
+    open_add(page)
     page.fill('#fq', 'yogurt'); page.wait_for_timeout(1200); page.click('#offBtn'); page.wait_for_timeout(1500)
     s = page.inner_text('.sheet')
     ok('Test yogurt' in s and 'Product data from Open Food Facts' in s, 'credit under product search results')
