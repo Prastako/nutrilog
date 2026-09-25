@@ -73,7 +73,7 @@ async function renderToday(){
   if (wide) h += '</div></div>';
 
   host.innerHTML = h;
-  renderSuppChecklist($('#todaySupps'), today);
+  renderSuppChecklist($('#todaySupps'), today, false, true);
   renderNextMeal($('#todayNext'), d);
 }
 
@@ -527,11 +527,11 @@ function suppScheduledOn(s, dateKey){
   return days.indexOf(dateFromKey(dateKey).getDay()) >= 0;
 }
 
-async function renderSuppChecklist(el, dateKey, showManage){
+async function renderSuppChecklist(el, dateKey, showManage, withButton){
   if (!el) return;
   const supps = (await recByType('supplement')).filter(s => s.active !== false);
   const intakes = await recByTypeDate('supplement_intake', dateKey, dateKey);
-  if (!supps.length && !showManage){ el.innerHTML = ''; return; }
+  if (!supps.length && !showManage && !withButton){ el.innerHTML = ''; return; }
 
   /* Upper level check: the day's planned doses plus intakes of supplements
      not planned for that day. */
@@ -558,6 +558,7 @@ async function renderSuppChecklist(el, dateKey, showManage){
   ulOver.forEach(o => {
     h += '<div class="notice warn">'+esc(t('sp_ul_over', {a: fmtAmt(o.amount), u: nutUnit(o.k), n: nutLabel(o.k), ul: fmtAmt(o.ul)}))+'</div>';
   });
+  if (withButton) h += '<div class="btnrow" style="margin-top:12px"><button class="btn" type="button" data-act="supp-manage">'+esc(t('fab_supp'))+'</button></div>';
   h += '</div>';
   el.innerHTML = h;
 }
