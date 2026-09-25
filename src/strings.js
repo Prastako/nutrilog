@@ -884,3 +884,15 @@ Object.assign(STR.en, {
   sy_share:'Add another device', sy_share_note:'Scan the code or open the link on the other device. Anyone with the link has access to the profile.',
   sy_link_is_key:'The link is the key to the profile, send it privately only.', sy_already:'This device is already joined to this profile.'
 });
+
+/* ---------- quick mode ---------- */
+Object.assign(STR.cs, {
+  qm_title:'Rychl\u00fd re\u017eim', qm_note:'Jen z\u00e1pis j\u00eddla a dopl\u0148k na jedn\u00e9 obrazovce. Nastaven\u00ed tohoto za\u0159\u00edzen\u00ed.',
+  qm_offer:'Mal\u00e1 obrazovka. Zapnout rychl\u00fd re\u017eim jen se z\u00e1pisem j\u00eddla?', qm_offer_yes:'Zapnout', qm_offer_no:'Nechat celou aplikaci',
+  qm_shortcut:'Rychl\u00fd z\u00e1pis', qm_energy:'{kcal} z {lo} a\u017e {hi} kcal', qm_same:'Jako v\u010dera', qm_full:'Cel\u00e1 aplikace', t_quick:'Z\u00e1pis'
+});
+Object.assign(STR.en, {
+  qm_title:'Quick mode', qm_note:'Only food and supplement logging on one screen. A setting of this device.',
+  qm_offer:'Small screen. Turn on Quick mode with food logging only?', qm_offer_yes:'Turn on', qm_offer_no:'Keep the full app',
+  qm_shortcut:'Quick log', qm_energy:'{kcal} of {lo} to {hi} kcal', qm_same:'Same as yesterday', qm_full:'Full app', t_quick:'Log'
+});
