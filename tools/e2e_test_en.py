@@ -118,6 +118,12 @@ def shot(page, name):
 def step(page, name, wait=0):
     if wait: page.wait_for_timeout(wait)
     shot(page, name); check(page, name)
+def open_add(page, mode=None):
+    # opens the add sheet from the visible meal "+" of the current time slot
+    slot = page.evaluate('guessSlot()')
+    page.click('[data-act="add-food"][data-slot="%s"]:visible' % slot); page.wait_for_timeout(400)
+    if mode:
+        page.click('#addModes button[data-mode="%s"]' % mode); page.wait_for_timeout(400)
 
 with sync_playwright() as p:
     b = p.chromium.launch()
@@ -155,14 +161,13 @@ with sync_playwright() as p:
         page.locator('[data-act="why-range"]').first.click(); step(page, 'e07_why_range', 400); page.click('[data-sheet-close]'); page.wait_for_timeout(300)
 
     # add flows
-    page.click('#fab'); step(page, 'e08_fab', 300)
-    page.click('[data-fab="add"]'); page.wait_for_timeout(400)
+    open_add(page); step(page, 'e08_add_sheet')
     page.fill('#fq', 'chicken breast'); step(page, 'e09_search', 1500)
     page.locator('#fres .frow').first.click(); page.wait_for_timeout(400)
     page.fill('#amG', '150'); step(page, 'e10_amount', 200)
     page.click('#amSave'); page.wait_for_timeout(800)
     # other add tabs
-    page.click('#fab'); page.wait_for_timeout(300); page.click('[data-fab="add"]'); page.wait_for_timeout(400)
+    open_add(page)
     tabs = page.evaluate("Array.from(document.querySelectorAll('.sheet .seg button, .sheet [role=tab]')).map(b => b.textContent.trim())")
     print('add tabs:', tabs)
     def close_sheets():
@@ -171,19 +176,19 @@ with sync_playwright() as p:
                 page.locator('[data-sheet-close]').first.click(); page.wait_for_timeout(300)
     close_sheets()
     for i in range(len(tabs)):
-        page.click('#fab'); page.wait_for_timeout(300); page.click('[data-fab="add"]'); page.wait_for_timeout(400)
+        open_add(page)
         page.locator('.sheet .seg button, .sheet [role=tab]').nth(i).click(); step(page, 'e11_add_tab_%d' % i, 600)
         close_sheets()
     # describe (mocked)
-    page.click('#fab'); page.wait_for_timeout(300); page.click('[data-fab="describe"]'); page.wait_for_timeout(400)
+    open_add(page, 'describe')
     page.fill('#dq', 'two eggs fried in butter and a bread roll'); page.click('#dqGo'); step(page, 'e12_describe', 1400)
     page.click('#dqSave'); page.wait_for_timeout(800)
     # barcode (lookup mocked as not found)
-    page.click('#fab'); page.wait_for_timeout(300); page.click('[data-fab="scan"]'); page.wait_for_timeout(600)
+    open_add(page, 'scan')
     page.fill('#scanCode', '5449000000996'); page.click('#scanGo'); step(page, 'e13_barcode_notfound', 1500)
     page.click('[data-sheet-close]'); page.wait_for_timeout(300)
     # photo (mocked)
-    page.click('#fab'); page.wait_for_timeout(300); page.click('[data-fab="photo"]'); step(page, 'e14_photo_sheet', 400)
+    open_add(page, 'photo'); step(page, 'e14_photo_sheet')
     page.set_input_files('#phFile', os.path.join(REPO, 'icon-512.png')); page.wait_for_timeout(800)
     page.click('#phGo'); step(page, 'e15_photo_result', 1500)
     page.click('#phLog'); page.wait_for_timeout(700)
