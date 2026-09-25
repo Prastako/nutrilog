@@ -112,6 +112,7 @@ async function renderLog(){
   const host = $('#s-log');
   await foodDbForNames();
   const day = S.logDate || localDateKey();
+  if (S.screen === 'log') $('#screenTitle').textContent = fmtLongDate(dateFromKey(day));
   const d = await dayTotals(day);
   const g = computeTargets(S.profile);
   let h = '<div class="daynav"><button class="iconbtn sm" type="button" data-act="ldate" data-d="-1" aria-label="'+esc(t('lg_prev'))+'">'+icon('back')+'</button>' +
