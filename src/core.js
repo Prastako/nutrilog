@@ -304,6 +304,7 @@ const RECORD_TYPES = {
 let dirtyTimer = null;
 function markDirty(reason){
   S.meta.dataChangedAt = nowIso();
+  if (typeof scheduleSync === 'function') scheduleSync();
   if (dirtyTimer) clearTimeout(dirtyTimer);
   dirtyTimer = setTimeout(() => { dirtyTimer = null; saveMeta(); scheduleBackup(reason || 'data changed'); }, 400);
 }
@@ -371,7 +372,8 @@ const DEFAULT_PREFS = {
   backup: { target:'github', repo:'', branch:'main' },
   archive: { path:'archive/recipes', showStarter:true },
   review: { includeSupplements:true },
-  log: { lastSlot:null }
+  log: { lastSlot:null },
+  sync: { url:'' }
 };
 
 const DEFAULT_META = {
@@ -390,7 +392,8 @@ const DEFAULT_META = {
     lastSnapshotDate: null
   },
   usage: { calls: 0, inTok: 0, outTok: 0, byModel: {}, byMonth: {} },
-  archive: { lastSyncAt: null, lastSha: null, count: 0, lastError: null }
+  archive: { lastSyncAt: null, lastSha: null, count: 0, lastError: null },
+  sync: { cursor:0, lastPushAt:null, lastOkAt:null, state:'off', lastError:'', name:'' }
 };
 
 const S = {
@@ -401,7 +404,7 @@ const S = {
   profile: null,          /* the profile record (schema 2) */
   prefs: deepCopy(DEFAULT_PREFS),
   meta: deepCopy(DEFAULT_META),
-  secrets: { anthropic:'', github:'' },
+  secrets: { anthropic:'', github:'', sync:'' },
   draft: null,
   installPrompt: null,
   swRegistered: null,
@@ -445,6 +448,7 @@ async function loadState(){
   S.look    = lookOf(S.prefs.look).id;
   S.secrets.anthropic = await secretGet('anthropic');
   S.secrets.github    = await secretGet('github');
+  S.secrets.sync      = await secretGet('sync');
   if (!S.meta.installedAt){ S.meta.installedAt = nowIso(); await saveMeta(); }
   await migrateFromSchema1();
   S.profile = await recGet('profile');
