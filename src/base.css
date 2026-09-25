@@ -320,3 +320,48 @@ ol.reasons li{margin-bottom:11px;font-size:14.5px;line-height:1.55}
   font-size:14px;max-width:min(92vw,var(--maxw));text-align:center;box-shadow:var(--shadow-lift);
 }
 .hide{display:none !important}
+
+/* ---------- surfaces (reskin brief 2): tokens, cards, text softness, buttons, chips ---------- */
+:root{
+  --catch:rgba(255,255,255,.7);
+  --outer:color-mix(in srgb, var(--ink) 8%, transparent);
+  --halo2:color-mix(in srgb, var(--accent) 5%, transparent);
+  --shadow:0 4px 24px var(--outer); --shadow-lift:0 4px 24px var(--outer);
+  --r:14px; --r-sm:12px; --r-lg:18px;
+}
+html[data-theme="dark"]{
+  --catch:color-mix(in srgb, var(--ink) 10%, transparent);
+  --outer:rgba(0,0,0,.35);
+  --halo2:color-mix(in srgb, var(--accent) 8%, transparent);
+  --shadow:0 4px 24px var(--outer); --shadow-lift:0 4px 24px var(--outer);
+}
+@media (prefers-color-scheme: dark){
+  html[data-theme="device"]{
+    --catch:color-mix(in srgb, var(--ink) 10%, transparent);
+    --outer:rgba(0,0,0,.35);
+    --halo2:color-mix(in srgb, var(--accent) 8%, transparent);
+    --shadow:0 4px 24px var(--outer); --shadow-lift:0 4px 24px var(--outer);
+  }
+}
+body{text-shadow:0 0 9px var(--ink-glow)}
+h1,h2,h3,.band .val,.btn:not(.ghost):not(.quiet):not(.danger){text-shadow:0 0 8px var(--glow-soft),0 0 24px var(--glow-soft)}
+.eyebrow,.macro .m .k,.phasetag{text-shadow:0 0 6px var(--ink-glow)}
+.card,.band{
+  background:linear-gradient(180deg,var(--surface2) 0%,var(--surface) 26%);border:0;border-radius:14px;
+  box-shadow:inset 0 0 0 1px var(--card-edge),inset 0 1px 0 var(--catch),inset 0 0 36px var(--glow-soft),0 4px 24px var(--outer);
+}
+.card.flat{background:var(--surface2);box-shadow:inset 0 0 0 1px var(--card-edge)}
+.btn{border-radius:12px}
+.btn:not(.ghost):not(.quiet):not(.danger){
+  min-height:56px;padding:15px 18px;border:0;border-radius:14px;
+  background:var(--accent-tint);color:var(--accent);font-size:20px;
+  box-shadow:inset 0 0 0 1px var(--accent-border),inset 0 0 30px var(--accent-tint),0 0 24px var(--glow-soft);
+}
+.btn.quiet,.btn.ghost{background:var(--surface2);border:0;color:var(--ink2);box-shadow:inset 0 0 0 1px var(--card-edge)}
+.chip,.pill{
+  border:0;border-radius:9px;background:var(--accent-tint);color:var(--accent);
+  font-size:11px;letter-spacing:.04em;box-shadow:inset 0 0 0 1px var(--accent-border);text-shadow:0 0 8px var(--glow-soft);
+}
+.chip{min-height:36px;padding:8px 12px}
+.chip[aria-pressed="true"]{background:var(--accent-tint);color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent-border),0 0 8px var(--glow-soft)}
+#toast{border-radius:12px;box-shadow:0 4px 24px var(--outer)}
