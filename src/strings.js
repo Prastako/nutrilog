@@ -874,3 +874,13 @@ Object.assign(STR.en, {
   sy_leave:'Leave this profile', sy_leave_note:'Data stays on this device and on the server.', sy_now:'Sync now',
   sy_url:'Server address', sy_advanced:'Advanced'
 });
+
+/* ---------- invite links ---------- */
+Object.assign(STR.cs, {
+  sy_share:'Přidat další zařízení', sy_share_note:'Naskenujte kód nebo otevřete odkaz v druhém zařízení. Kdo má odkaz, má přístup k profilu.',
+  sy_link_is_key:'Odkaz je klíč k profilu, posílejte ho jen soukromě.', sy_already:'Toto zařízení už je připojeno k tomuto profilu.'
+});
+Object.assign(STR.en, {
+  sy_share:'Add another device', sy_share_note:'Scan the code or open the link on the other device. Anyone with the link has access to the profile.',
+  sy_link_is_key:'The link is the key to the profile, send it privately only.', sy_already:'This device is already joined to this profile.'
+});
