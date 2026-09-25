@@ -298,7 +298,10 @@ const RECORD_TYPES = {
   chat_message:      {schema:1, shared:false}, /* chat history */
   photo_eval:        {schema:1, shared:false}, /* result of a photo evaluation */
   summary:           {schema:1, shared:true},  /* written weekly or monthly review */
-  meal_plan:         {schema:1, shared:true}   /* saved suggestions or meal prep plan */
+  meal_plan:         {schema:1, shared:true},  /* saved suggestions or meal prep plan */
+  cooking_session:   {schema:1, shared:true},  /* one cooking of a recipe: axis, flags, servings, changes, servings logged */
+  recipe_overlay:    {schema:1, shared:true},  /* saved personal changes to one recipe */
+  shopping_item:     {schema:1, shared:true}   /* one line of the shopping list */
 };
 
 let dirtyTimer = null;
