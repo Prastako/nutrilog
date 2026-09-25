@@ -42,12 +42,19 @@ function goBack(){
   else go('today');
 }
 
+/* Header label: the date on Today and Log, the screen name elsewhere (Review sets its period in renderReview). */
+function headerLabel(){
+  if (S.screen === 'today') return fmtLongDate(dateFromKey(localDateKey()));
+  if (S.screen === 'log') return fmtLongDate(dateFromKey(S.logDate || localDateKey()));
+  return t('t_' + S.screen);
+}
+
 function refreshChrome(){
   const isSub = SUBSCREENS.indexOf(S.screen) >= 0;
   $('#btnBack').classList.toggle('hide', !isSub);
   $('#btnSettings').classList.toggle('hide', S.screen === 'settings');
-  $('#screenTitle').textContent = isSub ? t('t_'+S.screen) : (S.screen === 'today' ? t('app_name') : t('t_'+S.screen));
-  $('#fab').classList.toggle('hide', !(S.screen === 'today' || S.screen === 'log'));
+  $('#screenTitle').textContent = headerLabel();
+
   document.body.classList.toggle('chatmode', S.screen === 'chat');
 }
 
@@ -114,7 +121,7 @@ function openFabSheet(){
 function bindEvents(){
   $('#btnBack').addEventListener('click', goBack);
   $('#btnSettings').addEventListener('click', () => go('settings'));
-  $('#fab').addEventListener('click', openFabSheet);
+
 
   document.addEventListener('click', async (e) => {
     const goBtn = e.target.closest('[data-go]');
