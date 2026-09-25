@@ -193,3 +193,25 @@ main{padding-left:32px;padding-right:32px}
   .sheetbg{align-items:flex-start;padding:6vh 16px 16px}
   .sheet{max-width:560px;border-radius:var(--r-lg);border:1px solid var(--card-edge);padding-bottom:20px}
 }
+
+/* ---------- small screens and Quick mode (brief quick-mode) ---------- */
+@media (max-width: 359.98px){
+  body{font-size:15px}
+  main{padding-left:10px;padding-right:10px}
+  .btn, .rowbtn, .seg button, .chip, .entry, #tabbar .tab{min-height:40px}
+  .iconbtn{min-width:40px;min-height:40px}
+  .topbar .hdr-orn{display:none}
+}
+body.quickmode #tabbar{display:none}
+body.quickmode main{padding-bottom:24px}
+body.quickmode::before{display:none}
+body.quickmode, body.quickmode *{text-shadow:none !important;box-shadow:none !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;filter:none !important;animation:none !important}
+body.quickmode .orn, body.quickmode .hdr-orn{display:none}
+body.quickmode .card, body.quickmode .band{border:1px solid var(--card-edge)}
+body.quickmode :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#s-quick .qm-energy{font-size:18px;margin:4px 0 10px}
+#s-quick .qm-slot{width:100%;min-height:48px;margin-top:10px}
+#s-quick .qm-entry{display:flex;align-items:center;gap:8px;padding:4px 0 4px 12px}
+#s-quick .qm-entry .en{flex:1;min-width:0;overflow-wrap:anywhere}
+#s-quick .qm-same{margin:6px 0 0 12px}
+#s-quick .qm-full{margin:18px 0 8px}

@@ -407,7 +407,8 @@ function renderSettings(){
     '<div class="field" style="margin-bottom:0"><span class="flabel">'+esc(t('set_lang'))+'</span><div class="seg">' +
       '<button type="button" class="'+(S.lang==='cs'?'on':'')+'" data-act="lang" data-v="cs" aria-pressed="'+(S.lang==='cs')+'">Čeština</button>' +
       '<button type="button" class="'+(S.lang==='en'?'on':'')+'" data-act="lang" data-v="en" aria-pressed="'+(S.lang==='en')+'">English</button>' +
-    '</div></div></div>';
+    '</div></div>' +
+    '<label class="opt sq" style="margin-top:12px"><input type="checkbox" id="qmSwitch" '+(quickOn() ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('qm_title'))+'</span><span class="t2">'+esc(t('qm_note'))+'</span></span></label></div>';
 
   h += '<div class="card"><h3>'+esc(t('set_profile_h'))+'</h3>' +
     '<div class="btnrow"><button class="btn quiet" type="button" data-act="go-profile">'+esc(t('set_profile_open'))+'</button></div></div>';
@@ -525,6 +526,7 @@ function renderSettings(){
   fillSnapshots();
   renderDiagnostics();
   $('#a-starter').addEventListener('change', async e => { S.prefs.archive.showStarter = e.target.checked; await savePrefs(); });
+  $('#qmSwitch').addEventListener('change', e => setQuickMode(e.target.checked));
 }
 
 /* ---------- Diagnostics (from v0.1) ---------- */
