@@ -123,5 +123,5 @@ function rangeBar(value, low, high, kind){
   else if (kind === 'max'){ cls = value > (low||0) ? 'bad' : value > (low||0)*0.9 ? 'warn' : 'ok'; }
   else if (low != null){ cls = value < low*0.5 ? 'bad' : value < low ? 'warn' : (high != null && value > high*1.1 ? 'warn' : 'ok'); }
   return '<div class="rbar"><div class="rzone" style="left:'+pct(low||0)+'%;width:'+Math.max(1, pct(high||low||0) - pct(low||0))+'%"></div>' +
-    '<div class="rfill '+cls+'" style="width:'+pct(value||0)+'%"></div></div>';
+    '<div class="rfill '+cls+'" style="width:'+pct(value||0)+'%"></div><span class="rend" style="left:'+pct(value||0)+'%"></span></div>';
 }
