@@ -94,6 +94,7 @@ async function renderReview(){
   await foodDbForNames();
   const mode = S.reviewMode;
   const P = await periodData(mode, S.reviewAnchor);
+  if (S.screen === 'review') $('#screenTitle').textContent = periodLabel(mode, P.range);
   const ref = referenceValues();
   let h = '<div class="seg" role="tablist">' +
     '<button type="button" role="tab" aria-selected="'+(mode==='week')+'" class="'+(mode==='week'?'on':'')+'" data-act="rmode" data-v="week">'+esc(t('rv_week'))+'</button>' +
