@@ -6,8 +6,10 @@ var ALLERGEN_KEYS = [
 ];
 
 function upgradeRecipe(r) {
-  var out = deepCopy(r);
+  var out = deepCopy(r) || {};
   out.schema = 2;
+  if (!Array.isArray(out.ingredients)) out.ingredients = [];
+  if (!Array.isArray(out.steps)) out.steps = [];
   if (!out.written) out.written = "omnivore";
 
   for (var i = 0; i < out.ingredients.length; i++) {
