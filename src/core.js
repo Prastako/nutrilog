@@ -614,11 +614,36 @@ function nutRound(n){
    widened into a range, then held above a floor. */
 
 const ACTIVITY = [
-  {id:1, mult:1.25, unc:0.13, k:'act1'},
-  {id:2, mult:1.40, unc:0.13, k:'act2'},
-  {id:3, mult:1.55, unc:0.14, k:'act3'},
-  {id:4, mult:1.75, unc:0.16, k:'act4'}
+  {id:1, mult:1.40, unc:0.13, k:'act1'},
+  {id:2, mult:1.55, unc:0.13, k:'act2'},
+  {id:3, mult:1.70, unc:0.14, k:'act3'},
+  {id:4, mult:1.90, unc:0.16, k:'act4'}
 ];
+const TRAIN_MET = {
+  strength: 3.5, heavy: 6.0, cycling: 5.0, cyclinghard: 9.0,
+  circuits: 7.5, hiit: 11.0, climbing: 5.8, yoga: 2.3
+};
+const TRAIN_ATTEND = { always: 0.9, usually: 0.75, sometimes: 0.5 };
+function sessionKcal(type, weightKg, minutes) {
+  var met = TRAIN_MET[type];
+  if (met == null) met = 3.5;
+  if (minutes == null || minutes === '' || isNaN(Number(minutes))) minutes = 60;
+  else minutes = Number(minutes);
+  if (minutes <= 0) return 0;
+  var wk = Number(weightKg);
+  if (!isFinite(wk) || wk <= 0) return 0;
+  return (met - 1) * wk * minutes / 60;
+}
+function trainingPerDay(detail, weightKg) {
+  if (!detail || detail.on !== true) return 0;
+  var sessions = Number(detail.sessions);
+  if (!sessions || sessions <= 0) return 0;
+  var attend = TRAIN_ATTEND[detail.attendance];
+  if (attend == null) attend = 0.75;
+  var perSession = sessionKcal(detail.type, weightKg, detail.minutes);
+  return perSession * sessions * attend / 7;
+}
+
 const SPLITS = {
   balanced: {p:25, f:30, c:45},
   protein:  {p:35, f:30, c:35},
@@ -687,8 +712,16 @@ function computeTargets(rec){
     rmrRel = Math.sqrt(0.12*0.12 + (half/rmr)*(half/rmr));
     method = 'weight';
   }
-  const band = ACTIVITY.find(x => x.id === Number(p.activity)) || ACTIVITY[1];
-  const tdee = rmr * band.mult;
+  const d = rec.person.activityDetail;
+  if (d && d.on === true) {
+    var band = ACTIVITY.find(x => x.id === Number(d.base));
+    if (!band) band = ACTIVITY[0];
+    var trainExact = trainingPerDay(d, w);
+  } else {
+    var band = ACTIVITY.find(x => x.id === Number(p.activity)) || ACTIVITY[1];
+    var trainExact = 0;
+  }
+  const tdee = rmr * band.mult + trainExact;
   const actRel = band.unc / band.mult;
   const rel = Math.sqrt(rmrRel*rmrRel + actRel*actRel);
   const adj = DIRECTIONS[p.direction] || 1;
@@ -709,7 +742,7 @@ function computeTargets(rec){
   });
   const macros = { p: mac(split.p,4), f: mac(split.f,9), c: mac(split.c,4) };
   return {
-    rmr: Math.round(rmr), mult: band.mult, tdee: Math.round(tdee),
+    rmr: Math.round(rmr), mult: band.mult, tdee: Math.round(tdee), training: Math.round(Math.round(trainExact * 1e6) / 1e6),
     relPct: Math.round(rel*1000)/10, method,
     low, high, mid: round10((low+high)/2), floor, floorAbs, floorBinding, split, macros,
     proteinPerKg: { low: Math.round(macros.p.low/w*10)/10, high: Math.round(macros.p.high/w*10)/10 }
