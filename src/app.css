@@ -302,3 +302,104 @@ body:not(.quickmode) .rowbtn .plus, body:not(.quickmode) #s-log [data-act="add-f
   background:var(--accent-tint);color:var(--accent-ink);box-shadow:inset 0 0 0 1px var(--accent-border),0 0 12px var(--glow-soft)}
 @media (max-width: 359.98px){ body:not(.quickmode) .rowbtn .plus, body:not(.quickmode) #s-log [data-act="add-food"]{width:40px;height:40px;min-width:40px;min-height:40px} }
 body:not(.quickmode) #s-log .entry .ek{margin-right:44px}
+/* ---------- open-edge controls: buttons (brief nutrilog-260926-open-edge-controls) ---------- */
+body:not(.quickmode) .btn {
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  color: var(--ink2) !important;
+  font-family: var(--font-body) !important;
+  min-height: 44px !important;
+}
+
+body:not(.quickmode) .btn .o-corner {
+  color: var(--ornament) !important;
+  opacity: .7 !important;
+}
+
+body:not(.quickmode) #amSave,
+body:not(.quickmode) #mnSave,
+body:not(.quickmode) #eSave,
+body:not(.quickmode) #sSave,
+body:not(.quickmode) #sNew,
+body:not(.quickmode) #rl-save,
+body:not(.quickmode) #or-save,
+body:not(.quickmode) .btn[data-act="go-profile"],
+body:not(.quickmode) .btn[data-act="recipe-log"],
+body:not(.quickmode) .btn[data-act="profile-save"],
+body:not(.quickmode) .chatin .btn {
+  background: var(--accent-ink) !important;
+  color: var(--onaccent) !important;
+  font-family: var(--font-display) !important;
+  font-size: 20px !important;
+  border: 0 !important;
+  border-radius: 6px !important;
+  min-height: 52px !important;
+  box-shadow: 0 0 24px var(--glow-soft) !important;
+}
+
+body:not(.quickmode) #amSave .o-corner,
+body:not(.quickmode) #mnSave .o-corner,
+body:not(.quickmode) #eSave .o-corner,
+body:not(.quickmode) #sSave .o-corner,
+body:not(.quickmode) #sNew .o-corner,
+body:not(.quickmode) #rl-save .o-corner,
+body:not(.quickmode) #or-save .o-corner,
+body:not(.quickmode) .btn[data-act="go-profile"] .o-corner,
+body:not(.quickmode) .btn[data-act="recipe-log"] .o-corner,
+body:not(.quickmode) .btn[data-act="profile-save"] .o-corner,
+body:not(.quickmode) .chatin .btn .o-corner {
+  color: var(--onaccent) !important;
+  opacity: 1 !important;
+}
+
+body:not(.quickmode) .btn.danger {
+  color: var(--garnet) !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+body:not(.quickmode) .btn.danger .o-corner {
+  display: none !important;
+}
+
+body:not(.quickmode) .rowbtn .plus,
+body:not(.quickmode) #s-log [data-act="add-food"] {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  font-size: 22px !important;
+  color: var(--accent-ink) !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  text-shadow: 0 0 8px var(--glow-soft) !important;
+}
+
+body:not(.quickmode) .iconbtn {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--ink2) !important;
+}
+
+@media (max-width: 359.98px) {
+  body:not(.quickmode) .iconbtn {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+  }
+}
+
+body:not(.quickmode) #s-log .entry .ek {
+  margin-right: 52px !important;
+}
