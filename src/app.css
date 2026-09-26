@@ -325,7 +325,7 @@ body:not(.quickmode) #sSave,
 body:not(.quickmode) #sNew,
 body:not(.quickmode) #rl-save,
 body:not(.quickmode) #or-save,
-body:not(.quickmode) .btn[data-act="go-profile"],
+body:not(.quickmode) #s-today .btn[data-act="go-profile"],
 body:not(.quickmode) .btn[data-act="recipe-log"],
 body:not(.quickmode) .btn[data-act="profile-save"],
 body:not(.quickmode) .chatin .btn {
@@ -346,7 +346,7 @@ body:not(.quickmode) #sSave .o-corner,
 body:not(.quickmode) #sNew .o-corner,
 body:not(.quickmode) #rl-save .o-corner,
 body:not(.quickmode) #or-save .o-corner,
-body:not(.quickmode) .btn[data-act="go-profile"] .o-corner,
+body:not(.quickmode) #s-today .btn[data-act="go-profile"] .o-corner,
 body:not(.quickmode) .btn[data-act="recipe-log"] .o-corner,
 body:not(.quickmode) .btn[data-act="profile-save"] .o-corner,
 body:not(.quickmode) .chatin .btn .o-corner {
@@ -430,3 +430,5 @@ body:not(.quickmode) .bubble { background:none !important; border:0 !important; 
 body:not(.quickmode) .bubble.me { margin-left:auto !important; text-align:right !important; border-right:2px solid var(--accent) !important; padding-right:10px !important; }
 body:not(.quickmode) .frow { background:none !important; border:0 !important; box-shadow:none !important; border-radius:0 !important; border-bottom:1px solid var(--line-row) !important; }
 body:not(.quickmode) .flag, body:not(.quickmode) .phasetag, body:not(.quickmode) .soonwrap .glyph { background:none !important; border:0 !important; box-shadow:none !important; border-radius:0 !important; }
+/* ---------- open-edge controls: fixes ---------- */
+body:not(.quickmode) .rthumb:not([style*="url("]), body:not(.quickmode) .rhero:not([style*="url("]){background-image:none !important}
