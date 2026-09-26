@@ -403,3 +403,18 @@ body:not(.quickmode) .iconbtn {
 body:not(.quickmode) #s-log .entry .ek {
   margin-right: 52px !important;
 }
+/* ---------- open-edge controls: tags and pickers ---------- */
+body:not(.quickmode) .pill, body:not(.quickmode) .fit { background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; font-size: 12px !important; color: var(--ink2) !important; }
+body:not(.quickmode) .pill + .pill::before, body:not(.quickmode) .fit + .fit::before { content: "\00B7" !important; margin: 0 6px !important; color: var(--ink3) !important; }
+body:not(.quickmode) .pill.wait, body:not(.quickmode) .fit.wait { color: var(--ochre-ink) !important; }
+body:not(.quickmode) .pill.ok, body:not(.quickmode) .fit.ok { color: var(--accent-ink) !important; }
+body:not(.quickmode) .pill.err, body:not(.quickmode) .fit.err { color: var(--garnet) !important; }
+body:not(.quickmode) .seg { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
+body:not(.quickmode) .chip[aria-pressed], body:not(.quickmode) .seg button { background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; color: var(--ink2) !important; min-width: 44px !important; min-height: 40px !important; padding: 0 10px !important; }
+body:not(.quickmode) .chip[aria-pressed="true"], body:not(.quickmode) .seg button.on { color: var(--accent-ink) !important; background: none !important; text-decoration: underline 2px var(--accent) !important; text-underline-offset: 6px !important; text-shadow: 0 0 8px var(--glow-soft) !important; }
+body:not(.quickmode) .chip:not([aria-pressed]) { background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; color: var(--accent-ink) !important; font-size: 14px !important; margin-right: 16px !important; min-height: 40px !important; }
+body:not(.quickmode) .btn:focus-visible, body:not(.quickmode) .chip:focus-visible, body:not(.quickmode) .seg button:focus-visible, body:not(.quickmode) .iconbtn:focus-visible, body:not(.quickmode) .opt:focus-within { outline: 2px solid var(--accent-ink) !important; outline-offset: 2px !important; }
+body:not(.quickmode) .opt { background: none !important; box-shadow: none !important; border: 0 !important; border-radius: 0 !important; border-bottom: 1px solid var(--line-row) !important; }
+body:not(.quickmode) .opt:has(input:checked) { background: none !important; box-shadow: none !important; }
+body:not(.quickmode) .opt:has(input:checked) .t1 { color: var(--accent-ink) !important; }
+body:not(.quickmode) .opt:has(input:checked) .mark { background: var(--accent) !important; border-color: var(--accent) !important; }
