@@ -418,3 +418,15 @@ body:not(.quickmode) .opt { background: none !important; box-shadow: none !impor
 body:not(.quickmode) .opt:has(input:checked) { background: none !important; box-shadow: none !important; }
 body:not(.quickmode) .opt:has(input:checked) .t1 { color: var(--accent-ink) !important; }
 body:not(.quickmode) .opt:has(input:checked) .mark { background: var(--accent) !important; border-color: var(--accent) !important; }
+/* ---------- open-edge controls: notices, recipes, chat ---------- */
+body:not(.quickmode) .notice { background:none !important; border:0 !important; box-shadow:none !important; border-radius:0 !important; border-left:2px solid var(--ornament) !important; padding-left:12px !important; color:var(--ink) !important; }
+body:not(.quickmode) .notice.warn { border-left-color:var(--ochre) !important; }
+body:not(.quickmode) .notice.bad { border-left-color:var(--garnet) !important; }
+body:not(.quickmode) .notice.good { border-left-color:var(--accent) !important; }
+body:not(.quickmode) .rthumb, body:not(.quickmode) .rhero { background-color:transparent !important; box-shadow:none !important; border:0 !important; border-radius:6px !important; color:var(--accent-ink) !important; font-family:var(--font-display) !important; }
+body:not(.quickmode) .kvgrid > div { background:none !important; border:0 !important; box-shadow:none !important; border-radius:0 !important; }
+body:not(.quickmode) .kvgrid > div + div { border-left:1px solid var(--line-row) !important; }
+body:not(.quickmode) .bubble { background:none !important; border:0 !important; box-shadow:none !important; border-radius:0 !important; max-width:100% !important; }
+body:not(.quickmode) .bubble.me { margin-left:auto !important; text-align:right !important; border-right:2px solid var(--accent) !important; padding-right:10px !important; }
+body:not(.quickmode) .frow { background:none !important; border:0 !important; box-shadow:none !important; border-radius:0 !important; border-bottom:1px solid var(--line-row) !important; }
+body:not(.quickmode) .flag, body:not(.quickmode) .phasetag, body:not(.quickmode) .soonwrap .glyph { background:none !important; border:0 !important; box-shadow:none !important; border-radius:0 !important; }
