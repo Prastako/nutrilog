@@ -1,18 +1,18 @@
 /* ---------- tokens: three looks (ember, lichen, ash), each light and dark ---------- */
 :root{
   --ground:#ECEAE6; --surface:#F5F3EF; --surface2:#DFDCD7;
-  --ink:#26262A; --ink2:#5C5A5D; --ink3:#8A8788; --accent:#9A5F5C; --ornament:#7F7A79;
+  --ink:#26262A; --ink2:#5C5A5D; --ink3:#625F60; --accent-ink:#855250; --accent:#9A5F5C; --ornament:#7F7A79;
   --accent-tint:color-mix(in srgb, var(--accent) 8%, transparent);
   --accent-border:color-mix(in srgb, var(--accent) 24%, transparent);
   --glow-strong:color-mix(in srgb, var(--accent) 26%, transparent);
   --glow-soft:color-mix(in srgb, var(--accent) 10%, transparent);
-  --card-edge:color-mix(in srgb, var(--ink) 7%, transparent);
+  --card-edge:color-mix(in srgb, var(--ink) 7%, transparent); --line-section:color-mix(in srgb, var(--ink) 20%, transparent); --line-row:color-mix(in srgb, var(--ink) 10%, transparent); --sep-opacity:.45;
   --ink-glow:color-mix(in srgb, var(--ink) 10%, transparent);
   --font-display:'Marcellus', Georgia, 'Times New Roman', serif;
   --font-body:'Raleway', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --display-weight:400; --display-style:normal; --display-variation:normal;
   --bg:var(--ground); --bg2:var(--surface2); --card:var(--surface); --card2:var(--surface2);
-  --line:var(--card-edge); --line2:var(--ink-glow);
+  --line:var(--line-row); --line2:var(--ink-glow);
   --teal:var(--accent); --teal-soft:var(--accent-tint); --onaccent:var(--surface);
   --garnet:#8C3B4A; --garnet-soft:#F2E0E1;
   --ochre:#A8762A; --ochre-soft:#F3E7CE; --ochre-ink:#85601F;
@@ -25,25 +25,25 @@
 }
 html[data-look="ember"]{
   --ground:#F1E8DA; --surface:#F8F2E7; --surface2:#E8DDC8;
-  --ink:#33291E; --ink2:#6E5F4B; --ink3:#9C8A70; --accent:#A9702F; --ornament:#8F7C61;
+  --ink:#33291E; --ink2:#6E5F4B; --ink3:#6D5F4B; --accent-ink:#835724; --accent:#A9702F; --ornament:#8F7C61;
   --font-display:'Beaufort', Georgia, 'Times New Roman', serif;
   --font-body:'Jost', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --display-weight:400; --display-style:normal; --display-variation:normal;
 }
 html[data-look="lichen"]{
   --ground:#ECEDE2; --surface:#F5F5EC; --surface2:#DFE2D2;
-  --ink:#262B24; --ink2:#5B6358; --ink3:#889084; --accent:#4E7A52; --ornament:#7E8A79;
+  --ink:#262B24; --ink2:#5B6358; --ink3:#5E645A; --accent-ink:#456B48; --accent:#4E7A52; --ornament:#7E8A79;
   --font-display:'Fraunces', Georgia, 'Times New Roman', serif;
   --font-body:'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --display-weight:300; --display-style:italic; --display-variation:'opsz' 144, 'SOFT' 100;
 }
 html[data-theme="dark"]{
   --ground:#15161A; --surface:#1B1C21; --surface2:#23242A;
-  --ink:#E8E4DE; --ink2:#ABA6A0; --ink3:#787471; --accent:#CFA3A0; --ornament:#8F8A88;
+  --ink:#E8E4DE; --ink2:#ABA6A0; --ink3:#908C89; --accent:#CFA3A0; --accent-ink:#CFA3A0; --ornament:#8F8A88;
   --accent-tint:color-mix(in srgb, var(--accent) 9%, transparent);
   --glow-strong:color-mix(in srgb, var(--accent) 42%, transparent);
   --glow-soft:color-mix(in srgb, var(--accent) 16%, transparent);
-  --ink-glow:color-mix(in srgb, var(--ink) 16%, transparent);
+  --ink-glow:color-mix(in srgb, var(--ink) 16%, transparent); --line-section:color-mix(in srgb, var(--ink) 22%, transparent); --line-row:color-mix(in srgb, var(--ink) 12%, transparent); --sep-opacity:.55;
   --onaccent:var(--ground);
   --garnet:#D9909B; --garnet-soft:#2E1F22;
   --ochre:#D8A85E; --ochre-soft:#2C2418; --ochre-ink:#D8A85E;
@@ -53,20 +53,20 @@ html[data-theme="dark"]{
 }
 html[data-look="ember"][data-theme="dark"]{
   --ground:#141110; --surface:#1B1714; --surface2:#231E19;
-  --ink:#EEE3D2; --ink2:#B7A68D; --ink3:#82725D; --accent:#D9A066; --ornament:#9C8A70;
+  --ink:#EEE3D2; --ink2:#B7A68D; --ink3:#97856D; --accent:#D9A066; --accent-ink:#D9A066; --ornament:#9C8A70;
 }
 html[data-look="lichen"][data-theme="dark"]{
   --ground:#0F1411; --surface:#151B17; --surface2:#1C231E;
-  --ink:#E3E6D8; --ink2:#A6AF9D; --ink3:#727D6C; --accent:#9FBF9C; --ornament:#8B9886;
+  --ink:#E3E6D8; --ink2:#A6AF9D; --ink3:#818D7B; --accent:#9FBF9C; --accent-ink:#9FBF9C; --ornament:#8B9886;
 }
 @media (prefers-color-scheme: dark){
   html[data-theme="device"]{
     --ground:#15161A; --surface:#1B1C21; --surface2:#23242A;
-    --ink:#E8E4DE; --ink2:#ABA6A0; --ink3:#787471; --accent:#CFA3A0; --ornament:#8F8A88;
+    --ink:#E8E4DE; --ink2:#ABA6A0; --ink3:#908C89; --accent:#CFA3A0; --accent-ink:#CFA3A0; --ornament:#8F8A88;
     --accent-tint:color-mix(in srgb, var(--accent) 9%, transparent);
     --glow-strong:color-mix(in srgb, var(--accent) 42%, transparent);
     --glow-soft:color-mix(in srgb, var(--accent) 16%, transparent);
-    --ink-glow:color-mix(in srgb, var(--ink) 16%, transparent);
+    --ink-glow:color-mix(in srgb, var(--ink) 16%, transparent); --line-section:color-mix(in srgb, var(--ink) 22%, transparent); --line-row:color-mix(in srgb, var(--ink) 12%, transparent); --sep-opacity:.55;
     --onaccent:var(--ground);
     --garnet:#D9909B; --garnet-soft:#2E1F22;
     --ochre:#D8A85E; --ochre-soft:#2C2418; --ochre-ink:#D8A85E;
@@ -76,11 +76,11 @@ html[data-look="lichen"][data-theme="dark"]{
   }
   html[data-look="ember"][data-theme="device"]{
     --ground:#141110; --surface:#1B1714; --surface2:#231E19;
-    --ink:#EEE3D2; --ink2:#B7A68D; --ink3:#82725D; --accent:#D9A066; --ornament:#9C8A70;
+    --ink:#EEE3D2; --ink2:#B7A68D; --ink3:#97856D; --accent:#D9A066; --accent-ink:#D9A066; --ornament:#9C8A70;
   }
   html[data-look="lichen"][data-theme="device"]{
     --ground:#0F1411; --surface:#151B17; --surface2:#1C231E;
-    --ink:#E3E6D8; --ink2:#A6AF9D; --ink3:#727D6C; --accent:#9FBF9C; --ornament:#8B9886;
+    --ink:#E3E6D8; --ink2:#A6AF9D; --ink3:#818D7B; --accent:#9FBF9C; --accent-ink:#9FBF9C; --ornament:#8B9886;
   }
 }
 
@@ -106,6 +106,8 @@ p:last-child{margin-bottom:0}
 a{color:var(--teal)}
 :focus-visible{outline:2px solid var(--ochre);outline-offset:2px;border-radius:6px}
 .num{font-variant-numeric:tabular-nums lining-nums}
+html{font-variant-numeric:lining-nums}
+input,select,textarea,button{font-variant-numeric:inherit}
 
 /* ---------- layout ---------- */
 #app{max-width:var(--maxw);margin:0 auto;min-height:100dvh;display:flex;flex-direction:column}
