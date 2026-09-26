@@ -279,3 +279,25 @@ main{position:relative}
   filter:drop-shadow(0 0 2.5px color-mix(in srgb, var(--lk-accent) 45%, transparent)) drop-shadow(0 0 7px color-mix(in srgb, var(--lk-accent) 18%, transparent));pointer-events:none}
 @media (max-width: 359.98px){ .orn-cols{display:none} }
 body.quickmode .orn-cols, body.quickmode .topbar .wm, body.quickmode .o-corner, body.quickmode .rend .ornsvg, body.quickmode #tabbar .dot .ornsvg{display:none}
+
+/* ---------- open-edge sections (Jan 2026-09-26, option C): sections lose their boxes, headings carry a hairline,
+   rows are separated by a small star with dots; the side thread gets its own gutter. Quick mode keeps its plain borders. ---------- */
+.orn-cols{left:8px;right:8px}
+@media (min-width: 900px){ main{padding-left:44px;padding-right:44px} .orn-cols{left:14px;right:14px} }
+body:not(.quickmode) .card, body:not(.quickmode) .band{background:none;border:0;border-radius:0;box-shadow:none;padding:4px 4px 6px;margin-bottom:22px}
+body:not(.quickmode) .card > h2:first-child, body:not(.quickmode) .card > h3:first-child, body:not(.quickmode) .card > .sheethead:first-child{
+  padding-bottom:8px;margin-bottom:6px;border-bottom:1px solid var(--card-edge)}
+body:not(.quickmode) .card > .sheethead:first-child + .entry{border-top:0}
+body:not(.quickmode) .card.flat, body:not(.quickmode) .card .card{padding:10px 4px;border-top:1px solid var(--card-edge);margin-bottom:14px}
+body:not(.quickmode) .macro .m{background:none;border:0;border-radius:0;padding:6px 8px}
+body:not(.quickmode) .macro .m + .m{border-left:1px solid var(--card-edge)}
+body:not(.quickmode) .rcard{background:none;border:0;border-radius:0;box-shadow:none;padding:10px 0}
+body:not(.quickmode) .rcard + .rcard{border-top:1px solid var(--card-edge)}
+body:not(.quickmode) .rowbtn{position:relative;border-bottom:0;min-height:52px}
+body:not(.quickmode) .rowbtn:not(:last-child)::after{content:"";position:absolute;left:50%;bottom:-6px;width:60px;height:12px;margin-left:-30px;pointer-events:none;
+  background:var(--ornament);opacity:.75;filter:drop-shadow(0 0 3px var(--glow-soft));
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-30 -6 60 12'%3E%3Cpath d='M0 -3.3C.36 -.84 .84 -.36 3.3 0 .84 .36 .36 .84 0 3.3 -.36 .84 -.84 .36 -3.3 0 -.84 -.36 -.36 -.84 0 -3.3Z'/%3E%3Ccircle cx='-11' r='.9'/%3E%3Ccircle cx='11' r='.9'/%3E%3Ccircle cx='-18' r='.6'/%3E%3Ccircle cx='18' r='.6'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-30 -6 60 12'%3E%3Cpath d='M0 -3.3C.36 -.84 .84 -.36 3.3 0 .84 .36 .36 .84 0 3.3 -.36 .84 -.84 .36 -3.3 0 -.84 -.36 -.36 -.84 0 -3.3Z'/%3E%3Ccircle cx='-11' r='.9'/%3E%3Ccircle cx='11' r='.9'/%3E%3Ccircle cx='-18' r='.6'/%3E%3Ccircle cx='18' r='.6'/%3E%3C/svg%3E") center/contain no-repeat}
+body:not(.quickmode) .rowbtn .plus, body:not(.quickmode) #s-log [data-act="add-food"]{width:36px;height:36px;min-width:36px;min-height:36px;
+  background:var(--accent-tint);color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent-border),0 0 12px var(--glow-soft)}
+@media (max-width: 359.98px){ body:not(.quickmode) .rowbtn .plus, body:not(.quickmode) #s-log [data-act="add-food"]{width:40px;height:40px;min-width:40px;min-height:40px} }
