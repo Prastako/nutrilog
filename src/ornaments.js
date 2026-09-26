@@ -29,7 +29,7 @@ function decorateOrnaments(root) {
   els = r.querySelectorAll('.orn > i:empty');
   for (i = 0; i < els.length; i++) els[i].innerHTML = ornSvg('rule');
 
-  els = r.querySelectorAll('.btn:not(.ghost):not(.quiet):not(.danger)');
+  els = r.querySelectorAll('.btn:not(.danger)');
   for (i = 0; i < els.length; i++) {
     if (!els[i].querySelector('.o-corner')) {
       els[i].insertAdjacentHTML('beforeend',
