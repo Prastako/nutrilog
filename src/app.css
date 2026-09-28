@@ -240,8 +240,8 @@ body.quickmode :focus-visible{outline:2px solid var(--accent);outline-offset:2px
 .ornsvg{display:block;overflow:visible;color:var(--ornament);stroke:currentColor;fill:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;
   filter:drop-shadow(0 0 2.5px var(--glow-strong)) drop-shadow(0 0 7px var(--glow-soft));pointer-events:none}
 .ornsvg .ca{mix-blend-mode:multiply;opacity:.25}
-.ornsvg .ca.r{color:#E0322F;transform:translate(-.55px,.1px);animation:orn-jit-r 7s steps(1,end) infinite}
-.ornsvg .ca.c{color:#1E9EC4;transform:translate(.55px,-.1px);animation:orn-jit-c 7s steps(1,end) infinite}
+.ornsvg .ca.r{color:#E0322F;transform:translate(-.55px,.1px)}
+.ornsvg .ca.c{color:#1E9EC4;transform:translate(.55px,-.1px)}
 html[data-theme="dark"] .ornsvg .ca{mix-blend-mode:screen;opacity:.3}
 html[data-theme="dark"] .ornsvg .ca.r{color:#FF5F5F}
 html[data-theme="dark"] .ornsvg .ca.c{color:#4FD8FF}
@@ -251,9 +251,6 @@ html[data-theme="dark"] .ornsvg .ca.c{color:#4FD8FF}
   html[data-theme="device"] .ornsvg .ca.c{color:#4FD8FF}
 }
 .ornsvg.o-star .ca{opacity:.22}
-@keyframes orn-jit-r{0%,91%{transform:translate(-.55px,.1px)}92%{transform:translate(-1.6px,.4px)}94%{transform:translate(.3px,-.2px)}95.5%{transform:translate(-.55px,.1px)}}
-@keyframes orn-jit-c{0%,91%{transform:translate(.55px,-.1px)}92%{transform:translate(1.5px,-.5px)}94%{transform:translate(-.3px,.3px)}95.5%{transform:translate(.55px,-.1px)}}
-@media (prefers-reduced-motion: reduce){.ornsvg .ca{animation:none}}
 .topbar .hdr-orn .ornsvg{width:262px;height:34px;max-width:100%}
 .orn > i{display:flex;align-items:center;justify-content:center}
 .orn > i .ornsvg{width:140px;height:20px}
@@ -333,7 +330,7 @@ body:not(.quickmode) .chatin .btn {
   border: 0 !important;
   border-radius: 6px !important;
   min-height: 52px !important;
-  box-shadow: 0 0 24px var(--glow-soft) !important;
+  box-shadow: 0 0 24px var(--glow-soft);
 }
 
 body:not(.quickmode) #amSave .o-corner,
@@ -431,7 +428,7 @@ body:not(.quickmode) .flag { background:none !important; border:0 !important; bo
 /* ---------- open-edge controls: fixes ---------- */
 body:not(.quickmode) .rthumb:not([style*="url("]), body:not(.quickmode) .rhero:not([style*="url("]){background-image:none !important}
 /* ---------- open-edge controls: fixes 2 ---------- */
-body:not(.quickmode) #rsSend{background:var(--accent-ink) !important;color:var(--onaccent) !important;font-family:var(--font-display) !important;font-size:calc(20px * var(--display-scale)) !important;border:0 !important;border-radius:6px !important;min-height:52px !important;box-shadow:0 0 24px var(--glow-soft) !important}
+body:not(.quickmode) #rsSend{background:var(--accent-ink) !important;color:var(--onaccent) !important;font-family:var(--font-display) !important;font-size:calc(20px * var(--display-scale)) !important;border:0 !important;border-radius:6px !important;min-height:52px !important;box-shadow:0 0 24px var(--glow-soft)}
 body:not(.quickmode) #rsSend .o-corner{color:var(--onaccent) !important;opacity:1 !important}
 /* ---------- selection: comet (brief nutrilog-260928-select-comet) ---------- */
 body:not(.quickmode){--spark-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-6 -6 12 12'%3E%3Cpath d='M0 -5.5C.6 -1.4 1.4 -.6 5.5 0 1.4 .6 .6 1.4 0 5.5 -.6 1.4 -1.4 .6 -5.5 0 -1.4 -.6 -.6 -1.4 0 -5.5Z'/%3E%3C/svg%3E")}
@@ -457,3 +454,54 @@ body:not(.quickmode) .looktile .lk-name{position:relative;margin-left:6px;line-h
 body:not(.quickmode) .looktile .lk-name::before{content:"";position:absolute;width:12px;height:12px;pointer-events:none;-webkit-mask:var(--spark-mask) center/contain no-repeat;mask:var(--spark-mask) center/contain no-repeat;left:-12px;top:calc(100% - 1px);background:color-mix(in srgb, currentColor 40%, transparent)}
 body:not(.quickmode) .looktile[aria-pressed="true"] .lk-name::before{background:var(--lk-accent);filter:drop-shadow(0 0 2.5px color-mix(in srgb, var(--lk-accent) 45%, transparent)) drop-shadow(0 0 7px color-mix(in srgb, var(--lk-accent) 18%, transparent))}
 body:not(.quickmode) .looktile[aria-pressed="true"] .lk-name::after{content:"";position:absolute;left:-2px;right:-6px;top:calc(100% + 4.3px);height:2.4px;pointer-events:none;background:linear-gradient(var(--lk-accent),var(--lk-accent)) left center/calc(100% - 1.2px) 1.5px no-repeat,radial-gradient(circle closest-side,var(--lk-accent) 96%,transparent 100%) right center/2.4px 2.4px no-repeat;filter:drop-shadow(0 0 4px color-mix(in srgb, var(--lk-accent) 45%, transparent))}
+/* ---------- motion (brief nutrilog-260928-motion) ---------- */
+:root{--t-fast:160ms;--t-base:260ms;--t-slow:340ms;--t-meter:720ms;--t-press:380ms;--stagger:42ms;--e-arrive:cubic-bezier(.22,.61,.36,1);--e-leave:cubic-bezier(.55,0,.8,.4);--e-move:cubic-bezier(.45,0,.2,1);--e-settle:cubic-bezier(.16,.75,.3,1);--m-rise:6px;--m-rise-list:5px;--m-sheet:110%;--m-press:.985}
+@keyframes m-in{from{opacity:0;transform:translateY(var(--m-rise))}to{opacity:1;transform:none}}
+@keyframes m-list{from{opacity:0;transform:translateY(var(--m-rise-list))}to{opacity:1;transform:none}}
+@keyframes m-sheet-in{from{transform:translateY(var(--m-sheet))}to{transform:none}}
+@keyframes m-sheet-out{from{transform:none}to{transform:translateY(var(--m-sheet))}}
+@keyframes m-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes m-fade-out{from{opacity:1}to{opacity:0}}
+@keyframes m-toast-in{from{opacity:0;transform:translate(-50%,var(--m-rise))}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes m-glow{0%{box-shadow:0 0 18px var(--glow-strong),0 0 46px var(--glow-soft)}45%{box-shadow:0 0 30px var(--glow-strong),0 0 64px var(--glow-soft)}100%{box-shadow:0 0 24px var(--glow-soft)}}
+@keyframes m-thread{from{right:var(--m-thread-from)}}
+.screen{animation:m-in var(--t-base) var(--e-arrive)}
+.sheetbg{animation:m-fade-in var(--t-slow) var(--e-arrive)}
+.sheet{animation:m-sheet-in var(--t-slow) var(--e-arrive)}
+.sheetbg.closing{animation:m-fade-out var(--t-base) var(--e-leave) forwards}
+.sheetbg.closing .sheet{animation:m-sheet-out var(--t-base) var(--e-leave) forwards}
+#toast.in{animation:m-toast-in var(--t-base) var(--e-arrive)}
+#toast.out{animation:m-fade-out var(--t-fast) var(--e-leave) forwards}
+body:not(.quickmode) .btn:not(.ghost):not(.quiet):not(.danger){transition:transform var(--t-fast) var(--e-arrive)}
+body:not(.quickmode) .btn:not(.ghost):not(.quiet):not(.danger):active{transform:scale(var(--m-press))}
+body:not(.quickmode) .btn.pulse:not(.ghost):not(.quiet):not(.danger){animation:m-glow var(--t-press) var(--e-arrive)}
+body:not(.quickmode) .btn.quiet, body:not(.quickmode) .btn.ghost, body:not(.quickmode) .iconbtn{transition:color var(--t-fast) var(--e-arrive)}
+body:not(.quickmode) .btn.quiet:active, body:not(.quickmode) .btn.ghost:active, body:not(.quickmode) .iconbtn:active{color:var(--accent-ink) !important}
+.rfill{transition:width var(--t-meter) var(--e-settle)}
+.rend{transition:left var(--t-meter) var(--e-settle)}
+body:not(.quickmode) :is(.entry,.rcard,.rowbtn,.frow){animation:m-list var(--t-base) var(--e-arrive) both}
+body:not(.quickmode) :is(.entry,.rcard,.rowbtn,.frow):nth-child(2){animation-delay:calc(var(--stagger) * 1)}
+body:not(.quickmode) :is(.entry,.rcard,.rowbtn,.frow):nth-child(3){animation-delay:calc(var(--stagger) * 2)}
+body:not(.quickmode) :is(.entry,.rcard,.rowbtn,.frow):nth-child(4){animation-delay:calc(var(--stagger) * 3)}
+body:not(.quickmode) :is(.entry,.rcard,.rowbtn,.frow):nth-child(5){animation-delay:calc(var(--stagger) * 4)}
+body:not(.quickmode) :is(.entry,.rcard,.rowbtn,.frow):nth-child(6){animation-delay:calc(var(--stagger) * 5)}
+body:not(.quickmode) :is(.entry,.rcard,.rowbtn,.frow):nth-child(7){animation-delay:calc(var(--stagger) * 6)}
+body:not(.quickmode) :is(.entry,.rcard,.rowbtn,.frow):nth-child(8){animation-delay:calc(var(--stagger) * 7)}
+body:not(.quickmode) :is(.entry,.rcard,.rowbtn,.frow):nth-child(9){animation-delay:calc(var(--stagger) * 8)}
+body:not(.quickmode) :is(.entry,.rcard,.rowbtn,.frow):nth-child(10){animation-delay:calc(var(--stagger) * 9)}
+body:not(.quickmode) :is(.entry,.rcard,.rowbtn,.frow):nth-child(11){animation-delay:calc(var(--stagger) * 10)}
+body:not(.quickmode) :is(.entry,.rcard,.rowbtn,.frow):nth-child(n+12){animation-delay:calc(var(--stagger) * 11)}
+#tabbar .tab{transition:color var(--t-fast) var(--e-arrive)}
+body:not(.quickmode) .chip[aria-pressed]::before, body:not(.quickmode) .seg button::before, body:not(.quickmode) .opt .t1::before, body:not(.quickmode) .looktile .lk-name::before{transition:background-color var(--t-fast) var(--e-arrive), opacity var(--t-fast) var(--e-arrive)}
+body:not(.quickmode) .chip[aria-pressed]::after, body:not(.quickmode) .seg button::after{content:"";position:absolute;left:14px;right:4px;top:calc(50% + 13.3px);height:2.4px;pointer-events:none;background:linear-gradient(var(--accent),var(--accent)) left center/calc(100% - 1.2px) 1.5px no-repeat,radial-gradient(circle closest-side,var(--accent) 96%,transparent 100%) right center/2.4px 2.4px no-repeat;opacity:0;transition:opacity var(--t-fast) var(--e-leave);--m-thread-from:calc(100% - 14px)}
+body:not(.quickmode) .opt .t1::after{content:"";position:absolute;left:-2px;right:-6px;top:calc(100% + 4.3px);height:2.4px;pointer-events:none;background:linear-gradient(var(--accent),var(--accent)) left center/calc(100% - 1.2px) 1.5px no-repeat,radial-gradient(circle closest-side,var(--accent) 96%,transparent 100%) right center/2.4px 2.4px no-repeat;opacity:0;transition:opacity var(--t-fast) var(--e-leave);--m-thread-from:calc(100% + 2px)}
+body:not(.quickmode) .looktile .lk-name::after{content:"";position:absolute;left:-2px;right:-6px;top:calc(100% + 4.3px);height:2.4px;pointer-events:none;background:linear-gradient(var(--lk-accent),var(--lk-accent)) left center/calc(100% - 1.2px) 1.5px no-repeat,radial-gradient(circle closest-side,var(--lk-accent) 96%,transparent 100%) right center/2.4px 2.4px no-repeat;opacity:0;transition:opacity var(--t-fast) var(--e-leave);--m-thread-from:calc(100% + 2px)}
+body:not(.quickmode) .chip[aria-pressed="true"]::after, body:not(.quickmode) .seg button.on::after, body:not(.quickmode) .opt:has(input:checked) .t1::after, body:not(.quickmode) .looktile[aria-pressed="true"] .lk-name::after{opacity:1;transition:none;animation:m-thread var(--t-slow) var(--e-arrive) 80ms both}
+@media (prefers-reduced-motion: reduce){
+  :root{--t-fast:60ms;--t-base:130ms;--t-slow:170ms;--stagger:0ms;--m-rise:0px;--m-rise-list:0px;--m-sheet:0px;--m-press:1}
+  .rfill, .rend{transition:none !important}
+  body:not(.quickmode) .btn:not(.ghost):not(.quiet):not(.danger){transition:none !important}
+  body:not(.quickmode) .btn.pulse{animation:none !important}
+  body:not(.quickmode) .chip[aria-pressed="true"]::after, body:not(.quickmode) .seg button.on::after, body:not(.quickmode) .opt:has(input:checked) .t1::after, body:not(.quickmode) .looktile[aria-pressed="true"] .lk-name::after{animation:none !important}
+}
+body.quickmode, body.quickmode *, body.quickmode *::before, body.quickmode *::after{animation:none !important;transition:none !important}
