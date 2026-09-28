@@ -934,3 +934,23 @@ Object.assign(STR.cs, {
 Object.assign(STR.en, {
   ct_line:'Recipe catalog: {n} recipes, updated {when}', ct_none:'The recipe catalog has not been downloaded yet.', ct_err:'Could not download the recipe catalog: {msg}'
 });
+Object.assign(STR.cs, {
+  rs_add:'Poslat recept', rs_title:'Nový recept do katalogu', rs_link:'Odkaz na recept', rs_text:'Text receptu',
+  rs_text_ph:'Vložte suroviny a postup, stačí i poznámky.', rs_help:'Stačí odkaz, text, nebo obojí. Claude recept převede do jednotné podoby a přidá ho do katalogu pro všechny.',
+  rs_send:'Odeslat', rs_bad_link:'Odkaz musí začínat http:// nebo https://', rs_too_long:'Text je delší než 20 000 znaků.',
+  rs_sent:'Recept odeslán. V katalogu se obvykle objeví do hodiny.', rs_offline:'Offline. Recept pošlete, až budete připojeni.',
+  rs_limit:'Tento měsíc jste už poslali {n} receptů, víc nejde.', rs_err:'Odeslání selhalo: {msg}', rs_list_h:'Poslané recepty',
+  rs_list_empty:'Zatím jste neposlali žádný recept.', rs_st_pending:'Zpracovává se', rs_st_published:'V katalogu',
+  rs_st_merged:'Přidáno jako varianta receptu {title}', rs_st_duplicate:'V katalogu už je: {title}', rs_st_rejected:'Nepřidáno: {reason}',
+  rs_r_not_recipe:'nevypadá to jako recept.', rs_r_unreadable:'odkaz nešel přečíst, vložte text receptu.', rs_r_invalid:'recept se nepodařilo převést.', rs_r_other:'neznámý důvod.'
+});
+Object.assign(STR.en, {
+  rs_add:'Send a recipe', rs_title:'New recipe for the catalog', rs_link:'Link to the recipe', rs_text:'Recipe text',
+  rs_text_ph:'Paste the ingredients and method; rough notes are fine.', rs_help:'A link, the text, or both. Claude converts the recipe to the common format and adds it to the catalog for everyone.',
+  rs_send:'Send', rs_bad_link:'The link must start with http:// or https://', rs_too_long:'The text is longer than 20,000 characters.',
+  rs_sent:'Recipe sent. It usually appears in the catalog within an hour.', rs_offline:'Offline. Send the recipe once you are connected.',
+  rs_limit:'You have already sent {n} recipes this month, which is the limit.', rs_err:'Sending failed: {msg}', rs_list_h:'Recipes you sent',
+  rs_list_empty:'You have not sent any recipes yet.', rs_st_pending:'Being processed', rs_st_published:'In the catalog',
+  rs_st_merged:'Added as a variation of {title}', rs_st_duplicate:'Already in the catalog: {title}', rs_st_rejected:'Not added: {reason}',
+  rs_r_not_recipe:'this does not look like a recipe.', rs_r_unreadable:'the link could not be read, paste the recipe text instead.', rs_r_invalid:'the recipe could not be converted.', rs_r_other:'unknown reason.'
+});
