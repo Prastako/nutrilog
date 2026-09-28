@@ -210,7 +210,7 @@ function bindEvents(){
     else if (act === 'recipe-ask'){ const r = RECIPES.byId[id]; S.chatSeed = t('rc_ask_seed', {t: r ? r.title : ''}); go('chat'); }
     else if (act === 'recipe-del'){
       const ok = await confirmSheet(t('rc_delete'), '<p class="muted">'+esc((RECIPES.byId[id]||{}).title||'')+'</p>', t('rc_delete'), true);
-      if (ok){ await dbDel('recipes', id); markDirty('recipe deleted'); await loadRecipes(); go('recipes'); }
+      if (ok){ const rec = await dbGet('recipes', id); if (rec){ rec.deleted = true; rec.updatedAt = nowIso(); await dbPut('recipes', rec); } markDirty('recipe deleted'); await loadRecipes(); go('recipes'); }
     }
     else if (act === 'recipe-new'){ newOwnRecipeSheet(); }
     else if (act === 'rserv'){
