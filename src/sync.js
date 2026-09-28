@@ -4,6 +4,8 @@ const SYNC_URL = 'https://jrajmont--01a0d84f9098771d83cd77326fa78d80.web.val.run
 const SYNC_BATCH = 200;
 const SYNC_DELAY_MS = 5000;
 let syncTimer = null;
+let syncRunning = false;
+let syncRunQueued = null;
 let syncPushing = false;
 let syncPushAgain = false;
 
@@ -72,10 +74,11 @@ async function syncApplyItem(item) {
 }
 
 /* ---- syncPull ---- */
-async function syncPull() {
+async function syncPull(key) {
   var count = 0;
   for (var i = 0; i < 100; i++) {
-    var data = await syncFetch('GET', '/v1/pull?after=' + (S.meta.sync.cursor || 0));
+    var data = await syncFetch('GET', '/v1/pull?after=' + (S.meta.sync.cursor || 0), undefined, key);
+    if (S.secrets.sync !== key) return 0;
     if (data.items) {
       for (var j = 0; j < data.items.length; j++) {
         if (await syncApplyItem(data.items[j])) count++;
@@ -221,6 +224,27 @@ function syncShow() {
 
 /* ---- syncRun ---- */
 async function syncRun(reason, push) {
+  if (syncRunning) {
+    syncRunQueued = { reason: reason, push: !!push || !!(syncRunQueued && syncRunQueued.push) };
+    return false;
+  }
+  syncRunning = true;
+  var ok = false;
+  try {
+    ok = await syncRunOnce(reason, push);
+  } finally {
+    syncRunning = false;
+  }
+  if (syncRunQueued) {
+    var q = syncRunQueued;
+    syncRunQueued = null;
+    await syncRun(q.reason, q.push);
+  }
+  return ok;
+}
+
+/* ---- syncRunOnce ---- */
+async function syncRunOnce(reason, push) {
   var st = S.meta.sync;
   if (!S.secrets.sync || st.state === 'revoked') return false;
   if (navigator.onLine === false) {
@@ -229,14 +253,19 @@ async function syncRun(reason, push) {
     syncShow();
     return false;
   }
+  var key = S.secrets.sync;
   try {
-    await syncPull();
+    await syncPull(key);
+    if (S.secrets.sync !== key) return false;
     if (await syncPending()) await syncPush();
+    if (S.secrets.sync !== key) return false;
     if (typeof catalogRun === 'function') await catalogRun(reason === 'now');
+    if (S.secrets.sync !== key) return false;
     st.state = 'ok';
     st.lastOkAt = nowIso();
     st.lastError = '';
   } catch (err) {
+    if (S.secrets.sync !== key) return false;
     if (err.status === 401) {
       st.state = 'revoked';
       clearTimeout(syncTimer);
@@ -246,6 +275,7 @@ async function syncRun(reason, push) {
       st.lastError = String(err.message);
     }
   } finally {
+    if (S.secrets.sync !== key) return false;
     await saveMeta();
     syncShow();
   }
@@ -265,6 +295,7 @@ function scheduleSync() {
 /* ---- syncJoin ---- */
 async function syncJoin(key, user) {
   if (S.secrets.sync && S.secrets.sync !== key) {
+    S.secrets.sync = key;
     await dbClear('records');
     var recipes = await dbAll('recipes');
     for (var i = 0; i < recipes.length; i++) {
@@ -272,6 +303,9 @@ async function syncJoin(key, user) {
         await dbDel('recipes', recipes[i].id);
       }
     }
+    resetSessionState();
+    await loadRecipes();
+    renderScreen(S.screen);
   }
   S.secrets.sync = key;
   await secretSet('sync', key);
@@ -300,6 +334,9 @@ async function syncLeave() {
     lastError: '',
     name: ''
   };
+  resetSessionState();
+  await loadRecipes();
+  renderScreen(S.screen);
   await saveMeta();
   syncShow();
 }
