@@ -966,3 +966,9 @@ Object.assign(STR.en, {
   rc_axis_none:'Not for your diet', rc_axis_none_note:'This recipe has no version for your diet. The original version is shown.',
   rc_nut_basis_stored:'Nutrition as stored with the recipe'
 });
+Object.assign(STR.cs, {
+  b_restore_merge_note:'Zařízení je připojené k profilu: po obnovení se data sloučí s profilem, novější záznam vyhrává.'
+});
+Object.assign(STR.en, {
+  b_restore_merge_note:'This device is joined to a profile: after the restore the data is merged with the profile, the newer record wins.'
+});

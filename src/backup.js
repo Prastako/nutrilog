@@ -285,9 +285,11 @@ async function restoreFromPayload(obj, sourceLabel){
   }
   const okToGo = await confirmSheet(sourceLabel,
     '<div class="notice warn">'+esc(t('b_restore_warn'))+'</div>' +
+    (S.secrets.sync ? '<p class="tiny">'+esc(t('b_restore_merge_note'))+'</p>' : '') +
     '<p class="tiny">'+esc(t('b_secrets_note'))+'</p>', t('confirm'), true);
   if (!okToGo){ toast(t('cancelled')); return false; }
   await applyPayload(obj);
+  if (S.secrets.sync) await syncAfterRestore();
   toast(t('restore_ok'));
   go('today');
   return true;

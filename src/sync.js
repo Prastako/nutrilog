@@ -282,6 +282,15 @@ async function syncRunOnce(reason, push) {
   return st.state === 'ok';
 }
 
+async function syncAfterRestore() {
+  if (!S.secrets.sync) return false;
+  S.meta.sync.cursor = 0;
+  S.meta.sync.lastPushAt = null;
+  S.meta.sync.lastPushIds = [];
+  await saveMeta();
+  return await syncRun('restore', true);
+}
+
 /* ---- scheduleSync ---- */
 function scheduleSync() {
   if (!S.secrets.sync || S.meta.sync.state === 'revoked') return;
