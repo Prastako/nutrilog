@@ -7,7 +7,10 @@
    cache first, so the 1 MB food database downloads once per version. */
 
 const CACHE = 'nutrilog-shell-0.2.7';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
+const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png',
+  './fonts/fraunces-italic-300-latin.woff2', './fonts/fraunces-italic-300-ext.woff2',
+  './fonts/figtree-normal-300-latin.woff2', './fonts/figtree-normal-300-ext.woff2',
+  './fonts/figtree-normal-400-latin.woff2', './fonts/figtree-normal-400-ext.woff2'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(

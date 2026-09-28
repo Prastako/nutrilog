@@ -980,3 +980,9 @@ Object.assign(STR.en, {
   tagns_dish:'Dish', tagns_budget:'Budget', tagns_season:'Season', tag_diet_high_fiber:'High fibre',
   p_weight_short:'Weight', p_hint_height:'cm, optional'
 });
+Object.assign(STR.cs, {
+  set_type:'Písmo', type_fraunces:'Fraunces a Figtree', type_marcellus:'Marcellus a Raleway', type_jost:'Jost', type_sample:'Aa 1 640 kcal'
+});
+Object.assign(STR.en, {
+  set_type:'Type', type_fraunces:'Fraunces and Figtree', type_marcellus:'Marcellus and Raleway', type_jost:'Jost', type_sample:'Aa 1,640 kcal'
+});

@@ -329,7 +329,7 @@ body:not(.quickmode) .chatin .btn {
   background: var(--accent-ink) !important;
   color: var(--onaccent) !important;
   font-family: var(--font-display) !important;
-  font-size: 20px !important;
+  font-size: calc(20px * var(--display-scale)) !important;
   border: 0 !important;
   border-radius: 6px !important;
   min-height: 52px !important;
@@ -431,7 +431,7 @@ body:not(.quickmode) .flag { background:none !important; border:0 !important; bo
 /* ---------- open-edge controls: fixes ---------- */
 body:not(.quickmode) .rthumb:not([style*="url("]), body:not(.quickmode) .rhero:not([style*="url("]){background-image:none !important}
 /* ---------- open-edge controls: fixes 2 ---------- */
-body:not(.quickmode) #rsSend{background:var(--accent-ink) !important;color:var(--onaccent) !important;font-family:var(--font-display) !important;font-size:20px !important;border:0 !important;border-radius:6px !important;min-height:52px !important;box-shadow:0 0 24px var(--glow-soft) !important}
+body:not(.quickmode) #rsSend{background:var(--accent-ink) !important;color:var(--onaccent) !important;font-family:var(--font-display) !important;font-size:calc(20px * var(--display-scale)) !important;border:0 !important;border-radius:6px !important;min-height:52px !important;box-shadow:0 0 24px var(--glow-soft) !important}
 body:not(.quickmode) #rsSend .o-corner{color:var(--onaccent) !important;opacity:1 !important}
 /* ---------- selection: comet (brief nutrilog-260928-select-comet) ---------- */
 body:not(.quickmode){--spark-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-6 -6 12 12'%3E%3Cpath d='M0 -5.5C.6 -1.4 1.4 -.6 5.5 0 1.4 .6 .6 1.4 0 5.5 -.6 1.4 -1.4 .6 -5.5 0 -1.4 -.6 -.6 -1.4 0 -5.5Z'/%3E%3C/svg%3E")}
