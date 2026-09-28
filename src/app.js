@@ -65,6 +65,7 @@ function refreshChrome(){
 }
 
 function renderScreen(name){
+  meterSeq = 0;
   if (name === 'today') renderToday();
   else if (name === 'log') renderLog();
   else if (name === 'recipes') renderRecipes();
