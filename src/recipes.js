@@ -190,17 +190,6 @@ function tagNs(tag){ return String(tag).split(':')[0]; }
 
 const ORIGIN_LABEL = {archive:'orig_archive', starter:'orig_starter', claude:'orig_claude', own:'orig_own'};
 
-function fmtQty(q){
-  if (q == null || q === '') return '';
-  const n = Number(q);
-  if (!isFinite(n)) return String(q);
-  const fr = [[0.25,'¼'],[0.5,'½'],[0.75,'¾'],[0.333,'⅓'],[0.667,'⅔']];
-  const whole = Math.floor(n), rest = n - whole;
-  for (const [v, s] of fr){ if (Math.abs(rest - v) < 0.04) return (whole ? whole : '') + s; }
-  if (n >= 20) return fmtNum(Math.round(n));
-  return fmtNum(n, 1);
-}
-
 function recipeCard(r, extra){
   const k = recipeKcal(r), tm = recipeTime(r), note = recipeNote(r.id);
   const prot = r.nutrition && r.nutrition.perServing ? r.nutrition.perServing.prot : null;

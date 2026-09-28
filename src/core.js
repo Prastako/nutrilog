@@ -1044,3 +1044,15 @@ function exclusionHits(text){
   });
   return hits;
 }
+
+/* Recipe amounts: common fractions as ¼ ½ ¾ ⅓ ⅔. */
+function fmtQty(q){
+  if (q == null || q === '') return '';
+  const n = Number(q);
+  if (!isFinite(n)) return String(q);
+  const fr = [[0.25,'¼'],[0.5,'½'],[0.75,'¾'],[0.333,'⅓'],[0.667,'⅔']];
+  const whole = Math.floor(n), rest = n - whole;
+  for (const [v, s] of fr){ if (Math.abs(rest - v) < 0.04) return (whole ? whole : '') + s; }
+  if (n >= 20) return fmtNum(Math.round(n));
+  return fmtNum(n, 1);
+}

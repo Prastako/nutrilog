@@ -45,7 +45,7 @@ test('fixed scaling: salt stays 1', () => {
 
 test('step text: {coconut} renders at 2 servings', () => {
   var r = resolveRecipe(recipe(), { servings: 2 });
-  assert.strictEqual(r.steps[0].text, 'Pour in coconut milk, 200 ml');
+  assert.strictEqual(r.steps[0].text, 'Pour in Coconut milk (200 ml)');
 });
 
 test('flags apply in sorted order, last write wins', () => {
