@@ -214,7 +214,7 @@ function recipeCard(r, extra){
     (extra ? '<span class="rextra">'+extra+'</span>' : '') +
     '<span class="rtags">' + (ex.length ? '<span class="pill err">'+esc(t('rc_excluded'))+'</span>' : '') +
       tags.map(x => '<span class="pill">'+esc(tagLabel(x))+'</span>').join('') +
-      (r.origin !== 'archive' ? '<span class="pill wait">'+esc(t(ORIGIN_LABEL[r.origin]||'orig_own'))+'</span>' : '') +
+      (r.origin !== 'archive' && r.origin !== 'catalog' ? '<span class="pill wait">'+esc(t(ORIGIN_LABEL[r.origin]||'orig_own'))+'</span>' : '') +
     '</span></span></button>';
 }
 
