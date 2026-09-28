@@ -177,7 +177,6 @@ function fillThumbs(root){
 function recipeKcal(r){ return r && r.nutrition && r.nutrition.perServing ? r.nutrition.perServing.kcal : null; }
 function recipeTime(r){ return r && r.time ? (r.time.totalMin || ((r.time.prepMin||0) + (r.time.cookMin||0)) || null) : null; }
 function recipeText(r){ return [r.title, r.titleEn, (r.ingredients||[]).map(i => i.item + ' ' + (i.prep||'')).join(' ')].join(' '); }
-function recipeExclusions(r){ return exclusionHits(recipeText(r)); }
 
 function tagLabel(tag){
   const [ns, val] = String(tag).split(':');
@@ -190,18 +189,143 @@ function tagNs(tag){ return String(tag).split(':')[0]; }
 
 const ORIGIN_LABEL = {archive:'orig_archive', starter:'orig_starter', claude:'orig_claude', own:'orig_own'};
 
+/* ---------- Recipe view resolution ---------- */
+
+function recipeView(r, opts){
+  opts = opts || {};
+  var schema2 = r.schema === 2;
+  var af = profileAxisFlags(S.profile);
+  var avail = recipeAvailability(r, S.profile);
+  var axisNone = !!(r.written && avail.reason === 'axis');
+
+  var versions;
+  if (schema2){
+    var allowed = ['omnivore', 'pescatarian', 'vegetarian', 'vegan'];
+    var base = r.written || 'omnivore';
+    var variantKeys = r.variants ? Object.keys(r.variants) : [];
+    var raw = [base].concat(variantKeys);
+    var uniqueSet = {};
+    for (var _i = 0; _i < raw.length; _i++){ uniqueSet[raw[_i]] = true; }
+    versions = [];
+    for (var vi = 0; vi < allowed.length; vi++){
+      if (uniqueSet[allowed[vi]]){ versions.push(allowed[vi]); }
+    }
+    for (var wi = 0; wi < raw.length; wi++){
+      if (allowed.indexOf(raw[wi]) < 0 && uniqueSet[raw[wi]]){
+        versions.push(raw[wi]);
+        uniqueSet[raw[wi]] = false;
+      }
+    }
+  } else {
+    versions = [r.written || 'omnivore'];
+  }
+
+  var axis;
+  if (opts.axis && versions.indexOf(opts.axis) >= 0){
+    axis = opts.axis;
+  } else if (avail.reason === 'axis'){
+    axis = r.written || 'omnivore';
+  } else {
+    axis = avail.axis;
+  }
+
+  var servings = opts.servings || Number(r.servings) || 1;
+
+  var ingredients, steps, flagsApplied;
+  if (schema2){
+    var res = resolveRecipe(r, {axis: axis, flags: af.flags, servings: servings});
+    ingredients = res.ingredients.map(function(ing){
+      var copy = Object.assign({}, ing);
+      copy.name = ingredientName(ing);
+      return copy;
+    });
+    steps = res.steps;
+    flagsApplied = af.flags.filter(function(f){ return r.flags && r.flags[f]; });
+  } else {
+    var factor = servings / (Number(r.servings) || 1);
+    ingredients = (r.ingredients || []).map(function(ing){
+      var copy = Object.assign({}, ing);
+      copy.name = ing.item;
+      if (ing.qty != null){ copy.qty = ing.qty * factor; }
+      return copy;
+    });
+    steps = (r.steps || []).map(function(s){ return Object.assign({}, s); });
+    flagsApplied = [];
+  }
+
+  return {
+    schema2: schema2,
+    axis: axis,
+    versions: versions,
+    flagsApplied: flagsApplied,
+    axisNone: axisNone,
+    servings: servings,
+    ingredients: ingredients,
+    steps: steps
+  };
+}
+
+function recipeExclusions(r, view){
+  view = view || recipeView(r);
+  if (!view.schema2){
+    return exclusionHits(recipeText(r));
+  }
+  var af = profileAxisFlags(S.profile);
+  var keys = [];
+  for (var i = 0; i < af.flags.length; i++){
+    var f = af.flags[i];
+    if (f === 'gluten-free'){ keys.push('gluten'); }
+    else if (f === 'lactose-free'){ keys.push('milk'); }
+    else if (f.indexOf('no:') === 0){ keys.push(f.slice(3)); }
+  }
+  var hits = [];
+  var labelSet = {};
+  for (var j = 0; j < view.ingredients.length; j++){
+    var ing = view.ingredients[j];
+    if (Array.isArray(ing.allergens)){
+      for (var k = 0; k < keys.length; k++){
+        if (ing.allergens.indexOf(keys[k]) >= 0){
+          if (!labelSet[ing.name]){
+            labelSet[ing.name] = true;
+            hits.push({label: ing.name, type: 'allergen', word: keys[k]});
+          }
+        }
+      }
+    }
+  }
+  var noAllergens = view.ingredients.filter(function(ing){ return !Array.isArray(ing.allergens); });
+  if (noAllergens.length > 0){
+    var text = noAllergens.map(function(ing){ return ing.name; }).join(' ');
+    var raw = exclusionHits(text);
+    for (var r = 0; r < raw.length; r++){
+      if (raw[r].type !== 'pattern' && !labelSet[raw[r].label]){
+        labelSet[raw[r].label] = true;
+        hits.push(raw[r]);
+      }
+    }
+  }
+  return hits;
+}
+
+function ingAmount(ing, schema2){
+  if (schema2 && (ing.scale === 'fixed' || ing.qty === 0 || ing.qty == null)){
+    return t('rc_to_taste');
+  }
+  return [fmtQty(ing.qty), ing.unit || ''].join(' ').trim();
+}
+
 function recipeCard(r, extra){
   const k = recipeKcal(r), tm = recipeTime(r), note = recipeNote(r.id);
   const prot = r.nutrition && r.nutrition.perServing ? r.nutrition.perServing.prot : null;
   const tags = (r.tags||[]).filter(x => ['meal','prep','diet','time'].indexOf(tagNs(x)) >= 0).slice(0,3);
-  const ex = recipeExclusions(r);
+  const v = recipeView(r), ex = recipeExclusions(r, v);
   const initial = esc((r.title||'?').trim().charAt(0).toUpperCase());
   return '<button class="rcard" type="button" data-act="open-recipe" data-id="'+esc(r.id)+'">' +
     '<span class="rthumb" data-thumb="'+esc(r.id)+'"><span>'+initial+'</span></span>' +
     '<span class="rbody"><span class="rtitle">'+esc(r.title)+(note && note.favorite ? ' <span class="star">★</span>' : '')+'</span>' +
     '<span class="rmeta num">'+[tm ? tm+' min' : null, k != null ? fmtNum(k)+' kcal' : null, prot != null ? t('mac_p')+' '+fmtNum(prot)+' g' : null].filter(Boolean).map(esc).join(' · ')+'</span>' +
     (extra ? '<span class="rextra">'+extra+'</span>' : '') +
-    '<span class="rtags">' + (ex.length ? '<span class="pill err">'+esc(t('rc_excluded'))+'</span>' : '') +
+    '<span class="rtags">' + (v.axisNone ? '<span class="pill err">'+esc(t('rc_axis_none'))+'</span>' : ex.length ? '<span class="pill err">'+esc(t('rc_excluded'))+'</span>' : '') +
       tags.map(x => '<span class="pill">'+esc(tagLabel(x))+'</span>').join('') +
       (r.origin !== 'archive' && r.origin !== 'catalog' ? '<span class="pill wait">'+esc(t(ORIGIN_LABEL[r.origin]||'orig_own'))+'</span>' : '') +
     '</span></span></button>';
@@ -435,13 +559,13 @@ async function recipeMissing(id){
   const r = RECIPES.byId[id];
   const pantry = await recByType('pantry_item');
   const haveNames = pantry.filter(p => p.have).map(p => fold(p.name));
-  const rows = (r.ingredients||[]).map(ing => {
-    const f = fold(ing.item);
+  const rows = recipeView(r).ingredients.map(ing => {
+    const f = fold(ing.name);
     const has = haveNames.some(n => n.length >= 3 && (f.indexOf(n) >= 0 || n.indexOf(f.split(/[ ,]/)[0]) >= 0));
     return {ing, has};
   });
   let b = '<p class="tiny" style="margin-bottom:10px">'+esc(t('rc_missing_note'))+'</p>';
-  b += rows.map((x, i) => '<label class="ing"><input type="checkbox" data-mi="'+i+'" '+(x.has ? 'checked' : '')+'><span class="it">'+esc(x.ing.item)+'</span>' +
+  b += rows.map((x, i) => '<label class="ing"><input type="checkbox" data-mi="'+i+'" '+(x.has ? 'checked' : '')+'><span class="it">'+esc(x.ing.name)+'</span>' +
     '<span class="pill '+(x.has ? 'ok' : 'wait')+'">'+esc(x.has ? t('pt_have') : t('pt_need'))+'</span></label>').join('');
   const sheet = openSheet(esc(t('rc_missing_btn')), b,
     '<button class="btn" type="button" id="rm-save">'+esc(t('rc_missing_save'))+'</button>');
@@ -449,7 +573,7 @@ async function recipeMissing(id){
     const boxes = $$('[data-mi]', sheet);
     for (const bx of boxes){
       const ing = rows[Number(bx.getAttribute('data-mi'))].ing;
-      const name = ing.item.split(',')[0].trim();
+      const name = r.schema === 2 ? ing.name : ing.item.split(',')[0].trim();
       const ex = pantry.find(p => fold(p.name) === fold(name));
       if (bx.checked){ if (!ex) await recPut({type:'pantry_item', name, have:true, toBuy:false}); else if (!ex.have){ ex.have = true; ex.toBuy = false; await recPut(ex); } }
       else { if (!ex) await recPut({type:'pantry_item', name, have:false, toBuy:true}); else { ex.have = false; ex.toBuy = true; await recPut(ex); } }
@@ -487,7 +611,8 @@ async function suggestFor(slot, dateKey, n){
   Object.values(RECIPES.notes).forEach(nt => { const last = (nt.cookedDates||[]).slice(-1)[0]; if (last) recent[nt.recipeId] = last; });
   const out = [];
   visibleRecipes().forEach(r => {
-    if (recipeExclusions(r).length) return;
+    const rv = recipeView(r);
+    if (rv.axisNone || recipeExclusions(r, rv).length) return;
     const tags = r.tags || [];
     const mealTags = tags.filter(x => tagNs(x) === 'meal');
     if (mealTags.length && mealTags.indexOf('meal:' + slot) < 0) return;
@@ -592,9 +717,10 @@ async function aiRecipesSheet(slot, kcal, mealPrep){
 const AI_DRAFTS = [];
 
 function recipeInline(r){
+  const v = recipeView(r);
   return '<p class="eyebrow" style="margin-top:10px">'+esc(t('rc_ingredients'))+'</p><ul class="tips">' +
-    (r.ingredients||[]).map(i => '<li>'+esc([fmtQty(i.qty), i.unit||'', i.item].join(' ').trim())+(i.prep ? ', '+esc(i.prep) : '')+'</li>').join('') + '</ul>' +
-    '<p class="eyebrow" style="margin-top:10px">'+esc(t('rc_steps'))+'</p><ol class="steps">' + (r.steps||[]).map(s => '<li>'+esc(s.text)+'</li>').join('') + '</ol>';
+    v.ingredients.map(i => '<li>'+esc([ingAmount(i, v.schema2), i.name].join(' ').trim())+(i.prep ? ', '+esc(i.prep) : '')+'</li>').join('') + '</ul>' +
+    '<p class="eyebrow" style="margin-top:10px">'+esc(t('rc_steps'))+'</p><ol class="steps">' + v.steps.map(s => '<li>'+esc(s.text)+'</li>').join('') + '</ol>';
 }
 
 /* A blank recipe you type in yourself. */
