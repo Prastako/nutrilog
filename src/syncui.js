@@ -33,6 +33,7 @@ function syncCardInner() {
   h += '</div>';
   if (joined) {
     h += '<p class="tiny">' + esc(t('sy_leave_note')) + '</p>';
+    h += submitListHtml();
   }
   h += '<details><summary>' + esc(t('sy_advanced')) + '</summary>' +
     '<div class="field"><label for="syncUrl">' + esc(t('sy_url')) + '</label>' +
@@ -60,9 +61,11 @@ function bindSyncCard() {
     const action = b.getAttribute('data-sync');
     if (action == 'join') openJoinSheet('');
     else if (action == 'leave') await syncLeave();
-    else if (action == 'now') await syncRun('now', true);
+    else if (action == 'now') { await syncRun('now', true); await submissionsFetch(); renderSyncCard(); }
     else if (action == 'share') await openShareSheet();
+    else if (action == 'submit') openSubmitSheet();
   });
+  if (S.secrets.sync) submissionsFetch().then(renderSyncCard);
 }
 
 function openJoinSheet(prefill) {
@@ -101,4 +104,74 @@ async function syncCheckKey(key) {
     closeSheet();
   });
   return true;
+}
+
+/* ---------- Submit list ---------- */
+
+function submitListHtml() {
+  var rows = '';
+  if (!SUBMIT.list || SUBMIT.list.length == 0) {
+    rows = '<p class="tiny">' + esc(t('rs_list_empty')) + '</p>';
+  } else {
+    var items = SUBMIT.list.slice(0, 50);
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      var canOpen = item.recipeId &&
+        (item.status == 'published' || item.status == 'merged' || item.status == 'duplicate') &&
+        typeof RECIPES !== 'undefined' && RECIPES.list &&
+        RECIPES.list.some(function(r) { return r.id == item.recipeId && r.origin == 'catalog'; });
+      var date = new Date(item.createdAt).toLocaleDateString(S.lang === 'cs' ? 'cs-CZ' : 'en-GB');
+      var label = esc(submissionLabel(item));
+      var status = esc(date + ' · ' + submissionStatus(item));
+      if (canOpen) {
+        rows += '<button class="entry" type="button" data-act="open-recipe" data-id="' + esc(item.recipeId) + '">';
+      } else {
+        rows += '<div class="entry">';
+      }
+      rows += '<span class="en">' + label + '</span><span class="em tiny">' + status + '</span>';
+      rows += canOpen ? '</button>' : '</div>';
+    }
+  }
+  return '<div class="submits"><div class="btnrow"><button class="btn quiet" type="button" data-sync="submit">' + esc(t('rs_add')) + '</button></div><h4>' + esc(t('rs_list_h')) + '</h4>' + rows + '</div>';
+}
+
+/* ---------- Submit sheet ---------- */
+
+function submitSheetState(link, text, online) {
+  var c = submitCheck(link, text, online);
+  return {disabled: !c.ok, msg: c.err ? t(c.err) : ''};
+}
+
+function submitSheetUpdate() {
+  var s = submitSheetState($('#rsLink').value, $('#rsText').value, navigator.onLine !== false);
+  $('#rsSend').disabled = s.disabled;
+  $('#rsMsg').textContent = s.msg;
+}
+
+function openSubmitSheet() {
+  var body = '<div class="field"><label for="rsLink">' + esc(t('rs_link')) + '</label><input id="rsLink" type="url" inputmode="url" autocapitalize="off" spellcheck="false"></div>' +
+    '<div class="field"><label for="rsText">' + esc(t('rs_text')) + '</label><textarea id="rsText" rows="8" placeholder="' + esc(t('rs_text_ph')) + '"></textarea></div>' +
+    '<p class="tiny">' + esc(t('rs_help')) + '</p><p class="tiny" id="rsMsg"></p>';
+  var foot = '<button class="btn" type="button" id="rsSend" disabled>' + esc(t('rs_send')) + '</button>';
+  openSheet(esc(t('rs_title')), body, foot);
+  $('#rsLink').addEventListener('input', submitSheetUpdate);
+  $('#rsText').addEventListener('input', submitSheetUpdate);
+  $('#rsSend').addEventListener('click', submitSheetSend);
+  submitSheetUpdate();
+}
+
+async function submitSheetSend() {
+  var r = await submitSend($('#rsLink').value, $('#rsText').value);
+  if (r.ok) {
+    closeSheet();
+    toast(t('rs_sent'));
+    renderSyncCard();
+  } else if (r.err == 'rs_limit') {
+    $('#rsMsg').textContent = t('rs_limit', {n: r.limit});
+  } else if (r.err == 'rs_err') {
+    $('#rsMsg').textContent = t('rs_err', {msg: r.msg});
+  } else if (r.err == 'sy_revoked') {
+    closeSheet();
+    renderSyncCard();
+  }
 }
