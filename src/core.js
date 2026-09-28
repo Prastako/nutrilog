@@ -188,12 +188,27 @@ function round1(n){ return Math.round(n*10)/10; }
 function deepCopy(o){ return o == null ? o : JSON.parse(JSON.stringify(o)); }
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
+function toastFadeMs(){
+  if(document.body.classList.contains('quickmode')){ return 0; }
+  const t = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--t-fast'));
+  return isFinite(t) ? t : 160;
+}
 function toast(msg, ms){
   const el = $('#toast');
   el.textContent = msg;
-  el.classList.remove('hide');
+  el.classList.remove('hide', 'out');
+  el.classList.remove('in');
+  void el.offsetWidth;
+  el.classList.add('in');
   clearTimeout(toast._tm);
-  toast._tm = setTimeout(() => el.classList.add('hide'), ms || 3200);
+  toast._tm = setTimeout(function(){
+    el.classList.remove('in');
+    el.classList.add('out');
+    toast._tm = setTimeout(function(){
+      el.classList.add('hide');
+      el.classList.remove('out');
+    }, toastFadeMs());
+  }, ms || 3200);
 }
 
 /* ---------- 2. Storage. IndexedDB, schema 2 ----------
