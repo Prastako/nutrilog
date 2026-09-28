@@ -55,6 +55,9 @@ The body fields follow in the same object.
 | `pantry_item` | yes | `name`, `have`, `toBuy` |
 | `summary` | yes | `periodKey` (`week:2026-09-21` or `month:2026-09`), `date`, `mode`, `text`, `model` |
 | `meal_plan` | yes | reserved for saved plans |
+| `cooking_session` | yes | one cooking of a recipe: `recipeId`, `axis`, `flags[]`, `servings`, `session[]` (overrides, section 5 schema 2), `startedAt`, `finishedAt` (null while cooking), `loggedServings` (starts at 0). Finishing sets `finishedAt` only; logging a serving writes a normal `food_entry` with `source` {kind recipe, ref `recipe:<id>`} and raises `loggedServings` |
+| `recipe_overlay` | yes | saved personal changes to one recipe: `recipeId`, `label`, `overrides[]`; at most one per recipe, saving again replaces it |
+| `shopping_item` | yes | reserved for the shopping list (name, qty, unit, grams, section, sources[], done) |
 | `chat_message` | no | `thread`, `role` user/assistant/note, `text`, `cards[]` |
 | `photo_eval` | no | `date`, `hint`, `result` (Claude's evaluation), `warnings[]` |
 
@@ -102,13 +105,14 @@ Reference values in the review: EFSA Dietary Reference Values for adults
 
 Recipes live in their own store because most of them are reference data from
 the archive, not personal data. Your own and Claude recipes are included in
-the backup; archive recipes are not (they live in the archive).
+the backup; archive, starter and catalog recipes are not (they live in the
+archive, in `data/recipes-starter.json` or in the shared catalog on the sync server).
 
 ```json
 {
   "id": "rcp-<slug>-<first reel code>",
   "type": "recipe", "schema": 1,
-  "origin": "archive | starter | claude | own",
+  "origin": "archive | starter | catalog | claude | own",
   "archive": "reel-recipe-atlas",
   "lang": "en",
   "title": "High protein creamy Tuscan chicken meal prep",
@@ -162,6 +166,54 @@ list so every idea stays attributed to the reel it came from.
 **Nutrition** is computed from the USDA database by the grams of each
 ingredient (`foodRef` records the match). Values stated by the author are kept
 in `nutrition.stated`, never mixed into `perServing`.
+
+### Schema 2 (one record, every diet)
+
+A schema 2 recipe is one record that resolves to the cook's diet, servings and
+changes (src/recipeschema.js). All new fields are optional; a schema 1 record
+passes through `upgradeRecipe()` once on read and gets the defaults below. The
+stored file is never rewritten by the app.
+
+- `written`: the diet the ingredient list is written for: `omnivore`,
+  `pescatarian`, `vegetarian` or `vegan` (missing reads as `omnivore`).
+- Each ingredient: `slot` (unique id, missing reads as `i<index>`), `role`
+  (protein, starch, veg, fat, aromatic, liquid, sauce, season, garnish, other;
+  missing reads as other), `scale` (`linear` default; `step` with `per` =
+  servings per unit; `fixed`) and `allergens[]` from the EU 14 keys `gluten`,
+  `crustacean`, `egg`, `fish`, `peanut`, `soy`, `milk`, `treenut`, `celery`,
+  `mustard`, `sesame`, `sulphite`, `lupin`, `mollusc`. A missing `allergens`
+  field means unknown, not none.
+- `variants`: {axis: overrides[]}; an axis is supported when it equals
+  `written` or has an entry here. `flags`: {`gluten-free` | `lactose-free` |
+  `no:<allergen>`: overrides[]}.
+- Each step: `uses[]` (slot ids), `{slot}` tokens in `text`, optional
+  `timerSec`. `storage` adds `freezerMonths`, `batchServings`, `fresh[]`.
+- Override: {`slot`, `op` replace | remove | add | amount, `item`, `qty`,
+  `unit`, `grams`, `foodRef`, `allergens[]`, `prep`, `note`, `steps`:
+  {"<step index>": "<full text>"}}.
+
+Resolution order: written ingredients, `variants[axis]`, flags (gluten-free,
+lactose-free, then `no:<key>` alphabetically), servings scaling (linear by
+servings / base, rounded to 1 decimal under 10, else whole; step =
+ceil(servings / per); fixed unchanged), personal overrides, session overrides.
+A later layer wins. Nutrition is recomputed from the resolved grams where
+per-100 g data exists: `basis` computed (all grams covered), estimated (part),
+or stored (none); `coverage` is the share of grams with data.
+
+Profile mapping (src/recipeavail.js): patterns everything, littlemeat and
+carnivore read as omnivore; coeliac or avoidgluten adds `gluten-free`; lactose
+or lactosefreeproducts adds `lactose-free`; allergy exclusions add `no:<key>`
+(app ids crustaceans, nuts, sulphites, molluscs map to crustacean, treenut,
+sulphite, mollusc); noEggs and noMilk add `no:egg` and `no:milk`. Categories
+are derived: `meal-prep` (tag `prep:meal-prep` or fridgeDays at least 3),
+`quick` (totalMin at most 30), `breakfast`, `snack`; `fullMeal` per serving
+means protein at least 25 g, fibre at least 7 g and 400 to 800 kcal.
+
+**Catalog recipes** (`origin: "catalog"`, ids `rcp-res-*` and `rcp-sub-*`) come
+from the shared catalog on the sync server (`GET /v1/catalog?after=<cursor>`,
+src/catalog.js). They are reference data: never pushed by sync, never in the
+backup, never changed by the app. The pull state is kept in
+`meta.catalog` {`cursor`, `lastOkAt`, `count`, `lastError`}.
 
 ## 6. Side by side with the workout archive
 
