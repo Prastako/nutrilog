@@ -4,6 +4,8 @@ const SYNC_URL = 'https://jrajmont--01a0d84f9098771d83cd77326fa78d80.web.val.run
 const SYNC_BATCH = 200;
 const SYNC_DELAY_MS = 5000;
 let syncTimer = null;
+let syncPushing = false;
+let syncPushAgain = false;
 
 /* ---- syncBase ---- */
 function syncBase() {
@@ -22,7 +24,7 @@ function syncKeyFromInput(text) {
 }
 
 /* ---- syncFetch ---- */
-async function syncFetch(method, path, body, key) {
+async function syncFetch(method, path, body, key, opts) {
   var url = syncBase() + path;
   var init = {
     method: method,
@@ -30,6 +32,7 @@ async function syncFetch(method, path, body, key) {
       Authorization: 'Bearer ' + (key || S.secrets.sync)
     }
   };
+  if (opts && opts.keepalive) init.keepalive = true;
   if (body !== undefined) {
     init.headers['Content-Type'] = 'application/json';
     init.body = JSON.stringify(body);
@@ -99,56 +102,106 @@ function syncPushable(store, rec) {
   return false;
 }
 
-/* ---- syncPush ---- */
-async function syncPush() {
-  var since = S.meta.sync.lastPushAt;
-  var items = [];
+/* ---- syncDue ---- */
+function syncDue(rec, since, ids) {
+  if (!since) return true;
+  var recMs = isoMs(rec.updatedAt);
+  var sinceMs = isoMs(since);
+  if (recMs > sinceMs) return true;
+  if (recMs === sinceMs && !(ids || []).some(function(id) { return id === rec.id; })) return true;
+  return false;
+}
+
+/* ---- syncPending ---- */
+async function syncPending() {
+  if (!S.meta.sync.lastPushAt) return true;
   var records = await dbAll('records');
   for (var i = 0; i < records.length; i++) {
-    var rec = records[i];
-    if (syncPushable('records', rec)) {
-      if (!since || isoMs(rec.updatedAt) > isoMs(since)) {
-        var body = {};
-        for (var k in rec) {
-          if (k !== '_search') body[k] = rec[k];
-        }
-        items.push({
-          store: 'records',
-          id: rec.id,
-          updatedAt: rec.updatedAt,
-          deleted: rec.deleted === true,
-          body: body
-        });
-      }
-    }
+    if (syncPushable('records', records[i]) && syncDue(records[i], S.meta.sync.lastPushAt, S.meta.sync.lastPushIds)) return true;
   }
   var recipes = await dbAll('recipes');
   for (var i = 0; i < recipes.length; i++) {
-    var rec = recipes[i];
-    if (syncPushable('recipes', rec)) {
-      if (!since || isoMs(rec.updatedAt) > isoMs(since)) {
-        var body = {};
-        for (var k in rec) {
-          if (k !== '_search') body[k] = rec[k];
+    if (syncPushable('recipes', recipes[i]) && syncDue(recipes[i], S.meta.sync.lastPushAt, S.meta.sync.lastPushIds)) return true;
+  }
+  return false;
+}
+
+/* ---- syncPush ---- */
+async function syncPush(opts) {
+  if (syncPushing) { syncPushAgain = true; return 0; }
+  syncPushing = true;
+  var count = 0;
+  try {
+    var since = S.meta.sync.lastPushAt;
+    var items = [];
+    var records = await dbAll('records');
+    for (var i = 0; i < records.length; i++) {
+      var rec = records[i];
+      if (syncPushable('records', rec)) {
+        if (syncDue(rec, since, S.meta.sync.lastPushIds)) {
+          var body = {};
+          for (var k in rec) {
+            if (k !== '_search') body[k] = rec[k];
+          }
+          items.push({
+            store: 'records',
+            id: rec.id,
+            updatedAt: rec.updatedAt,
+            deleted: rec.deleted === true,
+            body: body
+          });
         }
-        items.push({
-          store: 'recipes',
-          id: rec.id,
-          updatedAt: rec.updatedAt,
-          deleted: rec.deleted === true,
-          body: body
-        });
       }
     }
+    var recipes = await dbAll('recipes');
+    for (var i = 0; i < recipes.length; i++) {
+      var rec = recipes[i];
+      if (syncPushable('recipes', rec)) {
+        if (syncDue(rec, since, S.meta.sync.lastPushIds)) {
+          var body = {};
+          for (var k in rec) {
+            if (k !== '_search') body[k] = rec[k];
+          }
+          items.push({
+            store: 'recipes',
+            id: rec.id,
+            updatedAt: rec.updatedAt,
+            deleted: rec.deleted === true,
+            body: body
+          });
+        }
+      }
+    }
+    items.sort(function(a, b) { return isoMs(a.updatedAt) - isoMs(b.updatedAt); });
+    for (var start = 0; start < items.length; start += SYNC_BATCH) {
+      var batch = items.slice(start, start + SYNC_BATCH);
+      await syncFetch('POST', '/v1/push', { items: batch }, undefined, opts);
+      var newPushAt = batch[batch.length - 1].updatedAt;
+      if (S.meta.sync.lastPushAt === newPushAt) {
+        S.meta.sync.lastPushIds = S.meta.sync.lastPushIds || [];
+        for (var j = 0; j < batch.length; j++) {
+          if (batch[j].updatedAt === newPushAt) {
+            S.meta.sync.lastPushIds.push(batch[j].id);
+          }
+        }
+      } else {
+        S.meta.sync.lastPushAt = newPushAt;
+        S.meta.sync.lastPushIds = [];
+        for (var j = 0; j < batch.length; j++) {
+          if (batch[j].updatedAt === newPushAt) {
+            S.meta.sync.lastPushIds.push(batch[j].id);
+          }
+        }
+      }
+      await saveMeta();
+      count += batch.length;
+    }
+  } finally {
+    syncPushing = false;
   }
-  items.sort(function(a, b) { return isoMs(a.updatedAt) - isoMs(b.updatedAt); });
-  var count = 0;
-  for (var start = 0; start < items.length; start += SYNC_BATCH) {
-    var batch = items.slice(start, start + SYNC_BATCH);
-    await syncFetch('POST', '/v1/push', { items: batch });
-    S.meta.sync.lastPushAt = batch[batch.length - 1].updatedAt;
-    await saveMeta();
-    count += batch.length;
+  if (syncPushAgain) {
+    syncPushAgain = false;
+    count += await syncPush(opts);
   }
   return count;
 }
@@ -178,7 +231,7 @@ async function syncRun(reason, push) {
   }
   try {
     await syncPull();
-    if (push) await syncPush();
+    if (await syncPending()) await syncPush();
     if (typeof catalogRun === 'function') await catalogRun(reason === 'now');
     st.state = 'ok';
     st.lastOkAt = nowIso();
@@ -249,4 +302,14 @@ async function syncLeave() {
   };
   await saveMeta();
   syncShow();
+}
+
+/* ---- syncFlush ---- */
+async function syncFlush() {
+  if (syncTimer === null) return;
+  clearTimeout(syncTimer);
+  syncTimer = null;
+  if (S.secrets.sync && S.meta.sync.state !== 'revoked' && navigator.onLine !== false) {
+    syncPush({ keepalive: true }).catch(function(){});
+  }
 }

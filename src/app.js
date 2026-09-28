@@ -358,7 +358,9 @@ function bindEvents(){
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible' && (S.screen === 'today' || S.screen === 'log' || S.screen === 'quick') && !S.sheetOpen) renderScreen(S.screen);
     if (document.visibilityState === 'visible') syncRun('foreground');
+    else syncFlush();
   });
+  window.addEventListener('pagehide', () => syncFlush());
 }
 
 /* ---------- Service worker and updates ---------- */
