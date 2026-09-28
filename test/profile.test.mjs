@@ -74,7 +74,7 @@ describe('Profile screen without sex', () => {
     renderProfile();
     const html = els['#s-profile'].innerHTML;
     assert.ok(!html.includes('person.sex'), 'should not contain person.sex');
-    assert.ok(html.includes('Height (cm, optional)'), 'should contain Height label');
+    assert.ok(html.includes('>Height</label>') && html.includes('<span class="fhint">cm, optional</span>'), 'should contain Height label');
     assert.ok(html.includes('Body fat % (optional)'), 'should contain Body fat label');
   });
 
@@ -84,7 +84,7 @@ describe('Profile screen without sex', () => {
     S.draft = null;
     renderProfile();
     const html = els['#s-profile'].innerHTML;
-    assert.ok(html.includes('Výška (cm, nepovinné)'), 'should contain Výška label');
+    assert.ok(html.includes('>Výška</label>') && html.includes('<span class="fhint">cm, nepovinné</span>'), 'should contain Výška label');
     assert.ok(html.includes('Tělesný tuk % (nepovinné)'), 'should contain Tělesný tuk label');
   });
 

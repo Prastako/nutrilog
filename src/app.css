@@ -43,6 +43,8 @@
 .rbody{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
 .rtitle{font-weight:400;line-height:1.3}
 .rmeta{font-size:13px;color:var(--ink2)}
+.rmeta .mi{white-space:nowrap}
+.fhint{display:block;font-size:12px;line-height:1.3;color:var(--ink3);margin-top:4px}
 .rextra{font-size:12.5px;color:var(--accent-ink)}
 .rtags{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
 .rtags .pill{font-size:11px;padding:2px 7px}
@@ -400,7 +402,8 @@ body:not(.quickmode) #s-log .entry .ek {
 }
 /* ---------- open-edge controls: tags and pickers ---------- */
 body:not(.quickmode) .pill, body:not(.quickmode) .fit { background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; font-size: 12px !important; color: var(--ink2) !important; }
-body:not(.quickmode) .pill + .pill::before, body:not(.quickmode) .fit + .fit::before { content: "\00B7" !important; margin: 0 6px !important; color: var(--ink3) !important; }
+body:not(.quickmode) .pill, body:not(.quickmode) .fit { white-space: nowrap; }
+body:not(.quickmode) .pill:has(+ .pill)::after, body:not(.quickmode) .fit:has(+ .fit)::after { content: "\00B7" !important; margin: 0 2px 0 6px !important; color: var(--ink3) !important; }
 body:not(.quickmode) .pill.wait, body:not(.quickmode) .fit.wait { color: var(--ochre-ink) !important; }
 body:not(.quickmode) .pill.ok, body:not(.quickmode) .fit.ok { color: var(--accent-ink) !important; }
 body:not(.quickmode) .pill.err, body:not(.quickmode) .fit.err { color: var(--garnet) !important; }

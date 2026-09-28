@@ -325,7 +325,7 @@ function recipeCard(r, extra){
   return '<button class="rcard" type="button" data-act="open-recipe" data-id="'+esc(r.id)+'">' +
     '<span class="rthumb" data-thumb="'+esc(r.id)+'"><span>'+initial+'</span></span>' +
     '<span class="rbody"><span class="rtitle">'+esc(r.title)+(note && note.favorite ? ' <span class="star">★</span>' : '')+'</span>' +
-    '<span class="rmeta num">'+[tm ? tm+' min' : null, k != null ? fmtNum(k)+' kcal' : null, prot != null ? t('mac_p')+' '+fmtNum(prot)+' g' : null].filter(Boolean).map(esc).join(' · ')+'</span>' +
+    '<span class="rmeta num">'+[tm ? tm+' min' : null, k != null ? fmtNum(k)+' kcal' : null, prot != null ? t('mac_p')+' '+fmtNum(prot)+' g' : null].filter(Boolean).map((x, i, all) => '<span class="mi">'+esc(x)+(i < all.length - 1 ? '&nbsp;·' : '')+'</span>').join(' ')+'</span>' +
     (extra ? '<span class="rextra">'+extra+'</span>' : '') +
     '<span class="rtags">' + (v.axisNone ? '<span class="pill err">'+esc(t('rc_axis_none'))+'</span>' : ex.length ? '<span class="pill err">'+esc(t('rc_excluded'))+'</span>' : '') +
       tags.map(x => '<span class="pill">'+esc(tagLabel(x))+'</span>').join('') +
