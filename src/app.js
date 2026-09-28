@@ -105,6 +105,12 @@ function bindEvents(){
   bindQuick();
   $('#btnBack').addEventListener('click', goBack);
   $('#btnSettings').addEventListener('click', () => go('settings'));
+  document.addEventListener('pointerup', (e) => {
+    const b = e.target && e.target.closest ? e.target.closest('.btn') : null;
+    if (!b || b.classList.contains('quiet') || b.classList.contains('ghost') || b.classList.contains('danger')) return;
+    b.classList.remove('pulse'); void b.offsetWidth; b.classList.add('pulse');
+    b.addEventListener('animationend', () => b.classList.remove('pulse'), {once: true});
+  });
 
 
   document.addEventListener('click', async (e) => {
