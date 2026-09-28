@@ -203,7 +203,7 @@ function bindEvents(){
       b.setAttribute('aria-pressed', at >= 0 ? 'false' : 'true');
     }
     else if (act === 'rtag-off'){ const c = S.recipeFilter.tags; c.splice(c.indexOf(b.getAttribute('data-v')), 1); renderRecipeList(); }
-    else if (act === 'open-recipe'){ S.recipeId = id; S.recipeServings = null; go('recipe'); }
+    else if (act === 'open-recipe'){ S.recipeId = id; S.recipeServings = null; S.recipeAxis = null; go('recipe'); }
     else if (act === 'recipe-log'){ recipeLogSheet(id); }
     else if (act === 'recipe-fav'){ const n = recipeNote(id) || {}; await saveRecipeNote(id, {favorite: !n.favorite}); renderRecipe(); }
     else if (act === 'recipe-missing'){ recipeMissing(id); }

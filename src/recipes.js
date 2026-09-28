@@ -415,17 +415,48 @@ function openTagBrowser(){
 
 /* ---------- Recipe detail ---------- */
 
+function recipeVersionBlock(v){
+  var h = '';
+  if (v.versions.length >= 2) {
+    h += '<div class="field"><span class="flabel">' + esc(t('rc_version')) + '</span><div class="seg" role="tablist">' +
+      v.versions.map(function(axis){
+        return '<button type="button" role="tab" aria-selected="' + (axis === v.axis) + '" class="' + (axis === v.axis ? 'on' : '') + '" data-rver="' + axis + '">' + esc(t('ax_' + axis)) + '</button>';
+      }).join('') +
+      '</div></div>';
+  }
+  if (v.flagsApplied && v.flagsApplied.length) {
+    var labels = [];
+    for (var i = 0; i < v.flagsApplied.length; i++) {
+      var flag = v.flagsApplied[i];
+      if (flag === 'gluten-free') {
+        labels.push(t('fl_gluten_free'));
+      } else if (flag === 'lactose-free') {
+        labels.push(t('fl_lactose_free'));
+      } else if (flag.indexOf('no:') === 0) {
+        var key = flag.slice(3);
+        var mapping = {'crustacean': 'crustaceans', 'treenut': 'nuts', 'sulphite': 'sulphites', 'mollusc': 'molluscs'};
+        var mapped = mapping[key] || key;
+        var entry = ALLERGENS.filter(function(e){ return e.id === mapped; })[0];
+        var name = entry ? (S.lang === 'cs' ? entry.cs : entry.en) : key;
+        labels.push(t('fl_no', {a: name}));
+      }
+    }
+    h += '<p class="tiny" style="margin:0 0 10px">' + esc(t('rc_flags_applied', {list: labels.join(', ')})) + '</p>';
+  }
+  return h;
+}
+
 function renderRecipe(){
   const host = $('#s-recipe');
   const r = RECIPES.byId[S.recipeId];
   if (!r){ host.innerHTML = '<p class="muted">'+esc(t('rc_missing'))+'</p>'; return; }
   const note = recipeNote(r.id) || {};
-  const base = Number(r.servings) || 1;
-  const sv = S.recipeServings || base;
-  const factor = sv / base;
-  const ex = recipeExclusions(r);
+  const v = recipeView(r, {axis: S.recipeAxis || undefined, servings: S.recipeServings || undefined});
+  const sv = v.servings;
+  const ex = recipeExclusions(r, v);
   const ps = (r.nutrition && r.nutrition.perServing) || {};
   let h = '';
+  if (v.axisNone) h += '<div class="notice" style="margin-bottom:10px">'+esc(t('rc_axis_none_note'))+'</div>';
   h += '<div class="rhero" data-thumb="'+esc(r.id)+'"><span>'+esc((r.title||'?').charAt(0).toUpperCase())+'</span></div>';
   h += '<h2 style="margin:12px 0 4px">'+esc(r.title)+'</h2>';
   const sub = S.lang === 'cs' ? (r.titleCs || (r.titleEn !== r.title ? r.titleEn : '')) : (r.titleEn !== r.title ? r.titleEn : '');
@@ -447,23 +478,24 @@ function renderRecipe(){
     '</div>';
   if ((r.tags||[]).length) h += '<div class="chips" style="margin-bottom:12px">' + r.tags.map(tg => '<span class="pill">'+esc(tagLabel(tg))+'</span>').join('') + '</div>';
 
+  h += recipeVersionBlock(v);
   /* ingredients */
   h += '<div class="card"><div class="sheethead" style="align-items:center"><h3 style="flex:1">'+esc(t('rc_ingredients'))+'</h3>' +
     '<div class="stepper"><button class="iconbtn sm" type="button" data-act="rserv" data-d="-1" aria-label="-">−</button>' +
     '<span class="num">'+esc(fmtQty(sv))+' '+esc(t('rc_serv_short'))+'</span>' +
     '<button class="iconbtn sm" type="button" data-act="rserv" data-d="1" aria-label="+">+</button></div></div>';
   let group = undefined;
-  (r.ingredients||[]).forEach((ing, i) => {
+  v.ingredients.forEach((ing, i) => {
     if (ing.group !== group){ group = ing.group; if (group) h += '<p class="eyebrow" style="margin-top:10px">'+esc(group)+'</p>'; }
-    const q = ing.qty != null ? fmtQty(ing.qty * factor) : '';
-    h += '<label class="ing"><input type="checkbox"><span class="q num">'+esc([q, ing.unit||''].join(' ').trim())+'</span>' +
-      '<span class="it">'+esc(ing.item)+(ing.prep ? '<span class="tiny">, '+esc(ing.prep)+'</span>' : '')+(ing.optional ? ' <span class="tiny">('+esc(t('rc_optional'))+')</span>' : '')+'</span></label>';
+    const q = ingAmount(ing, v.schema2);
+    h += '<label class="ing"><input type="checkbox"><span class="q num">'+esc(q)+'</span>' +
+      '<span class="it">'+esc(ing.name)+(ing.prep ? '<span class="tiny">, '+esc(ing.prep)+'</span>' : '')+(ing.optional ? ' <span class="tiny">('+esc(t('rc_optional'))+')</span>' : '')+'</span></label>';
   });
   h += '</div>';
 
   /* steps */
   h += '<div class="card"><h3>'+esc(t('rc_steps'))+'</h3><ol class="steps">' +
-    (r.steps||[]).map(s => '<li>'+esc(s.text)+(s.minutes ? ' <span class="pill">'+esc(s.minutes)+' min</span>' : '')+'</li>').join('') + '</ol></div>';
+    v.steps.map(s => '<li>'+esc(s.text)+(s.minutes ? ' <span class="pill">'+esc(s.minutes)+' min</span>' : '')+'</li>').join('') + '</ol></div>';
 
   if ((r.variations||[]).length || (r.tips||[]).length){
     h += '<div class="card"><h3>'+esc(t('rc_var_tips'))+'</h3>';
@@ -516,6 +548,7 @@ function renderRecipe(){
   }
   host.innerHTML = h;
   fillThumbs(host);
+  $$('[data-rver]', host).forEach(b => b.addEventListener('click', () => { S.recipeAxis = b.getAttribute('data-rver'); renderRecipe(); }));
   const ta = $('#rnote');
   ta.addEventListener('change', () => saveRecipeNote(r.id, {notes: ta.value}));
 }
@@ -743,7 +776,7 @@ function newOwnRecipeSheet(){
       tips:[], variations:[], nutrition:{perServing:{}, basis:'none'}, tags:[], sources:[{platform:'own'}], createdAt: nowIso()
     };
     await saveRecipe(rec);
-    closeSheet(); S.recipeId = rec.id; S.recipeServings = null; go('recipe');
+    closeSheet(); S.recipeId = rec.id; S.recipeServings = null; S.recipeAxis = null; go('recipe');
   });
 }
 
