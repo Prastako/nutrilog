@@ -178,12 +178,14 @@ function recipeKcal(r){ return r && r.nutrition && r.nutrition.perServing ? r.nu
 function recipeTime(r){ return r && r.time ? (r.time.totalMin || ((r.time.prepMin||0) + (r.time.cookMin||0)) || null) : null; }
 function recipeText(r){ return [r.title, r.titleEn, (r.ingredients||[]).map(i => i.item + ' ' + (i.prep||'')).join(' ')].join(' '); }
 
+function tagCanon(tag){ return tag === 'diet:high-fiber' ? 'diet:high-fibre' : tag; }
 function tagLabel(tag){
   const [ns, val] = String(tag).split(':');
   const key = 'tag_' + ns + '_' + (val||'').replace(/[^a-z0-9]+/g,'_');
   const tr = t(key);
   if (tr !== key) return tr;
-  return (val || ns).replace(/-/g,' ');
+  const s = (val || ns).replace(/-/g,' ');
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 function tagNs(tag){ return String(tag).split(':')[0]; }
 
@@ -358,9 +360,9 @@ function recipeMatchesFilter(r){
     if (c === 'fav'){ const n = recipeNote(r.id); if (!n || !n.favorite) return false; }
     else if (c === 'noexcl'){ if (recipeExclusions(r).length) return false; }
     else if (c === 'time:under-30'){ const tm = recipeTime(r); if (!(tm && tm <= 30)) return false; }
-    else if ((r.tags||[]).indexOf(c) < 0) return false;
+    else if ((r.tags||[]).map(tagCanon).indexOf(tagCanon(c)) < 0) return false;
   }
-  for (const tg of F.tags){ if ((r.tags||[]).indexOf(tg) < 0) return false; }
+  for (const tg of F.tags){ if ((r.tags||[]).map(tagCanon).indexOf(tagCanon(tg)) < 0) return false; }
   if (F.origin !== 'all' && r.origin !== F.origin) return false;
   return true;
 }
@@ -398,7 +400,7 @@ function renderRecipeList(){
 
 function openTagBrowser(){
   const counts = {};
-  visibleRecipes().forEach(r => (r.tags||[]).forEach(tg => { counts[tg] = (counts[tg]||0) + 1; }));
+  visibleRecipes().forEach(r => (r.tags||[]).forEach(tg => { counts[tagCanon(tg)] = (counts[tagCanon(tg)]||0) + 1; }));
   const byNs = {};
   Object.keys(counts).forEach(tg => { const ns = tagNs(tg); (byNs[ns] = byNs[ns] || []).push(tg); });
   const order = ['meal','prep','time','diet','ing','cuisine','method','equip','flavor','course','nutri'];
