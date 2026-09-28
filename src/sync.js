@@ -178,6 +178,7 @@ async function syncRun(reason, push) {
   try {
     await syncPull();
     if (push) await syncPush();
+    if (typeof catalogRun === 'function') await catalogRun(reason === 'now');
     st.state = 'ok';
     st.lastOkAt = nowIso();
     st.lastError = '';
