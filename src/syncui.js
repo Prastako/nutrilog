@@ -8,10 +8,18 @@ function syncStateText() {
   return t('sy_on', {name: S.meta.sync.name, when: ago(S.meta.sync.lastOkAt)});
 }
 
+function catalogStateText() {
+  const c = S.meta.catalog;
+  if (c.lastError) return t('ct_err', {msg: c.lastError});
+  if (c.lastOkAt) return t('ct_line', {n: c.count, when: ago(c.lastOkAt)});
+  return t('ct_none');
+}
+
 function syncCardInner() {
   const joined = !!S.secrets.sync;
   let h = '<h3>' + esc(t('sy_title')) + '</h3>';
   h += '<p class="tiny" id="syncState">' + esc(syncStateText()) + '</p>';
+  if (joined) h += '<p class="tiny" id="catalogState">' + esc(catalogStateText()) + '</p>';
   h += '<p class="tiny">' + esc(t('sy_link_is_key')) + '</p>';
   h += '<div class="btnrow">';
   if (joined) {

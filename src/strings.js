@@ -928,3 +928,9 @@ Object.assign(STR.en, {
   bud_label:'Monthly budget in USD (0 = no check)', arch_starter_d:'A dozen starter recipes so suggestions work before the first archive.',
   ai_nokey_h:'Key missing', ai_working_long:'Writing recipes; this usually takes 20 to 60 seconds.', ai_bad_reply:'The reply came in an unexpected shape. Please try again.'
 });
+Object.assign(STR.cs, {
+  ct_line:'Katalog receptů: {n}, aktualizováno {when}', ct_none:'Katalog receptů se zatím nestáhl.', ct_err:'Katalog se nepodařilo stáhnout: {msg}'
+});
+Object.assign(STR.en, {
+  ct_line:'Recipe catalog: {n} recipes, updated {when}', ct_none:'The recipe catalog has not been downloaded yet.', ct_err:'Could not download the recipe catalog: {msg}'
+});
