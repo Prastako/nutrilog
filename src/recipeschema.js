@@ -97,6 +97,57 @@ function applyOverrides(ingredients, steps, overrides) {
   return ings;
 }
 
+function ingredientName(ing) {
+  if (ing.name) return ing.name;
+  var item = ing.item;
+  if (item.indexOf(', ') < 0) {
+    return item.charAt(0).toUpperCase() + item.slice(1);
+  }
+  var segments = item.split(', ');
+  var head = segments[0].toLowerCase();
+  var DROP = ['beverages', 'spices', 'soup', 'herbs', 'seasoning', 'sweets', 'snacks',
+    'baked products', 'cereals', 'vegetables', 'fruit', 'fruits', 'legumes', 'dairy',
+    'restaurant', 'fast foods', 'meals', 'babyfood', 'infant formula'];
+  var SUFFIX = ['sauce', 'oil', 'cheese', 'beans', 'nuts', 'seeds', 'peppers', 'mushrooms',
+    'lentils', 'noodles', 'flour', 'vinegar', 'milk', 'yogurt', 'cream', 'butter', 'sugar',
+    'rice', 'pasta', 'bread', 'crackers', 'juice', 'tea', 'coffee', 'stock', 'broth'];
+  var MEAT = ['beef', 'pork', 'chicken', 'lamb', 'turkey', 'veal', 'duck', 'goose',
+    'game meat', 'fish', 'salmon', 'tuna', 'cod', 'shrimp', 'crustaceans', 'mollusks'];
+
+  var suffixIdx = SUFFIX.indexOf(head);
+  var dropIdx = DROP.indexOf(head);
+  var meatIdx = MEAT.indexOf(head);
+
+  var cleanup = function(s) {
+    var words = ['ready-to-serve', 'ready to serve', 'raw', 'dry', 'dried', 'canned',
+      'fresh', 'frozen', 'cooked', 'ground', 'whole', 'drained'];
+    var again = true;
+    while (again) {
+      again = false;
+      for (var w = 0; w < words.length; w++) {
+        var tail = ' ' + words[w];
+        if (s.length > tail.length && s.slice(s.length - tail.length) === tail) {
+          s = s.slice(0, s.length - tail.length);
+          again = true;
+        }
+      }
+    }
+    return s;
+  };
+
+  var result;
+  if (dropIdx >= 0) {
+    result = segments[1] ? cleanup(segments[1]) : segments[0];
+  } else if (suffixIdx >= 0) {
+    result = cleanup(segments[1] || segments[0]) + ' ' + segments[0];
+  } else if (meatIdx >= 0) {
+    result = segments[0] + ', ' + cleanup(segments[1] || segments[0]);
+  } else {
+    result = cleanup(segments[0]);
+  }
+  return result.charAt(0).toUpperCase() + result.slice(1);
+}
+
 function resolveRecipe(recipe, opts) {
   opts = opts || {};
   var r = upgradeRecipe(recipe);
@@ -169,10 +220,11 @@ function resolveRecipe(recipe, opts) {
     step.text = step.text.replace(/\{([A-Za-z0-9_-]+)\}/g, function(_, slot) {
       var ig = ingMap[slot];
       if (!ig) return '';
-      if (ig.scale === 'fixed' || ig.role === 'season' || ig.qty == null) {
-        return ig.item;
+      var nm = ingredientName(ig);
+      if (ig.scale === 'fixed' || ig.role === 'season' || ig.qty == null || ig.qty === 0) {
+        return nm;
       }
-      return ig.item + ', ' + formatQty(ig.qty) + ' ' + ig.unit;
+      return nm + ' (' + fmtQty(ig.qty) + ' ' + ig.unit + ')';
     });
     renderedSteps.push(step);
   }

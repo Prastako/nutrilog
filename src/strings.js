@@ -954,3 +954,15 @@ Object.assign(STR.en, {
   rs_st_merged:'Added as a variation of {title}', rs_st_duplicate:'Already in the catalog: {title}', rs_st_rejected:'Not added: {reason}',
   rs_r_not_recipe:'this does not look like a recipe.', rs_r_unreadable:'the link could not be read, paste the recipe text instead.', rs_r_invalid:'the recipe could not be converted.', rs_r_other:'unknown reason.'
 });
+Object.assign(STR.cs, {
+  rc_to_taste:'dle chuti', rc_version:'Verze', ax_omnivore:'S masem', ax_pescatarian:'S rybami', ax_vegetarian:'Vegetariánská', ax_vegan:'Veganská',
+  rc_flags_applied:'Upraveno: {list}', fl_gluten_free:'bez lepku', fl_lactose_free:'bez laktózy', fl_no:'bez: {a}',
+  rc_axis_none:'Není pro vaši stravu', rc_axis_none_note:'Tento recept nemá verzi pro vaši stravu. Zobrazena je původní verze.',
+  rc_nut_basis_stored:'Výživové hodnoty uložené s receptem'
+});
+Object.assign(STR.en, {
+  rc_to_taste:'to taste', rc_version:'Version', ax_omnivore:'Omnivore', ax_pescatarian:'Pescatarian', ax_vegetarian:'Vegetarian', ax_vegan:'Vegan',
+  rc_flags_applied:'Adjusted: {list}', fl_gluten_free:'gluten-free', fl_lactose_free:'lactose-free', fl_no:'without {a}',
+  rc_axis_none:'Not for your diet', rc_axis_none_note:'This recipe has no version for your diet. The original version is shown.',
+  rc_nut_basis_stored:'Nutrition as stored with the recipe'
+});

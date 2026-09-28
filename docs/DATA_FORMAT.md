@@ -183,6 +183,8 @@ stored file is never rewritten by the app.
   `crustacean`, `egg`, `fish`, `peanut`, `soy`, `milk`, `treenut`, `celery`,
   `mustard`, `sesame`, `sulphite`, `lupin`, `mollusc`. A missing `allergens`
   field means unknown, not none.
+  Optional `name`: the cook-facing ingredient name; without it the app
+  derives one from `item` (for example "spices, cinnamon, stick" reads Cinnamon).
 - `variants`: {axis: overrides[]}; the versions of a recipe are `written` plus
   every axis with an entry here. Diet axes nest (rank omnivore 3, pescatarian 2,
   vegetarian 1, vegan 0): a profile gets the version with the highest rank not
