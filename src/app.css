@@ -249,6 +249,7 @@ html[data-theme="dark"] .ornsvg .ca.c{color:#4FD8FF}
 .orn > i{display:flex;align-items:center;justify-content:center}
 .orn > i .ornsvg{width:140px;height:20px}
 .btn:not(.ghost):not(.quiet):not(.danger){position:relative;padding-left:36px;padding-right:36px}
+.btn.quiet,.btn.ghost{position:relative;padding-left:36px;padding-right:36px}
 .btn .o-corner{position:absolute;width:20px;height:20px}
 .btn .o-corner.tl{top:7px;left:8px}
 .btn .o-corner.tr{top:7px;right:8px;transform:scaleX(-1)}
