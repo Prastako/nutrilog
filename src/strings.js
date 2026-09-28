@@ -972,3 +972,11 @@ Object.assign(STR.cs, {
 Object.assign(STR.en, {
   b_restore_merge_note:'This device is joined to a profile: after the restore the data is merged with the profile, the newer record wins.'
 });
+Object.assign(STR.cs, {
+  tagns_dish:'Jídlo', tagns_budget:'Rozpočet', tagns_season:'Sezóna', tag_diet_high_fiber:'Hodně vlákniny',
+  p_weight_short:'Váha', p_hint_height:'cm, nepovinné'
+});
+Object.assign(STR.en, {
+  tagns_dish:'Dish', tagns_budget:'Budget', tagns_season:'Season', tag_diet_high_fiber:'High fibre',
+  p_weight_short:'Weight', p_hint_height:'cm, optional'
+});
