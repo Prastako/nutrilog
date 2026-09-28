@@ -361,10 +361,17 @@ function lookOf(id) {
   return entry || LOOKS[2]; // Ash as fallback
 }
 
+const TYPES = [{id:'fraunces', display:'Fraunces', body:'Figtree'}, {id:'marcellus', display:'Marcellus', body:'Raleway'}, {id:'jost', display:'Jost', body:'Jost'}];
+function typeOf(id) {
+  const entry = TYPES.find(t => t.id === id);
+  return entry || TYPES[0];
+}
+
 const DEFAULT_PREFS = {
   lang: 'en',
   theme: 'device',
   look: 'ash',
+  type: 'fraunces',
   models: { chat:'claude-sonnet-5', vision:'claude-sonnet-5', analysis:'claude-opus-5' },
   prices: {
     'claude-sonnet-5': { in: 2, out: 10 },
@@ -415,6 +422,7 @@ const S = {
   lang: 'en',
   theme: 'device',
   look: 'ash',
+  type: 'fraunces',
   screen: 'today',
   prefs: deepCopy(DEFAULT_PREFS),
   meta: deepCopy(DEFAULT_META),
@@ -462,6 +470,7 @@ async function loadState(){
   S.lang    = S.prefs.lang;
   S.theme   = S.prefs.theme;
   S.look    = lookOf(S.prefs.look).id;
+  S.type    = typeOf(S.prefs.type).id;
   S.secrets.anthropic = await secretGet('anthropic');
   S.secrets.github    = await secretGet('github');
   S.secrets.sync      = await secretGet('sync');
@@ -475,7 +484,7 @@ async function loadState(){
   }
 }
 
-async function savePrefs(){ S.prefs.lang = S.lang; S.prefs.theme = S.theme; S.prefs.look = S.look; await kvSet('prefs', S.prefs); }
+async function savePrefs(){ S.prefs.lang = S.lang; S.prefs.theme = S.theme; S.prefs.look = S.look; S.prefs.type = S.type; await kvSet('prefs', S.prefs); }
 async function saveMeta(){ await kvSet('meta', S.meta); }
 
 /* ---------- 5. Migration from schema 1 (v0.1) ----------
