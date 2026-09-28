@@ -30,21 +30,34 @@ function runSheetCleanups(){
 /* Closing a sheet steps back over the history entry the sheet added, so
    the Android back gesture closes sheets first. The screen underneath is
    redrawn afterwards to show whatever the sheet changed. */
+function sheetCloseMs(){
+  if (document.body.classList.contains('quickmode')) return 0;
+  const v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--t-base'));
+  return isFinite(v) ? v : 260;
+}
 function closeSheet(fromPop){
+  const bg = $('#sheetRoot').querySelector('.sheetbg');
+  if (bg && bg.classList.contains('closing')) return;
   runSheetCleanups();
-  $('#sheetRoot').innerHTML = '';
   const wasOpen = S.sheetOpen;
   S.sheetOpen = false;
   if (wasOpen && !fromPop){
     try { if (history.state && history.state.sheet){ S.swallowPop = true; history.back(); } } catch(e){}
   }
   const f = S.afterSheet; S.afterSheet = null;
-  if (f) f();
-  else if (fromPop || !S.swallowPop) refreshScreenSoon();
+  const finish = () => {
+    if (bg && bg.parentNode) bg.remove();
+    else if (!bg) $('#sheetRoot').innerHTML = '';
+    if (f) f();
+    else if (fromPop || !S.swallowPop) refreshScreenSoon();
+  };
+  const ms = sheetCloseMs();
+  if (!bg || ms <= 0) finish();
+  else { bg.classList.add('closing'); setTimeout(finish, ms); }
 }
 function refreshScreenSoon(){
   clearTimeout(refreshScreenSoon._t);
-  refreshScreenSoon._t = setTimeout(() => { if (!S.sheetOpen) renderScreen(S.screen); }, 30);
+  refreshScreenSoon._t = setTimeout(() => { if (S.sheetOpen) return; if ($('#sheetRoot').querySelector('.sheetbg.closing')) { refreshScreenSoon(); return; } renderScreen(S.screen); }, 30);
 }
 
 function confirmSheet(title, bodyHtml, confirmLabel, danger){

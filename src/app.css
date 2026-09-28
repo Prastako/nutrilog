@@ -505,3 +505,4 @@ body:not(.quickmode) .chip[aria-pressed="true"]::after, body:not(.quickmode) .se
   body:not(.quickmode) .chip[aria-pressed="true"]::after, body:not(.quickmode) .seg button.on::after, body:not(.quickmode) .opt:has(input:checked) .t1::after, body:not(.quickmode) .looktile[aria-pressed="true"] .lk-name::after{animation:none !important}
 }
 body.quickmode, body.quickmode *, body.quickmode *::before, body.quickmode *::after{animation:none !important;transition:none !important}
+.sheetbg.closing{pointer-events:none}
