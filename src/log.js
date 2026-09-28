@@ -276,7 +276,7 @@ function amountStep(food, grams){
   if (ex.length) h += '<div class="notice bad"><b>'+esc(t('rc_excl_h'))+'</b> '+esc(ex.map(x=>x.label).join(', '))+'</div>';
   h += '<div class="chips" style="margin:10px 0">' +
     ['100 g'].concat(portions.map(p => p.label)).map((lab, i) =>
-      '<button class="chip" type="button" data-g="'+(i === 0 ? 100 : portions[i-1].g)+'">'+esc(lab)+(i ? ' · '+fmtNum(portions[i-1].g)+' g' : '')+'</button>').join('') + '</div>';
+      '<button class="chip" type="button" data-g="'+(i === 0 ? 100 : portions[i-1].g)+'" aria-pressed="'+(Math.round(i === 0 ? 100 : portions[i-1].g) === Math.round(g))+'">'+esc(lab)+(i ? ' · '+fmtNum(portions[i-1].g)+' g' : '')+'</button>').join('') + '</div>';
   h += '<div class="inline"><div class="field"><label for="amG">'+esc(t('am_grams'))+'</label><input id="amG" type="number" inputmode="decimal" step="1" min="1" value="'+esc(Math.round(g))+'"></div>' +
     '<div class="field"><label for="amDate">'+esc(t('lg_date'))+'</label><input id="amDate" type="date" value="'+esc(ADD.date)+'"></div></div>';
   h += '<div class="field"><span class="flabel">'+esc(t('lg_slot'))+'</span>'+slotChips(ADD.slot)+'</div>';
@@ -288,6 +288,7 @@ function amountStep(food, grams){
     const gg = Number($('#amG').value) || 0;
     const n = nutrientsFor(food, gg);
     $('#amPrev').innerHTML = '<div class="num"><b>'+esc(fmtNum(n.kcal))+'</b> kcal · '+esc(macroLine(n))+'</div>';
+    $$('[data-g]', body).forEach(b => b.setAttribute('aria-pressed', String(Math.round(Number(b.getAttribute('data-g'))) === Math.round(gg))));
   };
   upd();
   $('#amG').addEventListener('input', upd);
