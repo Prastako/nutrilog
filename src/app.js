@@ -87,6 +87,7 @@ function applyTheme(){
   const look = lookOf(S.look);
   document.documentElement.setAttribute('data-theme', S.theme);
   document.documentElement.setAttribute('data-look', look.id);
+  document.documentElement.setAttribute('data-type', typeOf(S.type).id);
   const dark = S.theme === 'dark' ||
     (S.theme === 'device' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   const meta = $('#metaThemeColor');
@@ -120,6 +121,7 @@ function bindEvents(){
     else if (act === 'profile-save'){ saveProfile().then(() => requestPersist()); }
     else if (act === 'theme'){ S.theme = b.getAttribute('data-v'); await savePrefs(); applyTheme(); renderSettings(); }
     else if (act === 'look'){ S.look = lookOf(b.getAttribute('data-v')).id; await savePrefs(); applyTheme(); renderSettings(); }
+    else if (act === 'type'){ S.type = typeOf(b.getAttribute('data-v')).id; await savePrefs(); applyTheme(); renderSettings(); }
     else if (act === 'lang'){ S.lang = b.getAttribute('data-v'); await savePrefs(); applyLang(); }
     else if (act === 'toggle-secret'){
       const inp = document.getElementById(b.getAttribute('data-for'));
