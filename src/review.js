@@ -178,17 +178,37 @@ function dailyChart(P, g){
   for (let k = P.range.from; k <= P.range.to; k = addDays(k, 1)) days.push(k);
   const vals = days.map(k => P.days[k] ? P.days[k].total.kcal || 0 : null);
   const max = Math.max(g ? g.high * 1.15 : 0, ...vals.filter(v => v != null), 1);
-  const W = 320, H = 90, bw = W / days.length;
-  let s = '<svg class="daychart" viewBox="0 0 '+W+' '+(H+14)+'" role="img" aria-label="'+esc(t('rv_chart'))+'">';
-  if (g) s += '<rect x="0" y="'+(H - g.high/max*H)+'" width="'+W+'" height="'+((g.high-g.low)/max*H)+'" fill="var(--teal-soft)"/>';
-  vals.forEach((v, i) => {
-    if (v == null) return;
-    const hgt = v / max * H;
-    const cls = g ? (v < g.low ? 'var(--ochre)' : v > g.high ? 'var(--garnet)' : 'var(--teal)') : 'var(--teal)';
-    s += '<rect x="'+(i*bw + bw*0.18)+'" y="'+(H - hgt)+'" width="'+(bw*0.64)+'" height="'+hgt+'" rx="2" fill="'+cls+'"/>';
-  });
-  if (days.length <= 7) days.forEach((k, i) => { s += '<text x="'+(i*bw + bw/2)+'" y="'+(H+11)+'" text-anchor="middle" font-size="8.5" fill="var(--ink3)">'+esc(new Intl.DateTimeFormat(locale(), {weekday:'short'}).format(dateFromKey(k)))+'</text>'; });
-  return s + '</svg>';
+  const pct = x => (x * 100).toFixed(2) + '%';
+  let s = '<div class="daychart" role="img" aria-label="'+esc(t('rv_chart'))+'"><div class="dc-plot">';
+  if (g){
+    const P1 = pct(1 - g.high / max);
+    const P2 = pct((g.high - g.low) / max);
+    s += '<div class="dc-band" style="top:'+P1+';height:'+P2+'"></div>';
+  }
+  s += '<div class="dc-cols">';
+  for (let i = 0; i < days.length; i++){
+    const v = vals[i];
+    s += '<div class="dc-col">';
+    if (v != null){
+      const colour = g ? (v < g.low ? 'var(--ochre)' : v > g.high ? 'var(--garnet)' : 'var(--teal)') : 'var(--teal)';
+      s += '<i class="dc-bar" style="height:'+pct(Math.min(v / max, 1))+';background:'+colour+'"></i>';
+    }
+    s += '</div>';
+  }
+  s += '</div></div>';
+  s += '<div class="dc-labels">';
+  if (days.length <= 7){
+    for (const k of days) s += '<span>'+esc(new Intl.DateTimeFormat(locale(), {weekday:'short'}).format(dateFromKey(k)))+'</span>';
+  } else {
+    const last = days[days.length - 1];
+    const marked = [1, 5, 10, 15, 20, 25, Number(last.slice(8))];
+    for (const k of days){
+      const d = Number(k.slice(8));
+      s += '<span>' + (marked.includes(d) ? d : '') + '</span>';
+    }
+  }
+  s += '</div></div>';
+  return s;
 }
 
 async function renderAddSuggestions(el, lacking){
