@@ -84,13 +84,13 @@ function slotPresetChips(G){
 function renderProfile(){
   const d = S.draft || (S.draft = S.profile ? mergeDefaults(migrateDietV3(S.profile), blankProfile()) : blankProfile());
   const P = d.person, G = d.goals, F = d.food, K = d.kitchen;
-  const num = (path, id, label, attrs) => '<div class="field"><label for="'+id+'">'+esc(label)+'</label><input id="'+id+'" type="number" '+attrs+' data-bind="'+path+'" value="'+esc(getPath(d, path) == null ? '' : getPath(d, path))+'"></div>';
+  const num = (path, id, label, attrs, hint) => '<div class="field"><label for="'+id+'">'+esc(label)+'</label><input id="'+id+'" type="number" '+attrs+' data-bind="'+path+'" value="'+esc(getPath(d, path) == null ? '' : getPath(d, path))+'">'+(hint ? '<span class="fhint">'+esc(hint)+'</span>' : '')+'</div>';
   let h = '<p class="muted">'+esc(t('p_intro'))+'</p><div class="orn"><i></i></div>';
 
   h += '<div class="card"><h3>'+esc(t('p_basics'))+'</h3>';
-  h += '<div class="inline">' + num('person.age','f-age',t('p_age')+' ('+t('p_years')+')','inputmode="numeric" min="10" max="100"') +
-       num('person.heightCm','f-height',t('p_height')+' ('+t('p_cm')+', '+t('p_optional')+')','inputmode="numeric" min="100" max="250"') +
-       num('person.weightKg','f-weight',t('p_weight')+' ('+t('p_kg')+')','inputmode="decimal" step="0.1" min="30" max="300"') + '</div>';
+  h += '<div class="inline">' + num('person.age','f-age',t('p_age'),'inputmode="numeric" min="10" max="100"',t('p_years')) +
+       num('person.heightCm','f-height',t('p_height'),'inputmode="numeric" min="100" max="250"',t('p_hint_height')) +
+       num('person.weightKg','f-weight',t('p_weight_short'),'inputmode="decimal" step="0.1" min="30" max="300"',t('p_kg')) + '</div>';
   h += num('person.bodyFatPct','f-bf',t('p_bf'),'inputmode="decimal" step="0.5" min="3" max="60"');
   h += '<p class="tiny" style="margin-top:6px">'+esc(t('p_bf_note'))+'</p>';
   h += '<p class="tiny" style="margin-top:10px">'+esc(t('p_energy_note'))+'</p>';
@@ -163,7 +163,7 @@ function renderProfile(){
 
   /* Meals through the day card */
   h += '<div class="card"><h3>' + esc(t('pm_h')) + '</h3>' + slotPresetChips(G) + '<div class="inline">' +
-    SLOTS.map(s => num('goals.slots.'+s, 'sl-'+s, t('slot_'+s)+' %', 'inputmode="numeric" min="0" max="80"')).join('') + '</div>' +
+    SLOTS.map(s => num('goals.slots.'+s, 'sl-'+s, t('slot_'+s), 'inputmode="numeric" min="0" max="80"')).join('') + '</div>' +
     '<p class="tiny">' + esc(t('pg_slots_note')) + '</p>' +
     '<div id="slotPreviewBox">' + previewParts(d).slots + '</div></div>';
 
