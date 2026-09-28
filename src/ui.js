@@ -126,8 +126,29 @@ function fitBadge(score){
   return '<span class="fit '+cls+'">'+s+'/5</span>';
 }
 
+const METER_LAST = {};
+let meterSeq = 0;
+let meterObs = null;
+
+function growMeters(root){
+  for (const el of (root || document).querySelectorAll('.rfill[data-w], .rend[data-w]')){
+    void el.offsetWidth;
+    const w = el.getAttribute('data-w') + '%';
+    if (el.classList.contains('rend')) el.style.left = w;
+    else el.style.width = w;
+    el.removeAttribute('data-w');
+  }
+}
+
+function ensureMeterObserver(){
+  if (meterObs || typeof MutationObserver === 'undefined' || !document.body) return;
+  meterObs = new MutationObserver(() => growMeters(document));
+  meterObs.observe(document.body, {childList: true, subtree: true});
+}
+
 /* Horizontal bar with a target range drawn in. */
 function rangeBar(value, low, high, kind){
+  ensureMeterObserver();
   const max = Math.max(high || low || 1, value || 0) * 1.15 || 1;
   const pct = v => clamp((v / max) * 100, 0, 100);
   let cls = 'ok';
@@ -135,6 +156,10 @@ function rangeBar(value, low, high, kind){
   if (kind === 'progress'){ cls = high != null && value > high*1.1 ? 'bad' : high != null && value > high ? 'warn' : 'ok'; }
   else if (kind === 'max'){ cls = value > (low||0) ? 'bad' : value > (low||0)*0.9 ? 'warn' : 'ok'; }
   else if (low != null){ cls = value < low*0.5 ? 'bad' : value < low ? 'warn' : (high != null && value > high*1.1 ? 'warn' : 'ok'); }
+  const key = S.screen + ':' + (meterSeq++);
+  const target = pct(value||0);
+  const from = (key in METER_LAST) ? METER_LAST[key] : 0;
+  METER_LAST[key] = target;
   return '<div class="rbar"><div class="rzone" style="left:'+pct(low||0)+'%;width:'+Math.max(1, pct(high||low||0) - pct(low||0))+'%"></div>' +
-    '<div class="rfill '+cls+'" style="width:'+pct(value||0)+'%"></div><span class="rend" style="left:'+pct(value||0)+'%"></span></div>';
+    '<div class="rfill '+cls+'" style="width:'+from+'%" data-w="'+target+'"></div><span class="rend" style="left:'+from+'%" data-w="'+target+'"></span></div>';
 }
