@@ -102,21 +102,31 @@ function profileAxisFlags(profile) {
 
 function recipeAvailability(recipe, profile, foods) {
   var af = profileAxisFlags(profile);
-  var axis = af.axis;
+  var profileAxis = af.axis;
   var flags = af.flags;
 
   // Check axis support
   var upgraded = upgradeRecipe(recipe);
-  if (upgraded.written !== axis) {
-    // Check variants
-    var variants = upgraded.variants;
-    var hasVariant = false;
-    if (variants && variants[axis]) {
-      hasVariant = true;
+  var axisRank = { omnivore: 3, pescatarian: 2, vegetarian: 1, vegan: 0 };
+  var profileRank = axisRank[profileAxis] != null ? axisRank[profileAxis] : 0;
+  var candidates = [upgraded.written];
+  if (upgraded.variants) {
+    var vk = Object.keys(upgraded.variants);
+    for (var vi = 0; vi < vk.length; vi++) {
+      candidates.push(vk[vi]);
     }
-    if (!hasVariant) {
-      return { axis: axis, flags: flags, available: false, reason: "axis" };
+  }
+  var bestRank = -1;
+  var axis = profileAxis;
+  for (var ci = 0; ci < candidates.length; ci++) {
+    var cRank = axisRank[candidates[ci]] != null ? axisRank[candidates[ci]] : -1;
+    if (cRank >= 0 && cRank <= profileRank && cRank > bestRank) {
+      bestRank = cRank;
+      axis = candidates[ci];
     }
+  }
+  if (bestRank < 0) {
+    return { axis: profileAxis, profileAxis: profileAxis, flags: flags, available: false, reason: "axis" };
   }
 
   // Resolve recipe
@@ -131,7 +141,7 @@ function recipeAvailability(recipe, profile, foods) {
       for (var k = 0; k < ingredients.length; k++) {
         var alls = ingredients[k].allergens;
         if (alls && alls.indexOf("gluten") !== -1) {
-          return { axis: axis, flags: flags, available: false, reason: "allergen:gluten" };
+          return { axis: axis, profileAxis: profileAxis, flags: flags, available: false, reason: "allergen:gluten" };
         }
       }
     } else if (flag === "lactose-free") {
@@ -140,7 +150,7 @@ function recipeAvailability(recipe, profile, foods) {
         if (alls2 && alls2.indexOf("milk") !== -1) {
           var note = ingredients[l].note || "";
           if (note.toLowerCase().indexOf("lactose-free") === -1) {
-            return { axis: axis, flags: flags, available: false, reason: "allergen:milk" };
+            return { axis: axis, profileAxis: profileAxis, flags: flags, available: false, reason: "allergen:milk" };
           }
         }
       }
@@ -149,13 +159,13 @@ function recipeAvailability(recipe, profile, foods) {
       for (var m = 0; m < ingredients.length; m++) {
         var alls3 = ingredients[m].allergens;
         if (alls3 && alls3.indexOf(key) !== -1) {
-          return { axis: axis, flags: flags, available: false, reason: "allergen:" + key };
+          return { axis: axis, profileAxis: profileAxis, flags: flags, available: false, reason: "allergen:" + key };
         }
       }
     }
   }
 
-  return { axis: axis, flags: flags, available: true, reason: null };
+  return { axis: axis, profileAxis: profileAxis, flags: flags, available: true, reason: null };
 }
 
 /* ------------------------------------------------------------------ */

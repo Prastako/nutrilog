@@ -183,8 +183,11 @@ stored file is never rewritten by the app.
   `crustacean`, `egg`, `fish`, `peanut`, `soy`, `milk`, `treenut`, `celery`,
   `mustard`, `sesame`, `sulphite`, `lupin`, `mollusc`. A missing `allergens`
   field means unknown, not none.
-- `variants`: {axis: overrides[]}; an axis is supported when it equals
-  `written` or has an entry here. `flags`: {`gluten-free` | `lactose-free` |
+- `variants`: {axis: overrides[]}; the versions of a recipe are `written` plus
+  every axis with an entry here. Diet axes nest (rank omnivore 3, pescatarian 2,
+  vegetarian 1, vegan 0): a profile gets the version with the highest rank not
+  above its own rank; with none at or below it the recipe is unavailable.
+  `flags`: {`gluten-free` | `lactose-free` |
   `no:<allergen>`: overrides[]}.
 - Each step: `uses[]` (slot ids), `{slot}` tokens in `text`, optional
   `timerSec`. `storage` adds `freezerMonths`, `batchServings`, `fresh[]`.
