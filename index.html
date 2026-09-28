@@ -1852,6 +1852,32 @@ Object.assign(STR.en, {
   bud_label:'Monthly budget in USD (0 = no check)', arch_starter_d:'A dozen starter recipes so suggestions work before the first archive.',
   ai_nokey_h:'Key missing', ai_working_long:'Writing recipes; this usually takes 20 to 60 seconds.', ai_bad_reply:'The reply came in an unexpected shape. Please try again.'
 });
+Object.assign(STR.cs, {
+  ct_line:'Katalog receptů: {n}, aktualizováno {when}', ct_none:'Katalog receptů se zatím nestáhl.', ct_err:'Katalog se nepodařilo stáhnout: {msg}'
+});
+Object.assign(STR.en, {
+  ct_line:'Recipe catalog: {n} recipes, updated {when}', ct_none:'The recipe catalog has not been downloaded yet.', ct_err:'Could not download the recipe catalog: {msg}'
+});
+Object.assign(STR.cs, {
+  rs_add:'Poslat recept', rs_title:'Nový recept do katalogu', rs_link:'Odkaz na recept', rs_text:'Text receptu',
+  rs_text_ph:'Vložte suroviny a postup, stačí i poznámky.', rs_help:'Stačí odkaz, text, nebo obojí. Claude recept převede do jednotné podoby a přidá ho do katalogu pro všechny.',
+  rs_send:'Odeslat', rs_bad_link:'Odkaz musí začínat http:// nebo https://', rs_too_long:'Text je delší než 20 000 znaků.',
+  rs_sent:'Recept odeslán. V katalogu se obvykle objeví do hodiny.', rs_offline:'Offline. Recept pošlete, až budete připojeni.',
+  rs_limit:'Tento měsíc jste už poslali {n} receptů, víc nejde.', rs_err:'Odeslání selhalo: {msg}', rs_list_h:'Poslané recepty',
+  rs_list_empty:'Zatím jste neposlali žádný recept.', rs_st_pending:'Zpracovává se', rs_st_published:'V katalogu',
+  rs_st_merged:'Přidáno jako varianta receptu {title}', rs_st_duplicate:'V katalogu už je: {title}', rs_st_rejected:'Nepřidáno: {reason}',
+  rs_r_not_recipe:'nevypadá to jako recept.', rs_r_unreadable:'odkaz nešel přečíst, vložte text receptu.', rs_r_invalid:'recept se nepodařilo převést.', rs_r_other:'neznámý důvod.'
+});
+Object.assign(STR.en, {
+  rs_add:'Send a recipe', rs_title:'New recipe for the catalog', rs_link:'Link to the recipe', rs_text:'Recipe text',
+  rs_text_ph:'Paste the ingredients and method; rough notes are fine.', rs_help:'A link, the text, or both. Claude converts the recipe to the common format and adds it to the catalog for everyone.',
+  rs_send:'Send', rs_bad_link:'The link must start with http:// or https://', rs_too_long:'The text is longer than 20,000 characters.',
+  rs_sent:'Recipe sent. It usually appears in the catalog within an hour.', rs_offline:'Offline. Send the recipe once you are connected.',
+  rs_limit:'You have already sent {n} recipes this month, which is the limit.', rs_err:'Sending failed: {msg}', rs_list_h:'Recipes you sent',
+  rs_list_empty:'You have not sent any recipes yet.', rs_st_pending:'Being processed', rs_st_published:'In the catalog',
+  rs_st_merged:'Added as a variation of {title}', rs_st_duplicate:'Already in the catalog: {title}', rs_st_rejected:'Not added: {reason}',
+  rs_r_not_recipe:'this does not look like a recipe.', rs_r_unreadable:'the link could not be read, paste the recipe text instead.', rs_r_invalid:'the recipe could not be converted.', rs_r_other:'unknown reason.'
+});
 
 /* ---- core.js ---- */
 /* ============================================================
@@ -2252,7 +2278,8 @@ const DEFAULT_META = {
   },
   usage: { calls: 0, inTok: 0, outTok: 0, byModel: {}, byMonth: {} },
   archive: { lastSyncAt: null, lastSha: null, count: 0, lastError: null },
-  sync: { cursor:0, lastPushAt:null, lastOkAt:null, state:'off', lastError:'', name:'' }
+  sync: { cursor:0, lastPushAt:null, lastOkAt:null, state:'off', lastError:'', name:'' },
+  catalog: { cursor:0, count:0, lastOkAt:null, lastError:'' }
 };
 
 const S = {
@@ -6998,6 +7025,7 @@ async function syncRun(reason, push) {
   try {
     await syncPull();
     if (push) await syncPush();
+    if (typeof catalogRun === 'function') await catalogRun(reason === 'now');
     st.state = 'ok';
     st.lastOkAt = nowIso();
     st.lastError = '';
@@ -7069,6 +7097,202 @@ async function syncLeave() {
   syncShow();
 }
 
+/* ---- catalog.js ---- */
+/* ---- catalog ---- */
+
+const CATALOG_MAX_AGE_MS = 6 * 3600 * 1000;
+
+function catalogDue() {
+  return !S.meta.catalog.lastOkAt || Date.now() - isoMs(S.meta.catalog.lastOkAt) >= CATALOG_MAX_AGE_MS;
+}
+
+async function catalogRun(force) {
+  if (force || catalogDue()) {
+    return await catalogPull();
+  }
+  return false;
+}
+
+async function catalogPull() {
+  if (!S.secrets.sync || S.meta.sync.state === 'revoked' || navigator.onLine === false) {
+    return false;
+  }
+
+  try {
+    var cursor = S.meta.catalog.cursor;
+
+    while (true) {
+      var j = await syncFetch('GET', '/v1/catalog?after=' + cursor);
+
+      for (var i = 0; i < j.items.length; i++) {
+        var item = j.items[i];
+        if (item.deleted) {
+          var r = await dbGet('recipes', item.id);
+          if (r && r.origin === 'catalog') {
+            await dbDel('recipes', item.id);
+          }
+        } else {
+          var existing = await dbGet('recipes', item.id);
+          if (!existing || existing.origin === 'catalog') {
+            var rec = Object.assign({}, item.body);
+            rec.id = item.id;
+            rec.origin = 'catalog';
+            await dbPut('recipes', rec);
+          }
+        }
+      }
+
+      S.meta.catalog.cursor = j.seq;
+      await saveMeta();
+
+      if (!j.more) break;
+      cursor = j.seq;
+    }
+
+    S.meta.catalog.lastOkAt = nowIso();
+    var all = await dbAll('recipes');
+    S.meta.catalog.count = 0;
+    for (var k = 0; k < all.length; k++) {
+      if (all[k].origin === 'catalog') S.meta.catalog.count++;
+    }
+    S.meta.catalog.lastError = '';
+    await saveMeta();
+    if (typeof loadRecipes === 'function') loadRecipes();
+    return true;
+  } catch (err) {
+    if (err.status === 401) {
+      throw err;
+    }
+    S.meta.catalog.lastError = String(err.message);
+    await saveMeta();
+    return false;
+  }
+}
+
+/* ---- submit.js ---- */
+/* ---- submit: send recipes to the shared catalog & list submissions ---- */
+
+const SUBMIT = {list: [], prev: null};
+
+function submitCheck(link, text, online) {
+  var l = link.trim();
+  var x = text.trim();
+  var linkOk = l.startsWith('http://') || l.startsWith('https://');
+  var err = '';
+  if (!online) err = 'rs_offline';
+  else if (l && !linkOk) err = 'rs_bad_link';
+  else if (x.length > 20000) err = 'rs_too_long';
+  var ok = !err && (linkOk || x.length >= 80);
+  return {ok, err};
+}
+
+async function submitSend(link, text) {
+  var l = link.trim();
+  var x = text.trim();
+  var body = {
+    url: l || null,
+    text: x || null
+  };
+  var status;
+  try {
+    var res = await fetch(syncBase() + '/v1/submissions', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + S.secrets.sync,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    status = res.status;
+    if (status >= 200 && status <= 299) {
+      var j = await res.json();
+      SUBMIT.list.unshift({
+        id: j.submission.id,
+        createdAt: j.submission.createdAt,
+        status: 'pending',
+        url: body.url,
+        textStart: body.text ? body.text.slice(0, 60) : null,
+        title: null,
+        recipeId: null,
+        reason: null
+      });
+      return {ok: true, submission: j.submission};
+    }
+    if (status === 401) {
+      S.meta.sync.state = 'revoked';
+      await saveMeta();
+      syncShow();
+      return {ok: false, err: 'sy_revoked'};
+    }
+    if (status === 429) {
+      var j429 = await res.json();
+      return {ok: false, err: 'rs_limit', limit: j429.limit};
+    }
+    return {ok: false, err: 'rs_err', msg: 'HTTP ' + status};
+  } catch (e) {
+    return {ok: false, err: 'rs_err', msg: e.message};
+  }
+}
+
+async function submissionsFetch() {
+  try {
+    var j = await syncFetch('GET', '/v1/submissions');
+    var items = (j.items || []).slice(0, 50);
+    if (SUBMIT.prev !== null) {
+      var anyNew = false;
+      for (var i = 0; i < items.length; i++) {
+        if ((items[i].status === 'published' || items[i].status === 'merged') &&
+            SUBMIT.prev[items[i].id] === 'pending') {
+          anyNew = true;
+          break;
+        }
+      }
+      if (anyNew) await catalogRun(true);
+    }
+    SUBMIT.prev = {};
+    for (var k = 0; k < items.length; k++) {
+      SUBMIT.prev[items[k].id] = items[k].status;
+    }
+    SUBMIT.list = items;
+    return items;
+  } catch (e) {
+    if (e.status === 401) {
+      S.meta.sync.state = 'revoked';
+      await saveMeta();
+      syncShow();
+      return null;
+    }
+    return null;
+  }
+}
+
+function submissionLabel(item) {
+  if (item.title) return item.title;
+  if (item.url) return new URL(item.url).host;
+  return (item.textStart || '') + '…';
+}
+
+function submissionStatus(item) {
+  switch (item.status) {
+    case 'pending':
+      return t('rs_st_pending');
+    case 'published':
+      return t('rs_st_published');
+    case 'merged':
+      return t('rs_st_merged', {title: item.title});
+    case 'duplicate':
+      return t('rs_st_duplicate', {title: item.title});
+    case 'rejected':
+      var R = 'rs_r_other';
+      if (item.reason === 'not_recipe') R = 'rs_r_not_recipe';
+      else if (item.reason === 'unreadable_link') R = 'rs_r_unreadable';
+      else if (item.reason === 'invalid') R = 'rs_r_invalid';
+      return t('rs_st_rejected', {reason: t(R)});
+    default:
+      return t('rs_st_pending');
+  }
+}
+
 /* ---- syncui.js ---- */
 /* ---------- Sync UI ---------- */
 
@@ -7080,10 +7304,18 @@ function syncStateText() {
   return t('sy_on', {name: S.meta.sync.name, when: ago(S.meta.sync.lastOkAt)});
 }
 
+function catalogStateText() {
+  const c = S.meta.catalog;
+  if (c.lastError) return t('ct_err', {msg: c.lastError});
+  if (c.lastOkAt) return t('ct_line', {n: c.count, when: ago(c.lastOkAt)});
+  return t('ct_none');
+}
+
 function syncCardInner() {
   const joined = !!S.secrets.sync;
   let h = '<h3>' + esc(t('sy_title')) + '</h3>';
   h += '<p class="tiny" id="syncState">' + esc(syncStateText()) + '</p>';
+  if (joined) h += '<p class="tiny" id="catalogState">' + esc(catalogStateText()) + '</p>';
   h += '<p class="tiny">' + esc(t('sy_link_is_key')) + '</p>';
   h += '<div class="btnrow">';
   if (joined) {
@@ -7097,6 +7329,7 @@ function syncCardInner() {
   h += '</div>';
   if (joined) {
     h += '<p class="tiny">' + esc(t('sy_leave_note')) + '</p>';
+    h += submitListHtml();
   }
   h += '<details><summary>' + esc(t('sy_advanced')) + '</summary>' +
     '<div class="field"><label for="syncUrl">' + esc(t('sy_url')) + '</label>' +
@@ -7124,9 +7357,11 @@ function bindSyncCard() {
     const action = b.getAttribute('data-sync');
     if (action == 'join') openJoinSheet('');
     else if (action == 'leave') await syncLeave();
-    else if (action == 'now') await syncRun('now', true);
+    else if (action == 'now') { await syncRun('now', true); await submissionsFetch(); renderSyncCard(); }
     else if (action == 'share') await openShareSheet();
+    else if (action == 'submit') openSubmitSheet();
   });
+  if (S.secrets.sync) submissionsFetch().then(renderSyncCard);
 }
 
 function openJoinSheet(prefill) {
@@ -7165,6 +7400,76 @@ async function syncCheckKey(key) {
     closeSheet();
   });
   return true;
+}
+
+/* ---------- Submit list ---------- */
+
+function submitListHtml() {
+  var rows = '';
+  if (!SUBMIT.list || SUBMIT.list.length == 0) {
+    rows = '<p class="tiny">' + esc(t('rs_list_empty')) + '</p>';
+  } else {
+    var items = SUBMIT.list.slice(0, 50);
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      var canOpen = item.recipeId &&
+        (item.status == 'published' || item.status == 'merged' || item.status == 'duplicate') &&
+        typeof RECIPES !== 'undefined' && RECIPES.list &&
+        RECIPES.list.some(function(r) { return r.id == item.recipeId && r.origin == 'catalog'; });
+      var date = new Date(item.createdAt).toLocaleDateString(S.lang === 'cs' ? 'cs-CZ' : 'en-GB');
+      var label = esc(submissionLabel(item));
+      var status = esc(date + ' · ' + submissionStatus(item));
+      if (canOpen) {
+        rows += '<button class="entry" type="button" data-act="open-recipe" data-id="' + esc(item.recipeId) + '">';
+      } else {
+        rows += '<div class="entry">';
+      }
+      rows += '<span class="en">' + label + '</span><span class="em tiny">' + status + '</span>';
+      rows += canOpen ? '</button>' : '</div>';
+    }
+  }
+  return '<div class="submits"><div class="btnrow"><button class="btn quiet" type="button" data-sync="submit">' + esc(t('rs_add')) + '</button></div><h4>' + esc(t('rs_list_h')) + '</h4>' + rows + '</div>';
+}
+
+/* ---------- Submit sheet ---------- */
+
+function submitSheetState(link, text, online) {
+  var c = submitCheck(link, text, online);
+  return {disabled: !c.ok, msg: c.err ? t(c.err) : ''};
+}
+
+function submitSheetUpdate() {
+  var s = submitSheetState($('#rsLink').value, $('#rsText').value, navigator.onLine !== false);
+  $('#rsSend').disabled = s.disabled;
+  $('#rsMsg').textContent = s.msg;
+}
+
+function openSubmitSheet() {
+  var body = '<div class="field"><label for="rsLink">' + esc(t('rs_link')) + '</label><input id="rsLink" type="url" inputmode="url" autocapitalize="off" spellcheck="false"></div>' +
+    '<div class="field"><label for="rsText">' + esc(t('rs_text')) + '</label><textarea id="rsText" rows="8" placeholder="' + esc(t('rs_text_ph')) + '"></textarea></div>' +
+    '<p class="tiny">' + esc(t('rs_help')) + '</p><p class="tiny" id="rsMsg"></p>';
+  var foot = '<button class="btn" type="button" id="rsSend" disabled>' + esc(t('rs_send')) + '</button>';
+  openSheet(esc(t('rs_title')), body, foot);
+  $('#rsLink').addEventListener('input', submitSheetUpdate);
+  $('#rsText').addEventListener('input', submitSheetUpdate);
+  $('#rsSend').addEventListener('click', submitSheetSend);
+  submitSheetUpdate();
+}
+
+async function submitSheetSend() {
+  var r = await submitSend($('#rsLink').value, $('#rsText').value);
+  if (r.ok) {
+    closeSheet();
+    toast(t('rs_sent'));
+    renderSyncCard();
+  } else if (r.err == 'rs_limit') {
+    $('#rsMsg').textContent = t('rs_limit', {n: r.limit});
+  } else if (r.err == 'rs_err') {
+    $('#rsMsg').textContent = t('rs_err', {msg: r.msg});
+  } else if (r.err == 'sy_revoked') {
+    closeSheet();
+    renderSyncCard();
+  }
 }
 
 /* ---- invite.js ---- */
