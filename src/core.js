@@ -396,7 +396,8 @@ const DEFAULT_META = {
   },
   usage: { calls: 0, inTok: 0, outTok: 0, byModel: {}, byMonth: {} },
   archive: { lastSyncAt: null, lastSha: null, count: 0, lastError: null },
-  sync: { cursor:0, lastPushAt:null, lastOkAt:null, state:'off', lastError:'', name:'' }
+  sync: { cursor:0, lastPushAt:null, lastOkAt:null, state:'off', lastError:'', name:'' },
+  catalog: { cursor:0, count:0, lastOkAt:null, lastError:'' }
 };
 
 const S = {
