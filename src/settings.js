@@ -401,6 +401,11 @@ function renderSettings(){
         '<span class="lk-dots"><i style="background:'+l.dark.ground+'"></i><i style="background:'+l.dark.ink+'"></i><i style="background:'+l.dark.accent+'"></i></span>' +
         '<span class="lk-name">'+esc(l.name)+'</span></button>').join('') +
     '</div></div>' +
+    '<div class="field"><span class="flabel">'+esc(t('set_type'))+'</span><div class="looks">' +
+      TYPES.map(ty => '<button class="looktile" type="button" data-act="type" data-v="'+ty.id+'" aria-pressed="'+(typeOf(S.type).id===ty.id)+'" style="background:var(--bg);color:var(--ink);--lk-accent:var(--accent)">' +
+        '<span class="lk-name" style="font-family:\''+ty.display+'\'">'+esc(t('type_'+ty.id))+'</span>' +
+        '<span class="tiny" style="font-family:\''+ty.body+'\'">'+esc(t('type_sample'))+'</span></button>').join('') +
+    '</div></div>' +
     '<div class="field"><span class="flabel">'+esc(t('set_theme'))+'</span><div class="seg">' +
       ['device','light','dark'].map(v => '<button type="button" class="'+(S.theme===v?'on':'')+'" data-act="theme" data-v="'+v+'" aria-pressed="'+(S.theme===v)+'">'+esc(t('th_'+v))+'</button>').join('') +
     '</div></div>' +
