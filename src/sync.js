@@ -58,6 +58,7 @@ async function syncMe(key) {
 async function syncApplyItem(item) {
   if (item.store !== 'records' && item.store !== 'recipes') return false;
   var local = await dbGet(item.store, item.id);
+  if (item.store === 'recipes' && local && (local.origin === 'catalog' || local.origin === 'starter' || local.origin === 'archive')) return false;
   if (local && isoMs(item.updatedAt) <= isoMs(local.updatedAt)) return false;
   var obj = Object.assign({}, item.body);
   obj.id = item.id;

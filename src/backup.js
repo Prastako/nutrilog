@@ -12,7 +12,7 @@ const EXPORT_KV_KEYS = ['prefs'];
 async function buildPayload(){
   const kv = (await dbAll('kv')).filter(r => EXPORT_KV_KEYS.indexOf(r.key) >= 0);
   const records = await dbAll('records');
-  const recipes = (await dbAll('recipes')).filter(r => r.origin === 'claude' || r.origin === 'own').map(r => { const c = Object.assign({}, r); delete c._search; return c; });
+  const recipes = (await dbAll('recipes')).filter(r => (r.origin === 'claude' || r.origin === 'own') && !r.deleted).map(r => { const c = Object.assign({}, r); delete c._search; return c; });
   return {
     app: 'nutrilog',
     schema: SCHEMA,
