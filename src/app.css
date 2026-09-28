@@ -85,7 +85,14 @@ details summary{cursor:pointer}
 .flag{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border-radius:10px;margin-bottom:6px;font-size:14px}
 .flag .v{text-align:right}
 .flag.lo{background:var(--ochre-soft)} .flag.lo2{background:var(--garnet-soft)} .flag.hi{background:var(--garnet-soft)}
-.daychart{width:100%;height:auto;display:block;margin-top:12px}
+.daychart{display:flex;flex-direction:column;width:100%;height:120px;margin-top:12px}
+.daychart .dc-plot{position:relative;height:100px;flex:none;overflow:hidden}
+.daychart .dc-band{position:absolute;left:0;right:0;box-sizing:border-box;background:color-mix(in srgb, var(--accent) 12%, transparent);border-top:1px solid var(--line-row);border-bottom:1px solid var(--line-row)}
+.daychart .dc-cols{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:flex-end}
+.daychart .dc-col{flex:1 1 0;min-width:0;height:100%;display:flex;align-items:flex-end;justify-content:center}
+.daychart .dc-bar{display:block;width:60%;min-width:6px;max-width:28px;border-radius:2px}
+.daychart .dc-labels{display:flex;height:20px;flex:none}
+.daychart .dc-labels span{flex:1 1 0;min-width:0;text-align:center;font-size:11px;line-height:20px;color:var(--ink3);white-space:nowrap}
 .nrow{padding:4px 0 8px;border-bottom:1px solid var(--line)}
 .aitext p{margin:0 0 8px}
 .aitext ul,.aitext ol{margin:0 0 8px;padding-left:20px}
