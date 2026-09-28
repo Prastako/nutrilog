@@ -839,6 +839,9 @@ body:not(.quickmode) .frow { background:none !important; border:0 !important; bo
 body:not(.quickmode) .flag, body:not(.quickmode) .phasetag, body:not(.quickmode) .soonwrap .glyph { background:none !important; border:0 !important; box-shadow:none !important; border-radius:0 !important; }
 /* ---------- open-edge controls: fixes ---------- */
 body:not(.quickmode) .rthumb:not([style*="url("]), body:not(.quickmode) .rhero:not([style*="url("]){background-image:none !important}
+/* ---------- open-edge controls: fixes 2 ---------- */
+body:not(.quickmode) #rsSend{background:var(--accent-ink) !important;color:var(--onaccent) !important;font-family:var(--font-display) !important;font-size:20px !important;border:0 !important;border-radius:6px !important;min-height:52px !important;box-shadow:0 0 24px var(--glow-soft) !important}
+body:not(.quickmode) #rsSend .o-corner{color:var(--onaccent) !important;opacity:1 !important}
 
 </style>
 </head>
@@ -4675,7 +4678,7 @@ function recipeCard(r, extra){
     (extra ? '<span class="rextra">'+extra+'</span>' : '') +
     '<span class="rtags">' + (ex.length ? '<span class="pill err">'+esc(t('rc_excluded'))+'</span>' : '') +
       tags.map(x => '<span class="pill">'+esc(tagLabel(x))+'</span>').join('') +
-      (r.origin !== 'archive' ? '<span class="pill wait">'+esc(t(ORIGIN_LABEL[r.origin]||'orig_own'))+'</span>' : '') +
+      (r.origin !== 'archive' && r.origin !== 'catalog' ? '<span class="pill wait">'+esc(t(ORIGIN_LABEL[r.origin]||'orig_own'))+'</span>' : '') +
     '</span></span></button>';
 }
 
