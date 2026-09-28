@@ -400,25 +400,37 @@ const DEFAULT_META = {
   catalog: { cursor:0, count:0, lastOkAt:null, lastError:'' }
 };
 
+/* Per-person view state: fresh-install values. Joining another profile or leaving resets it (resetSessionState). */
+const SESSION_DEFAULTS = {
+  profile: null,          /* the profile record (schema 2) */
+  draft: null,
+  logDate: null,          /* day shown in the diary */
+  suggestDate: null,
+  reviewAnchor: null,
+  recipeFilter: { q:'', chips:[], tags:[], fav:false, origin:'all' }
+};
+
 const S = {
+  ...deepCopy(SESSION_DEFAULTS),
   lang: 'en',
   theme: 'device',
   look: 'ash',
   screen: 'today',
-  profile: null,          /* the profile record (schema 2) */
   prefs: deepCopy(DEFAULT_PREFS),
   meta: deepCopy(DEFAULT_META),
   secrets: { anthropic:'', github:'', sync:'' },
-  draft: null,
   installPrompt: null,
   swRegistered: null,
-  logDate: null,          /* day shown in the diary */
-  recipeFilter: { q:'', chips:[], tags:[], fav:false, origin:'all' },
   recipeTab: 'suggest',
   reviewMode: 'week',
-  reviewAnchor: null,
   chatBusy: false
 };
+
+function resetSessionState(){
+  Object.assign(S, deepCopy(SESSION_DEFAULTS));
+  if (S.meta) S.meta.chatThread = null;
+  if (typeof RECIPES !== 'undefined') RECIPES.notes = {};
+}
 
 function mergeDefaults(target, defaults){
   const out = deepCopy(defaults);
