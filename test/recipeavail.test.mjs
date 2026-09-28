@@ -43,13 +43,14 @@ describe('profileAxisFlags', () => {
 });
 
 describe('recipeAvailability', () => {
-  it('vegetarian recipe not available for pescatarian profile', () => {
+  it('vegetarian recipe is available for a pescatarian profile (axes nest)', () => {
     const result = recipeAvailability(
       { written: 'vegetarian', variants: { omnivore: [] }, ingredients: [], steps: [] },
       { food: { pattern: 'pescatarian' } }
     );
-    assert.equal(result.available, false);
-    assert.equal(result.reason, 'axis');
+    assert.equal(result.available, true);
+    assert.equal(result.axis, 'vegetarian');
+    assert.equal(result.profileAxis, 'pescatarian');
   });
 });
 
