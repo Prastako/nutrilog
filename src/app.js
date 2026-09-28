@@ -98,31 +98,6 @@ function applyLang(){
   renderAll();
 }
 
-function openFabSheet(){
-  const b = '<div class="fabgrid">' +
-    '<button class="btn" type="button" data-fab="add">'+icon('log')+esc(t('fab_add'))+'</button>' +
-    '<button class="btn quiet" type="button" data-fab="photo">'+icon('camera')+esc(t('fab_photo'))+'</button>' +
-    '<button class="btn quiet" type="button" data-fab="scan">'+esc(t('fab_scan'))+'</button>' +
-    '<button class="btn quiet" type="button" data-fab="describe">'+esc(t('fab_describe'))+'</button>' +
-    '<button class="btn quiet" type="button" data-fab="supp">'+esc(t('fab_supp'))+'</button>' +
-    '</div>';
-  const sheet = openSheet(esc(t('fab_title')), b);
-  sheet.addEventListener('click', e => {
-    const f = e.target.closest('[data-fab]');
-    if (!f) return;
-    const v = f.getAttribute('data-fab');
-    const date = S.screen === 'log' ? (S.logDate || localDateKey()) : localDateKey();
-    if (v === 'photo'){ closeSheet(); openPhotoSheet({date}); return; }
-    if (v === 'supp'){ S.afterSheet = openSuppManager; closeSheet(); return; }
-    closeSheet();
-    openAddSheet(guessSlot(), date);
-    if (v === 'scan' || v === 'describe'){
-      $$('#addModes button').forEach(x => x.classList.toggle('on', x.getAttribute('data-mode') === v));
-      addMode(v);
-    }
-  });
-}
-
 /* ---------- Events ---------- */
 
 function bindEvents(){
