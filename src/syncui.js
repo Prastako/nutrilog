@@ -33,6 +33,9 @@ function syncCardInner() {
   }
   h += '</div>';
   if (joined) {
+    h += '<div class="field" style="margin-top:10px"><label for="syncNameSet">' + esc(t('au_name_label')) + '</label>' +
+      '<input id="syncNameSet" type="text" autocomplete="off" value="' + esc(S.meta.sync.name || '') + '"></div>' +
+      '<div class="btnrow"><button class="btn quiet" type="button" data-sync="name">' + esc(t('save')) + '</button></div>';
     h += '<p class="tiny">' + esc(t('sy_leave_note')) + '</p>';
     h += submitListHtml();
   }
@@ -65,6 +68,7 @@ function bindSyncCard() {
     else if (action == 'now') { await syncRun('now', true); await submissionsFetch(); renderSyncCard(); }
     else if (action == 'share') await openShareSheet();
     else if (action == 'submit') openSubmitSheet();
+    else if (action == 'name') await syncSaveName();
   });
   if (S.secrets.sync) submissionsFetch().then(renderSyncCard);
 }
@@ -96,10 +100,16 @@ async function syncCheckKey(key) {
   closeSheet();
   const foot = '<button class="btn" type="button" id="syncJoinYes">' + esc(t('confirm')) + '</button>' +
     '<button class="btn quiet" type="button" id="syncJoinNo">' + esc(t('cancel')) + '</button>';
-  openSheet(esc(t('sy_join_confirm', {name: user.name})), '<p>' + esc(note) + '</p>', foot);
+  openSheet(esc(t('sy_join_confirm', {name: user.name})), '<p>' + esc(note) + '</p>' +
+    '<div class="field" style="margin-top:12px"><label for="syncName">' + esc(t('au_name_label')) + '</label>' +
+    '<input id="syncName" type="text" autocomplete="off" value="' + esc(user.name || '') + '"></div><p class="tiny" id="syncNameErr"></p>', foot);
   $('#syncJoinYes').addEventListener('click', async () => {
+    const nm = String(($('#syncName') || {}).value || '').trim();
+    if (!syncNameOk(nm)) { const er = $('#syncNameErr'); if (er) er.textContent = t('au_name_err'); return; }
     closeSheet();
-    await syncJoin(key, user);
+    let u = user;
+    if (nm !== (user.name || '')) { try { u = (await syncPutName(nm, key)) || Object.assign({}, user, {name: nm}); } catch (err) { u = user; } }
+    await syncJoin(key, u);
   });
   $('#syncJoinNo').addEventListener('click', () => {
     closeSheet();
@@ -174,5 +184,19 @@ async function submitSheetSend() {
   } else if (r.err == 'sy_revoked') {
     closeSheet();
     renderSyncCard();
+  }
+}
+/* Sync and friends: save the name others see (brief author). */
+async function syncSaveName() {
+  const nm = String(($('#syncNameSet') || {}).value || '').trim();
+  if (!syncNameOk(nm)) { toast(t('au_name_err')); return; }
+  if (navigator.onLine === false) { toast(t('au_offline')); return; }
+  try {
+    const u = await syncPutName(nm);
+    S.meta.sync.name = (u && u.name) || nm;
+    await saveMeta();
+    toast(t('sg_saved'));
+  } catch (err) {
+    toast(err && err.status ? t('sy_err', {msg: err.message}) : t('au_offline'));
   }
 }

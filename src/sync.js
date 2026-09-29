@@ -359,3 +359,9 @@ async function syncFlush() {
     syncPush({ keepalive: true }).catch(function(){});
   }
 }
+/* ---- display name (brief author) ---- */
+function syncNameOk(name) { var n = String(name || '').trim(); return n.length >= 1 && n.length <= 40 && !/[\r\n]/.test(n); }
+async function syncPutName(name, key) {
+  var data = await syncFetch('PUT', '/v1/me', {name: String(name).trim()}, key);
+  return data.user;
+}
