@@ -86,13 +86,54 @@ async function renderChat(){
   return log;
 }
 
+function chatScreenContext(){
+  let s;
+  switch(S.screen){
+    case 'today': s = 'Screen: Today, ' + numDate(localDateKey(), true); break;
+    case 'log': s = 'Screen: Log, ' + numDate(S.logDate || localDateKey(), true); break;
+    case 'review':
+      if (S.reviewMode !== 'month'){
+        const r1 = periodRange('week', S.reviewAnchor);
+        s = 'Screen: Review, week ' + numDate(r1.from, true) + ' – ' + numDate(r1.to, true);
+      } else {
+        const r2 = periodRange('month', S.reviewAnchor);
+        s = 'Screen: Review, month ' + new Intl.DateTimeFormat('en-GB', {month:'long', year:'numeric'}).format(dateFromKey(r2.from));
+      }
+      break;
+    case 'recipes':
+      s = 'Screen: Recipes, ' + (S.recipeTab === 'all' ? 'All recipes' : 'Suggestions');
+      const q = (S.recipeFilter && S.recipeFilter.q || '').trim();
+      if (q) s += ', search "' + q + '"';
+      break;
+    case 'recipe':
+      const r = RECIPES.byId[S.recipeId];
+      s = 'Screen: Recipe, ' + (r ? r.title : '');
+      if (r){
+        const v = recipeView(r, {axis: S.recipeAxis || undefined, servings: S.recipeServings || undefined});
+        if (v.schema2 && v.axis !== (r.written || 'omnivore')){
+          s += ', version ' + v.axis.charAt(0).toUpperCase() + v.axis.slice(1);
+        }
+        if (S.recipeServings != null && Number(S.recipeServings) !== Number(r.servings)){
+          s += ', ' + S.recipeServings + ' servings';
+        }
+      }
+      break;
+    case 'profile': s = 'Screen: Profile'; break;
+    case 'settings': s = 'Screen: Settings'; break;
+    case 'chat': s = 'Screen: Chat'; break;
+    default: s = 'Screen: ' + S.screen;
+  }
+  return s.length > 120 ? s.slice(0, 120) : s;
+}
+
 async function sendChat(text){
   text = String(text || '').trim();
   if (!text || S.chatBusy) return;
   if (!(await ensureAiReady())) return;
   S.chatBusy = true;
   const thread = S.meta.chatThread || null;
-  await recPut({type:'chat_message', thread, role:'user', text}, {silent:true});
+  const screenCtx = chatScreenContext();
+  await recPut({type:'chat_message', thread, role:'user', text, ctx: screenCtx}, {silent:true});
   const ta = $('#chatText'); if (ta){ ta.value = ''; ta.style.height = 'auto'; }
   const log = $('#chatLog');
   const emptyHint = log && log.querySelector('p.tiny'); if (emptyHint) emptyHint.remove();
@@ -105,14 +146,15 @@ async function sendChat(text){
   try {
     const ctx = await buildContext({today:true, pantry:true, recipes:true});
     const system = 'You are the kitchen and nutrition companion inside NutriLog, a personal food diary. ' + langInstruction() +
-      ' Help with what to cook from the ingredients at home, what is missing, substitutions, meal prep and nutrition questions. Prefer recipes from the person\'s archive (show them with show_recipe). Never suggest anything from the hard exclusions. ' + recipeLangInstruction().replace('Write recipes', 'When you save a recipe with save_recipe, write it') + ' Keep answers short and practical; use lists for ingredients and steps. When the person mentions having, buying or running out of ingredients, call update_pantry.\n\n' + ctx;
+      ' Help with what to cook from the ingredients at home, what is missing, substitutions, meal prep and nutrition questions. Prefer recipes from the person\'s archive (show them with show_recipe). Never suggest anything from the hard exclusions. ' + recipeLangInstruction().replace('Write recipes', 'When you save a recipe with save_recipe, write it') + ' Keep answers short and practical; use lists for ingredients and steps. When the person mentions having, buying or running out of ingredients, call update_pantry. Each message ends with a bracketed line saying which screen the person was on when they sent it; \'this recipe\', \'today\' or \'this week\' refer to it.\n\n' + ctx;
     const hist = (await chatHistory()).filter(m => m.role === 'user' || m.role === 'assistant').slice(-20);
     let messages = [];
     hist.forEach(m => {
       const txt = (m.text || '').trim() || '…';
+      const content = m.role === 'user' && m.ctx ? txt + '\n\n[' + m.ctx + ']' : txt;
       const last = messages[messages.length - 1];
-      if (last && last.role === m.role) last.content += '\n\n' + txt;
-      else messages.push({role: m.role, content: txt});
+      if (last && last.role === m.role) last.content += '\n\n' + content;
+      else messages.push({role: m.role, content});
     });
     /* the API needs the conversation to start with the person */
     while (messages.length && messages[0].role !== 'user') messages.shift();
