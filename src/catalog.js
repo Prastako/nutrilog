@@ -14,15 +14,20 @@ async function catalogRun(force) {
 }
 
 async function catalogPull() {
-  if (!S.secrets.sync || S.meta.sync.state === 'revoked' || navigator.onLine === false) {
+  var first = !S.meta.catalog.cursor;
+  if (navigator.onLine === false) {
+    if (first) { S.catalogFailed = true; catalogShow(); }
     return false;
   }
+  /* open catalog (brief open-catalog): no key when there is none or it was revoked */
+  var noAuth = !S.secrets.sync || S.meta.sync.state === 'revoked';
+  S.catalogBusy = first; S.catalogFailed = false; if (first) catalogShow();
 
   try {
     var cursor = S.meta.catalog.cursor;
 
     while (true) {
-      var j = await syncFetch('GET', '/v1/catalog?after=' + cursor);
+      var j = await syncFetch('GET', '/v1/catalog?after=' + cursor, undefined, undefined, {noAuth: noAuth});
 
       for (var i = 0; i < j.items.length; i++) {
         var item = j.items[i];
@@ -56,15 +61,21 @@ async function catalogPull() {
       if (all[k].origin === 'catalog') S.meta.catalog.count++;
     }
     S.meta.catalog.lastError = '';
+    if (S.meta.catalog.count > 0 && !S.meta.catalog.starterOff) { S.meta.catalog.starterOff = true; S.prefs.archive.showStarter = false; await savePrefs(); }
     await saveMeta();
-    if (typeof loadRecipes === 'function') loadRecipes();
+    if (typeof loadRecipes === 'function') await loadRecipes();
+    S.catalogBusy = false; catalogShow();
     return true;
   } catch (err) {
     if (err.status === 401) {
+      S.catalogBusy = false; if (first) { S.catalogFailed = true; } catalogShow();
       throw err;
     }
     S.meta.catalog.lastError = String(err.message);
     await saveMeta();
+    S.catalogBusy = false; if (first) { S.catalogFailed = true; } catalogShow();
     return false;
   }
 }
+/* Recipes shows the first-download line while it runs and after it failed (brief open-catalog). */
+function catalogShow() { if (S.screen === 'recipes' && typeof renderRecipes === 'function') renderRecipes(); }

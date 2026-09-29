@@ -464,6 +464,7 @@ async function boot(){
   go(fresh ? 'start' : known.indexOf(hash) >= 0 ? hash : 'recipes', false);
   try { history.replaceState({screen:S.screen}, '', '#'+S.screen); } catch(e){}
   syncRun('app open');
+  if (!S.secrets.sync || S.meta.sync.state === 'revoked') catalogRun(!S.meta.catalog.cursor).catch(() => {});
   if (hash.indexOf('join=') === 0) syncHandleJoinLink(syncKeyFromInput('#' + hash));
   else maybeOfferQuick();
 
