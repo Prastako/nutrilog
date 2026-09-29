@@ -15,6 +15,7 @@ with sync_playwright() as p:
     b = p.chromium.launch(); ctx = b.new_context(viewport={'width':390,'height':844}, locale='en-GB', timezone_id='Europe/Prague')
     page = ctx.new_page(); page.on('pageerror', lambda e: errs.append(str(e)))
     page.goto('http://127.0.0.1:8783/#today'); page.wait_for_timeout(1500)
+    page.evaluate("async () => { S.prefs.modules = {logging:true, goals:true, supplements:true, assistant:true}; await savePrefs(); location.hash = '#today'; }"); page.reload(); page.wait_for_timeout(1500)
     page.evaluate("S.draft=null; go('profile')"); page.wait_for_timeout(600)
     mp = lambda: page.inner_text('#macroPreviewBox'); sp = lambda: page.inner_text('#slotPreviewBox')
     ok(mp().strip()=='' and sp().strip()=='', 'blank profile: no preview')
