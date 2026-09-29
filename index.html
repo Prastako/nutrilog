@@ -7,7 +7,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ECEAE6" id="metaThemeColor">
 <script>
-const VERSION = '0.2.8';
+const VERSION = '0.2.9';
 const SCHEMA = 2;
 </script>
 <meta name="mobile-web-app-capable" content="yes">
@@ -587,7 +587,7 @@ main{padding-left:32px;padding-right:32px}
   .iconbtn{min-width:40px;min-height:40px}
   .topbar .hdr-orn{display:none}
 }
-body.quickmode #tabbar{display:none}
+body.quickpref #tabbar{display:none}
 body.quickmode main{padding-bottom:24px}
 body.quickmode::before{display:none}
 body.quickmode, body.quickmode *{text-shadow:none !important;box-shadow:none !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;filter:none !important;animation:none !important}
@@ -890,6 +890,26 @@ body:not(.quickmode) .chip[aria-pressed="true"]::after, body:not(.quickmode) .se
 }
 body.quickmode, body.quickmode *, body.quickmode *::before, body.quickmode *::after{animation:none !important;transition:none !important}
 .sheetbg.closing{pointer-events:none}
+/* small-screen header (brief nutrilog-260929-quick-gear) */
+@media (max-width: 359.98px){
+  .topbar{min-height:calc(env(safe-area-inset-top) + 56px);box-sizing:border-box}
+  #btnBack,#btnSettings{top:calc(env(safe-area-inset-top) + 8px)}
+}
+/* chat button and chat sheet (brief nutrilog-260929-chat-overlay) */
+#btnChat{position:absolute;top:calc(env(safe-area-inset-top) + 14px);right:56px}
+#btnChat.solo{right:12px}
+.topbar .brand{max-width:calc(100% - 184px)}
+@media (max-width: 359.98px){ #btnChat{top:calc(env(safe-area-inset-top) + 8px);right:60px} #btnChat.solo{right:12px} }
+.sheetbg:has(> .sheet.full){align-items:stretch}
+.sheet.full{max-width:560px;height:calc(100dvh - env(safe-area-inset-top));max-height:none;margin-top:env(safe-area-inset-top);border-radius:0;display:flex;flex-direction:column;overflow:hidden}
+.sheet.full .sheetbody{flex:1;min-height:0;display:flex;flex-direction:column}
+.chatsheet{flex:1;min-height:0;display:flex;flex-direction:column}
+.chatsheet .chatlog{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.chatsheet .chatlog > p.tiny:only-child{margin:auto 0 !important}
+.chatsheet .chatin{position:static;flex:none}
+body.chatmode #s-chat.on{display:flex;flex-direction:column;min-height:calc(100dvh - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+body.chatmode #s-chat .chatlog{flex:1}
+body.chatmode #s-chat .chatlog > p.tiny:only-child{margin:auto 0 !important}
 
 </style>
 </head>
@@ -943,6 +963,7 @@ body.quickmode, body.quickmode *, body.quickmode *::before, body.quickmode *::af
   <header class="topbar">
     <button id="btnBack" class="iconbtn hide" type="button" aria-label="Back"><svg><use href="#i-back"/></svg></button>
     <div class="brand"><span class="hdr-orn" aria-hidden="true"></span><h1 id="screenTitle"></h1></div>
+    <button id="btnChat" class="iconbtn" type="button" aria-label="Chat"><svg><use href="#i-chat"/></svg></button>
     <button id="btnSettings" class="iconbtn" type="button" aria-label="Settings"><svg><use href="#i-gear"/></svg></button>
   </header>
 
@@ -968,7 +989,7 @@ body.quickmode, body.quickmode *, body.quickmode *::before, body.quickmode *::af
 
 <script>
 /* ============================================================
-   NutriLog 0.2.8. Built from src/ by tools/build.py.
+   NutriLog 0.2.9. Built from src/ by tools/build.py.
    Edit the files in src/, then run the build; do not edit this
    generated block by hand.
    ============================================================ */
@@ -1961,6 +1982,12 @@ Object.assign(STR.cs, {
 Object.assign(STR.en, {
   set_type:'Type', type_fraunces:'Fraunces and Figtree', type_marcellus:'Marcellus and Raleway', type_jost:'Jost', type_sample:'Aa 1,640 kcal'
 });
+Object.assign(STR.cs, {
+  b_line_nobackup_new:'Zatím bez zálohy. Připojte se odkazem k profilu, nebo občas exportujte ručně.', b_line_nobackup_data:'Máte data a nemáte zálohu. Když smažete data prohlížeče, zmizí.', b_line_stale:'Záloha se nepovedla už {h} hodin.'
+});
+Object.assign(STR.en, {
+  b_line_nobackup_new:'No backup yet. Join a profile with a link, or export by hand from time to time.', b_line_nobackup_data:'You have data and no backup. Clearing browser data would take it.', b_line_stale:'Backup has not succeeded for {h} hours.'
+});
 
 /* ---- core.js ---- */
 /* ============================================================
@@ -2024,11 +2051,20 @@ function fmtAmt(n){
   return fmtNum(n, 2);
 }
 
+function numDate(d, withYear){
+  if (typeof d === 'string') d = dateFromKey(d);
+  let result = d.getDate() + '.' + (d.getMonth() + 1) + '.';
+  if (withYear) result += d.getFullYear();
+  return result;
+}
+
 function fmtDateTime(iso){
   if (!iso) return t('never');
-  try {
-    return new Intl.DateTimeFormat(locale(), {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}).format(new Date(iso));
-  } catch(e){ return iso; }
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  return numDate(d) + ' ' + hours + ':' + minutes;
 }
 
 function fmtLongDate(d){
@@ -2037,7 +2073,7 @@ function fmtLongDate(d){
 
 function fmtShortDate(key){
   const d = dateFromKey(key);
-  return new Intl.DateTimeFormat(locale(), {weekday:'short', day:'numeric', month:'numeric'}).format(d);
+  return new Intl.DateTimeFormat(locale(), {weekday:'short'}).format(d) + ' ' + numDate(d);
 }
 
 function ago(iso){
@@ -4453,7 +4489,7 @@ function openSheet(titleHtml, bodyHtml, footHtml, opts){
   const root = $('#sheetRoot');
   root.innerHTML =
     '<div class="sheetbg" role="dialog" aria-modal="true">' +
-      '<div class="sheet'+(opts && opts.tall ? ' tall' : '')+'">' +
+      '<div class="sheet'+(opts && opts.tall ? ' tall' : '')+(opts && opts.full ? ' full' : '')+'">' +
         '<div class="sheethead"><h2>'+titleHtml+'</h2>' +
         '<button class="iconbtn" type="button" data-sheet-close="1" aria-label="'+esc(t('close'))+'">'+icon('close')+'</button></div>' +
         '<div class="sheetbody">' + bodyHtml + '</div>' +
@@ -5260,7 +5296,7 @@ async function recipeLogSheet(id){
   let b = '<p class="muted">'+esc(r.title)+'</p>' +
     '<div class="field"><span class="flabel">'+esc(t('lg_slot'))+'</span>'+slotChips(slot)+'</div>' +
     '<div class="field"><label for="rl-serv">'+esc(t('rc_servings_eaten'))+'</label><input id="rl-serv" type="number" inputmode="decimal" step="0.25" min="0.25" value="1"></div>' +
-    '<div class="field"><label for="rl-date">'+esc(t('lg_date'))+'</label><input id="rl-date" type="date" value="'+esc(S.logDate || localDateKey())+'"></div>' +
+    '<div class="field"><label for="rl-date">'+esc(t('lg_date'))+'</label><input id="rl-date" type="date" value="'+esc(S.logDate || localDateKey())+'"><span class="fhint" data-hint-for="rl-date">'+esc((S.logDate || localDateKey()) ? numDate(S.logDate || localDateKey(), true) : '')+'</span></div>' +
     '<p class="tiny" id="rl-prev"></p>';
   if (ps.kcal == null) b += '<div class="notice warn">'+esc(t('rc_no_nutrition'))+'</div>';
   const sheet = openSheet(esc(t('rc_log')), b, '<button class="btn" type="button" id="rl-save">'+esc(t('save'))+'</button>');
@@ -5616,7 +5652,6 @@ async function renderLog(){
   const host = $('#s-log');
   await foodDbForNames();
   const day = S.logDate || localDateKey();
-  if (S.screen === 'log') $('#screenTitle').textContent = fmtLongDate(dateFromKey(day));
   const d = await dayTotals(day);
   const g = computeTargets(S.profile);
   const navH = '<div class="daynav"><button class="iconbtn sm" type="button" data-act="ldate" data-d="-1" aria-label="'+esc(t('lg_prev'))+'">'+icon('back')+'</button>' +
@@ -5775,7 +5810,7 @@ function amountStep(food, grams){
     ['100 g'].concat(portions.map(p => p.label)).map((lab, i) =>
       '<button class="chip" type="button" data-g="'+(i === 0 ? 100 : portions[i-1].g)+'" aria-pressed="'+(Math.round(i === 0 ? 100 : portions[i-1].g) === Math.round(g))+'">'+esc(lab)+(i ? ' · '+fmtNum(portions[i-1].g)+' g' : '')+'</button>').join('') + '</div>';
   h += '<div class="inline"><div class="field"><label for="amG">'+esc(t('am_grams'))+'</label><input id="amG" type="number" inputmode="decimal" step="1" min="1" value="'+esc(Math.round(g))+'"></div>' +
-    '<div class="field"><label for="amDate">'+esc(t('lg_date'))+'</label><input id="amDate" type="date" value="'+esc(ADD.date)+'"></div></div>';
+    '<div class="field"><label for="amDate">'+esc(t('lg_date'))+'</label><input id="amDate" type="date" value="'+esc(ADD.date)+'"><span class="fhint" data-hint-for="amDate">'+esc((ADD.date) ? numDate(ADD.date, true) : '')+'</span></div></div>';
   h += '<div class="field"><span class="flabel">'+esc(t('lg_slot'))+'</span>'+slotChips(ADD.slot)+'</div>';
   h += '<div class="card flat" id="amPrev"></div>';
   h += '<div class="btnrow" style="margin:12px 0"><button class="btn" type="button" id="amSave">'+esc(t('save'))+'</button>' +
@@ -5953,7 +5988,7 @@ async function editEntry(id){
   let b = '<p class="muted">'+esc(entryName(e))+'</p>';
   if (hasGrams) b += '<div class="field"><label for="eg">'+esc(t('am_grams'))+'</label><input id="eg" type="number" inputmode="decimal" value="'+esc(e.amount.grams)+'"></div>';
   else if (isRecipe) b += '<div class="field"><label for="es">'+esc(t('rc_servings_eaten'))+'</label><input id="es" type="number" inputmode="decimal" step="0.25" value="'+esc(e.amount.qty)+'"></div>';
-  b += '<div class="field"><label for="ed">'+esc(t('lg_date'))+'</label><input id="ed" type="date" value="'+esc(e.date)+'"></div>';
+  b += '<div class="field"><label for="ed">'+esc(t('lg_date'))+'</label><input id="ed" type="date" value="'+esc(e.date)+'"><span class="fhint" data-hint-for="ed">'+esc((e.date) ? numDate(e.date, true) : '')+'</span></div>';
   b += '<div class="field"><span class="flabel">'+esc(t('lg_slot'))+'</span>'+slotChips(slot)+'</div>';
   b += '<details><summary class="linkbtn">'+esc(t('lg_all_nutrients'))+'</summary>'+nutrientTable(e.nutrients)+'</details>';
   if (e.basis === 'estimate') b += '<p class="tiny" style="margin-top:8px">'+esc(t('lg_est_note'))+'</p>';
@@ -6126,7 +6161,7 @@ function suppForm(s){
       [1,2,3,4,5,6,0].map(d => '<button class="chip" type="button" data-day="'+d+'" aria-pressed="'+((s.schedule.days||[]).indexOf(d)>=0)+'">'+dayNames[d]+'</button>').join('') + '</div></div>' +
     '</div>' +
     '<div id="sstartrow"'+(isAltSaved ? '' : ' style="display:none"')+'>' +
-    '<div class="field"><label for="sstart">'+esc(t('sp_rep_start'))+'</label><input id="sstart" type="date" value="'+esc(s.schedule.start || localDateKey())+'"></div>' +
+    '<div class="field"><label for="sstart">'+esc(t('sp_rep_start'))+'</label><input id="sstart" type="date" value="'+esc(s.schedule.start || localDateKey())+'"><span class="fhint" data-hint-for="sstart">'+esc((s.schedule.start || localDateKey()) ? numDate(s.schedule.start || localDateKey(), true) : '')+'</span></div>' +
     '</div>' +
     '<div class="field"><span class="flabel">'+esc(t('sp_time'))+'</span><div class="chips" id="stime">' +
       ['morning','noon','evening','any'].map(x => '<button class="chip" type="button" data-time="'+x+'" aria-pressed="'+((s.schedule.time||'any')===x)+'">'+esc(t('sp_time_'+x))+'</button>').join('') + '</div></div>' +
@@ -6388,7 +6423,7 @@ function renderPhotoResult(r, warn){
   if ((r.suggestions||[]).length) h += '<div class="card flat"><h3>'+esc(t('ph_tweaks'))+'</h3><ul class="tips">'+r.suggestions.map(x => '<li>'+esc(x)+'</li>').join('')+'</ul></div>';
   h += '<div class="card"><h3>'+esc(t('ph_portion'))+'</h3>' +
     '<div class="inline"><div class="field"><label for="phG">'+esc(t('am_grams'))+'</label><input id="phG" type="number" inputmode="decimal" value="'+esc(pg ? Math.round(pg) : 100)+'"></div>' +
-    '<div class="field"><label for="phD">'+esc(t('lg_date'))+'</label><input id="phD" type="date" value="'+esc(PHOTO.date)+'"></div></div>' +
+    '<div class="field"><label for="phD">'+esc(t('lg_date'))+'</label><input id="phD" type="date" value="'+esc(PHOTO.date)+'"><span class="fhint" data-hint-for="phD">'+esc((PHOTO.date) ? numDate(PHOTO.date, true) : '')+'</span></div></div>' +
     '<div class="field"><span class="flabel">'+esc(t('lg_slot'))+'</span>'+slotChips(PHOTO.slot)+'</div>' +
     '<div id="phN"></div>' +
     '<div class="btnrow" style="margin-top:10px"><button class="btn" type="button" id="phLog">'+esc(t('ph_log'))+'</button>' +
@@ -6453,6 +6488,19 @@ const CHAT_TOOLS = [
   }
 ];
 
+let CHAT_HOST = null;
+function chatQ(sel){ return (CHAT_HOST || document).querySelector(sel); }
+
+function chatScrollEnd(){
+  const log = chatQ('#chatLog');
+  if (CHAT_HOST && CHAT_HOST.id !== 's-chat'){
+    if (log) log.scrollTop = log.scrollHeight;
+    else window.scrollTo(0, document.body.scrollHeight);
+  } else {
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+}
+
 async function chatHistory(){
   const all = await recByType('chat_message');
   const thread = S.meta.chatThread || null;
@@ -6485,8 +6533,9 @@ function mdLite(src){
   return out;
 }
 
-async function renderChat(){
-  const host = $('#s-chat');
+async function renderChat(host){
+  host = host || (CHAT_HOST && CHAT_HOST.isConnected ? CHAT_HOST : $('#s-chat'));
+  CHAT_HOST = host;
   const pantry = await recByType('pantry_item');
   const haveN = pantry.filter(p => p.have).length, buyN = pantry.filter(p => !p.have && p.toBuy).length;
   let h = '<div class="chatbar"><button class="chip" type="button" data-act="pantry">'+esc(t('pt_chip', {n: haveN}))+'</button>' +
@@ -6503,14 +6552,54 @@ async function renderChat(){
     '<button class="btn" type="button" id="chatSend" aria-label="'+esc(t('ch_send'))+'">'+icon('send')+'</button></div>';
   host.innerHTML = h;
   fillThumbs(host);
-  const ta = $('#chatText');
+  const ta = chatQ('#chatText');
   if (S.chatSeed){ ta.value = S.chatSeed; S.chatSeed = null; }
   ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = Math.min(160, ta.scrollHeight) + 'px'; });
-  $('#chatSend').addEventListener('click', () => sendChat(ta.value));
-  $('#chatQuick').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (b) sendChat(t(b.getAttribute('data-q'))); });
-  const log = $('#chatLog');
-  setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 30);
+  chatQ('#chatSend').addEventListener('click', () => sendChat(ta.value));
+  chatQ('#chatQuick').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (b) sendChat(t(b.getAttribute('data-q'))); });
+  const log = chatQ('#chatLog');
+  setTimeout(chatScrollEnd, 30);
   return log;
+}
+
+function chatScreenContext(){
+  let s;
+  switch(S.screen){
+    case 'today': s = 'Screen: Today, ' + numDate(localDateKey(), true); break;
+    case 'log': s = 'Screen: Log, ' + numDate(S.logDate || localDateKey(), true); break;
+    case 'review':
+      if (S.reviewMode !== 'month'){
+        const r1 = periodRange('week', S.reviewAnchor);
+        s = 'Screen: Review, week ' + numDate(r1.from, true) + ' – ' + numDate(r1.to, true);
+      } else {
+        const r2 = periodRange('month', S.reviewAnchor);
+        s = 'Screen: Review, month ' + new Intl.DateTimeFormat('en-GB', {month:'long', year:'numeric'}).format(dateFromKey(r2.from));
+      }
+      break;
+    case 'recipes':
+      s = 'Screen: Recipes, ' + (S.recipeTab === 'all' ? 'All recipes' : 'Suggestions');
+      const q = (S.recipeFilter && S.recipeFilter.q || '').trim();
+      if (q) s += ', search "' + q + '"';
+      break;
+    case 'recipe':
+      const r = RECIPES.byId[S.recipeId];
+      s = 'Screen: Recipe, ' + (r ? r.title : '');
+      if (r){
+        const v = recipeView(r, {axis: S.recipeAxis || undefined, servings: S.recipeServings || undefined});
+        if (v.schema2 && v.axis !== (r.written || 'omnivore')){
+          s += ', version ' + v.axis.charAt(0).toUpperCase() + v.axis.slice(1);
+        }
+        if (S.recipeServings != null && Number(S.recipeServings) !== Number(r.servings)){
+          s += ', ' + S.recipeServings + ' servings';
+        }
+      }
+      break;
+    case 'profile': s = 'Screen: Profile'; break;
+    case 'settings': s = 'Screen: Settings'; break;
+    case 'chat': s = 'Screen: Chat'; break;
+    default: s = 'Screen: ' + S.screen;
+  }
+  return s.length > 120 ? s.slice(0, 120) : s;
 }
 
 async function sendChat(text){
@@ -6519,27 +6608,29 @@ async function sendChat(text){
   if (!(await ensureAiReady())) return;
   S.chatBusy = true;
   const thread = S.meta.chatThread || null;
-  await recPut({type:'chat_message', thread, role:'user', text}, {silent:true});
-  const ta = $('#chatText'); if (ta){ ta.value = ''; ta.style.height = 'auto'; }
-  const log = $('#chatLog');
+  const screenCtx = chatScreenContext();
+  await recPut({type:'chat_message', thread, role:'user', text, ctx: screenCtx}, {silent:true});
+  const ta = chatQ('#chatText'); if (ta){ ta.value = ''; ta.style.height = 'auto'; }
+  const log = chatQ('#chatLog');
   const emptyHint = log && log.querySelector('p.tiny'); if (emptyHint) emptyHint.remove();
   log.insertAdjacentHTML('beforeend', chatBubble({role:'user', text}));
   log.insertAdjacentHTML('beforeend', '<div class="bubble ai" id="liveBubble"><span class="typing"><i></i><i></i><i></i></span></div>');
-  window.scrollTo(0, document.body.scrollHeight);
-  const live = $('#liveBubble');
+  chatScrollEnd();
+  const live = chatQ('#liveBubble');
   let shown = '';
   const cards = [];
   try {
     const ctx = await buildContext({today:true, pantry:true, recipes:true});
     const system = 'You are the kitchen and nutrition companion inside NutriLog, a personal food diary. ' + langInstruction() +
-      ' Help with what to cook from the ingredients at home, what is missing, substitutions, meal prep and nutrition questions. Prefer recipes from the person\'s archive (show them with show_recipe). Never suggest anything from the hard exclusions. ' + recipeLangInstruction().replace('Write recipes', 'When you save a recipe with save_recipe, write it') + ' Keep answers short and practical; use lists for ingredients and steps. When the person mentions having, buying or running out of ingredients, call update_pantry.\n\n' + ctx;
+      ' Help with what to cook from the ingredients at home, what is missing, substitutions, meal prep and nutrition questions. Prefer recipes from the person\'s archive (show them with show_recipe). Never suggest anything from the hard exclusions. ' + recipeLangInstruction().replace('Write recipes', 'When you save a recipe with save_recipe, write it') + ' Keep answers short and practical; use lists for ingredients and steps. When the person mentions having, buying or running out of ingredients, call update_pantry. Each message ends with a bracketed line saying which screen the person was on when they sent it; \'this recipe\', \'today\' or \'this week\' refer to it.\n\n' + ctx;
     const hist = (await chatHistory()).filter(m => m.role === 'user' || m.role === 'assistant').slice(-20);
     let messages = [];
     hist.forEach(m => {
       const txt = (m.text || '').trim() || '…';
+      const content = m.role === 'user' && m.ctx ? txt + '\n\n[' + m.ctx + ']' : txt;
       const last = messages[messages.length - 1];
-      if (last && last.role === m.role) last.content += '\n\n' + txt;
-      else messages.push({role: m.role, content: txt});
+      if (last && last.role === m.role) last.content += '\n\n' + content;
+      else messages.push({role: m.role, content});
     });
     /* the API needs the conversation to start with the person */
     while (messages.length && messages[0].role !== 'user') messages.shift();
@@ -6576,7 +6667,7 @@ async function sendChat(text){
     live.outerHTML = '<div class="notice bad">'+esc(t('err_prefix'))+'<div class="verbatim">'+esc(String(err.message||err))+'</div></div>';
   }
   S.chatBusy = false;
-  window.scrollTo(0, document.body.scrollHeight);
+  chatScrollEnd();
 }
 
 async function runChatTool(tu, cards){
@@ -6662,6 +6753,14 @@ async function openPantry(shopping){
   });
 }
 
+async function openChatSheet(seed){
+  const sheet = openSheet(esc(t('t_chat')), '<div class="chatsheet"></div>', '', {full: true});
+  S.afterSheet = () => {};
+  S.chatSeed = seed || null;
+  renderChat(sheet.querySelector('.chatsheet'));
+  return sheet;
+}
+
 /* ---- review.js ---- */
 /* ============================================================
    Weekly and monthly review. Everything is computed on the phone from
@@ -6687,7 +6786,7 @@ function periodLabel(mode, r){
   const f = dateFromKey(r.from), tt = dateFromKey(r.to);
   if (mode === 'month') return new Intl.DateTimeFormat(locale(), {month:'long', year:'numeric'}).format(f);
   const o = {day:'numeric', month:'numeric'};
-  return new Intl.DateTimeFormat(locale(), o).format(f) + ' – ' + new Intl.DateTimeFormat(locale(), o).format(tt);
+  return numDate(f) + ' – ' + numDate(tt);
 }
 
 async function periodData(mode, anchor){
@@ -6759,7 +6858,6 @@ async function renderReview(){
   await foodDbForNames();
   const mode = S.reviewMode;
   const P = await periodData(mode, S.reviewAnchor);
-  if (S.screen === 'review') $('#screenTitle').textContent = periodLabel(mode, P.range);
   const ref = referenceValues();
   let h = '<div class="seg" role="tablist">' +
     '<button type="button" role="tab" aria-selected="'+(mode==='week')+'" class="'+(mode==='week'?'on':'')+'" data-act="rmode" data-v="week">'+esc(t('rv_week'))+'</button>' +
@@ -7178,27 +7276,20 @@ function backupHoursStale(){
   return (Date.now() - new Date(S.meta.backup.lastVerifiedAt).getTime()) / 3600000;
 }
 
+function backupLine(){
+  if (syncFresh()) return '';
+  if (!backupConfigured() && !S.profile) return '<p id="backupLine">' + esc(t('b_line_nobackup_new')) + '</p>';
+  if (!backupConfigured() && S.profile) return '<p id="backupLine">' + esc(t('b_line_nobackup_data')) + ' <button class="btn quiet" type="button" data-act="export">' + esc(t('bar_export')) + '</button></p>';
+  if (backupHoursStale() > 48 && isFinite(backupHoursStale())){
+    const h = Math.floor(backupHoursStale());
+    return '<p id="backupLine">' + esc(t('b_line_stale', {h: h})) + ' <button class="btn quiet" type="button" data-act="backup-now">' + esc(t('b_run_now')) + '</button><button class="btn quiet" type="button" data-act="export">' + esc(t('bar_export')) + '</button></p>';
+  }
+  return '';
+}
+
 function renderBackupBar(){
   const bar = $('#backupBar');
-  const b = S.meta.backup;
-  const hasData = !!S.profile;
-  let cls = 'bar', html = '';
-  if (typeof syncFresh === 'function' && syncFresh()){ bar.className = 'bar hide'; bar.innerHTML = ''; return; }
-  if (!backupConfigured()){
-    if (hasData) cls += ' bad';
-    html = '<div>' + esc(hasData ? t('bar_unconf_data') : t('bar_unconf_new')) + '</div>' +
-      '<div class="btnrow"><button class="btn quiet" type="button" data-act="go-settings">'+esc(t('bar_setup'))+'</button>' +
-      (hasData ? '<button class="btn quiet" type="button" data-act="export">'+esc(t('bar_export'))+'</button>' : '') + '</div>';
-  } else if (backupHoursStale() > 48){
-    cls += ' bad';
-    const h = isFinite(backupHoursStale()) ? Math.floor(backupHoursStale()) : null;
-    html = '<div>' + esc(h === null ? t('bar_unconf_data') : t('bar_stale', {h: h})) + '</div>' +
-      (b.lastError ? '<div class="verbatim">'+esc(b.lastError)+'</div>' : '') +
-      '<div class="btnrow"><button class="btn quiet" type="button" data-act="backup-now">'+esc(t('b_run_now'))+'</button>' +
-      '<button class="btn quiet" type="button" data-act="export">'+esc(t('bar_export'))+'</button></div>';
-  }
-  bar.className = cls + (html ? '' : ' hide');
-  bar.innerHTML = html;
+  if (bar){ bar.className = 'bar hide'; bar.innerHTML = ''; }
 }
 
 /* ============================================================
@@ -7815,7 +7906,7 @@ function syncStateText() {
   if (S.meta.sync.state == 'offline') return t('sy_offline');
   if (S.meta.sync.state == 'error') return t('sy_err', {msg: S.meta.sync.lastError});
   if (S.meta.sync.state == 'revoked') return t('sy_revoked');
-  return t('sy_on', {name: S.meta.sync.name, when: ago(S.meta.sync.lastOkAt)});
+  return t('sy_on', {name: S.meta.sync.name, when: fmtDateTime(S.meta.sync.lastOkAt)});
 }
 
 function catalogStateText() {
@@ -7828,6 +7919,7 @@ function catalogStateText() {
 function syncCardInner() {
   const joined = !!S.secrets.sync;
   let h = '<h3>' + esc(t('sy_title')) + '</h3>';
+  if (typeof backupLine === 'function') h += backupLine();
   h += '<p class="tiny" id="syncState">' + esc(syncStateText()) + '</p>';
   if (joined) h += '<p class="tiny" id="catalogState">' + esc(catalogStateText()) + '</p>';
   h += '<p class="tiny">' + esc(t('sy_link_is_key')) + '</p>';
@@ -7930,7 +8022,7 @@ function submitListHtml() {
         (item.status == 'published' || item.status == 'merged' || item.status == 'duplicate') &&
         typeof RECIPES !== 'undefined' && RECIPES.list &&
         RECIPES.list.some(function(r) { return r.id == item.recipeId && r.origin == 'catalog'; });
-      var date = new Date(item.createdAt).toLocaleDateString(S.lang === 'cs' ? 'cs-CZ' : 'en-GB');
+      var date = numDate(new Date(item.createdAt), true);
       var label = esc(submissionLabel(item));
       var status = esc(date + ' · ' + submissionStatus(item));
       if (canOpen) {
@@ -8718,10 +8810,8 @@ function goBack(){
   else go('today');
 }
 
-/* Header label: the date on Today and Log, the screen name elsewhere (Review sets its period in renderReview). */
+/* Header label: the screen name; Quick mode has no navigator, so it keeps the short date. */
 function headerLabel(){
-  if (S.screen === 'today') return fmtLongDate(dateFromKey(localDateKey()));
-  if (S.screen === 'log') return fmtLongDate(dateFromKey(S.logDate || localDateKey()));
   if (S.screen === 'quick') return fmtShortDate(localDateKey());
   return t('t_' + S.screen);
 }
@@ -8730,10 +8820,12 @@ function refreshChrome(){
   const isSub = SUBSCREENS.indexOf(S.screen) >= 0;
   $('#btnBack').classList.toggle('hide', !isSub);
   $('#btnSettings').classList.toggle('hide', S.screen === 'settings');
+  const bc = $('#btnChat'); if (bc){ bc.classList.toggle('hide', S.screen === 'quick'); bc.classList.toggle('solo', S.screen === 'settings'); bc.setAttribute('aria-label', t('t_chat')); }
   $('#screenTitle').textContent = headerLabel();
 
   document.body.classList.toggle('chatmode', S.screen === 'chat');
-  document.body.classList.toggle('quickmode', quickOn());
+  document.body.classList.toggle('quickmode', quickOn() && S.screen === 'quick');
+  document.body.classList.toggle('quickpref', quickOn());
 }
 
 function renderScreen(name){
@@ -8778,6 +8870,10 @@ function bindEvents(){
   bindQuick();
   $('#btnBack').addEventListener('click', goBack);
   $('#btnSettings').addEventListener('click', () => go('settings'));
+  $('#btnChat').addEventListener('click', () => openChatSheet(''));
+  const dateHintUpd = (e) => { const el = e.target; if (!el || !el.matches || !el.id || !el.matches('input[type="date"]')) return;
+    const h = document.querySelector('[data-hint-for="' + el.id + '"]'); if (h) h.textContent = el.value ? numDate(el.value, true) : ''; };
+  document.addEventListener('input', dateHintUpd); document.addEventListener('change', dateHintUpd);
   document.addEventListener('pointerup', (e) => {
     const b = e.target && e.target.closest ? e.target.closest('.btn') : null;
     if (!b || b.classList.contains('quiet') || b.classList.contains('ghost') || b.classList.contains('danger')) return;
@@ -8888,7 +8984,7 @@ function bindEvents(){
     else if (act === 'recipe-log'){ recipeLogSheet(id); }
     else if (act === 'recipe-fav'){ const n = recipeNote(id) || {}; await saveRecipeNote(id, {favorite: !n.favorite}); renderRecipe(); }
     else if (act === 'recipe-missing'){ recipeMissing(id); }
-    else if (act === 'recipe-ask'){ const r = RECIPES.byId[id]; S.chatSeed = t('rc_ask_seed', {t: r ? r.title : ''}); go('chat'); }
+    else if (act === 'recipe-ask'){ const r = RECIPES.byId[id]; openChatSheet(t('rc_ask_seed', {t: r ? r.title : ''})); }
     else if (act === 'recipe-del'){
       const ok = await confirmSheet(t('rc_delete'), '<p class="muted">'+esc((RECIPES.byId[id]||{}).title||'')+'</p>', t('rc_delete'), true);
       if (ok){ const rec = await dbGet('recipes', id); if (rec){ rec.deleted = true; rec.updatedAt = nowIso(); await dbPut('recipes', rec); } markDirty('recipe deleted'); await loadRecipes(); go('recipes'); }
