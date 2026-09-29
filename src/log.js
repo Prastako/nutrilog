@@ -7,24 +7,11 @@
 /* Wide screens (900 px and more) show Today and the diary in two columns. */
 function isWide(){ return !!(window.matchMedia && window.matchMedia('(min-width: 900px)').matches); }
 
-async function renderToday(){
-  const host = $('#s-today');
-  const now = new Date();
-  const today = localDateKey();
-  let h = '<p class="eyebrow">'+esc(fmtLongDate(now))+'</p>';
-
-  if (!S.profile && moduleOn('goals')){
-    h += '<div class="card"><h2>'+esc(t('today_noprofile_h'))+'</h2>' +
-         '<p class="muted">'+esc(t('today_noprofile_p'))+'</p>' +
-         '<div class="btnrow" style="margin-top:12px"><button class="btn" type="button" data-act="go-profile">'+esc(t('today_setup_btn'))+'</button></div></div>';
-  }
-  const g = moduleOn('goals') ? computeTargets(S.profile) : null;
-  const d = await dayTotals(today);
+/* Energy band, macro grid and fibre line of a day (Today's top block, now at the top of Log). */
+function logBandHtml(d, g){
   const tot = d.total;
   const eaten = tot.kcal || 0;
-
-  const wide = isWide();
-  if (wide) h += '<div class="cols"><div class="col">';
+  let h = '';
   h += '<div class="band">';
   h += '<p class="eyebrow">'+esc(t('td_eaten'))+'</p>';
   h += '<div class="val num">'+esc(fmtNum(eaten))+'<span class="unit">'+esc(t('kcal'))+'</span></div>';
@@ -53,28 +40,7 @@ async function renderToday(){
     const fib = tot.fib || 0;
     h += '<div class="card flat" style="margin-top:12px;padding:12px 14px"><div class="kv" style="border:0;padding:0 0 6px"><span class="k">'+esc(t('nut_fib'))+'</span><span class="v num">'+esc(fmtNum(fib))+' / 25 g</span></div>'+rangeBar(fib, 25, 40, 'progress')+'</div>';
   }
-
-  /* meals */
-  h += '<div class="orn"><i></i></div><div class="card"><h3 style="margin-bottom:6px">'+esc(t('td_meals'))+'</h3>';
-  SLOTS.forEach(s => {
-    const n = d.bySlot[s];
-    const cnt = d.entries.filter(e => e.slot === s).length;
-    h += '<button class="rowbtn" type="button" data-act="add-food" data-slot="'+s+'"><span class="k">'+esc(t('slot_'+s))+'</span>' +
-      '<span class="v num">'+(cnt ? esc(fmtNum(n.kcal||0))+' kcal' : '<span class="tiny">'+esc(t('td_add'))+'</span>')+'</span><span class="plus">+</span></button>';
-  });
-  h += '</div>';
-
-  /* supplements */
-  if (wide) h += '</div><div class="col">';
-  h += '<div id="todaySupps"></div>';
-
-  /* next meal */
-  h += '<div id="todayNext"></div>';
-  if (wide) h += '</div></div>';
-
-  host.innerHTML = h;
-  renderSuppChecklist($('#todaySupps'), today, false, true);
-  renderNextMeal($('#todayNext'), d);
+  return h;
 }
 
 async function renderNextMeal(el, d){
@@ -124,8 +90,7 @@ async function renderLog(){
   const navH = '<div class="daynav"><button class="iconbtn sm" type="button" data-act="ldate" data-d="-1" aria-label="'+esc(t('lg_prev'))+'">'+icon('back')+'</button>' +
     '<label class="datepick"><span class="num">'+esc(day === localDateKey() ? t('today') : fmtLongDate(dateFromKey(day)))+'</span><input type="date" id="logDateInp" value="'+esc(day)+'"></label>' +
     '<button class="iconbtn sm flip" type="button" data-act="ldate" data-d="1" aria-label="'+esc(t('lg_next'))+'">'+icon('back')+'</button></div>';
-  const totH = '<div class="card flat totals"><div class="num"><b>'+esc(fmtNum(d.total.kcal||0))+'</b> kcal'+(g ? ' <span class="tiny">/ '+esc(fmtNum(g.low))+'–'+esc(fmtNum(g.high))+'</span>' : '')+'</div>' +
-    '<div class="tiny num">'+esc(macroLine(d.total))+' · '+esc(t('nut_fib'))+' '+esc(fmtNum(d.total.fib||0))+' g</div></div>';
+  const totH = logBandHtml(d, g);
   let h = '';
   const slots = SLOTS.slice();
   if (d.entries.some(e => SLOTS.indexOf(e.slot) < 0)) slots.push('other');
@@ -144,10 +109,12 @@ async function renderLog(){
     });
     h += '</div>';
   });
-  const restH = '<div id="logSupps"></div>' +
+  const isToday = day === localDateKey();
+  const restH = '<div id="logSupps"></div>' + (isToday ? '<div id="logNext"></div>' : '') +
     '<div class="btnrow" style="margin:6px 0 16px"><button class="btn quiet" type="button" data-act="copy-day">'+esc(t('lg_copy_prev'))+'</button></div>';
-  host.innerHTML = isWide() ? '<div class="cols"><div class="col">' + navH + h + '</div><div class="col">' + totH + restH + '</div></div>' : navH + totH + h + restH;
+  host.innerHTML = isWide() ? '<div class="cols"><div class="col">' + navH + totH + h + '</div><div class="col">' + restH + '</div></div>' : navH + totH + h + restH;
   renderSuppChecklist($('#logSupps'), day, true);
+  if (isToday) renderNextMeal($('#logNext'), d);
   $('#logDateInp').addEventListener('change', e => { if (e.target.value){ S.logDate = e.target.value; renderLog(); } });
 }
 
