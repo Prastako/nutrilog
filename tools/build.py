@@ -7,7 +7,7 @@ version = sys.argv[1] if len(sys.argv) > 1 else (src / 'VERSION').read_text().st
 (src / 'VERSION').write_text(version + '\n')
 css = (src/'fonts.css').read_text() + '\n' + (src/'base.css').read_text() + '\n' + (src/'app.css').read_text()
 icons = (src/'icons.svg.part').read_text()
-order = ['strings.js','core.js','foods.js','recipeschema.js','recipeavail.js','cooked.js','ai.js','ui.js','ornaments.js','recipes.js','log.js','quick.js','photo.js','chat.js','review.js','backup.js','sync.js','catalog.js','submit.js','syncui.js','invite.js','settings.js','app.js']
+order = ['strings.js','core.js','foods.js','recipeschema.js','recipeavail.js','cooked.js','ai.js','ui.js','ornaments.js','recipes.js','log.js','quick.js','photo.js','chat.js','review.js','backup.js','sync.js','catalog.js','submit.js','syncui.js','invite.js','settings.js','start.js','app.js']
 js = '\n'.join('/* ---- ' + f + ' ---- */\n' + (src/f).read_text() for f in order)
 html = (src/'shell.html').read_text()
 for k, v in (('@@CSS@@', css), ('@@ICONS@@', icons), ('@@JS@@', js), ('@@VERSION@@', version)):

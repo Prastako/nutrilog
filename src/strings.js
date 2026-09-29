@@ -1002,3 +1002,5 @@ Object.assign(STR.en, {
   mod_supplements:'Supplements', mod_supplements_d:'Your supplements, their schedule and reminders.', mod_assistant:'Assistant', mod_assistant_d:'Chat, food photos and descriptions, Review commentary. Needs a Claude key.',
   mod_needs_logging:'Goals need the food log; it was turned on too.', mod_goals_off:'Goals were turned off because they need the food log.'
 });
+Object.assign(STR.cs, { t_start:'Začínáme', fs_step:'{i} ze {n}', fs_on:'Zapnout', fs_skip:'Přeskočit' });
+Object.assign(STR.en, { t_start:'Getting started', fs_step:'{i} of {n}', fs_on:'Turn on', fs_skip:'Skip' });
