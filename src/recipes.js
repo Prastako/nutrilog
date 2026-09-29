@@ -179,7 +179,9 @@ function recipeTime(r){ return r && r.time ? (r.time.totalMin || ((r.time.prepMi
 function recipeText(r){ return [r.title, r.titleEn, (r.ingredients||[]).map(i => i.item + ' ' + (i.prep||'')).join(' ')].join(' '); }
 
 function tagCanon(tag){ return tag === 'diet:high-fiber' ? 'diet:high-fibre' : tag; }
+function recipeAuthor(r){ return r && r.author && r.author.name ? String(r.author.name) : ''; }
 function tagLabel(tag){
+  if (String(tag).indexOf('by:') === 0) return String(tag).slice(3);
   const [ns, val] = String(tag).split(':');
   const key = 'tag_' + ns + '_' + (val||'').replace(/[^a-z0-9]+/g,'_');
   const tr = t(key);
@@ -325,7 +327,7 @@ function recipeCard(r, extra){
   return '<button class="rcard" type="button" data-act="open-recipe" data-id="'+esc(r.id)+'">' +
     '<span class="rthumb" data-thumb="'+esc(r.id)+'"><span>'+initial+'</span></span>' +
     '<span class="rbody"><span class="rtitle">'+esc(r.title)+(note && note.favorite ? ' <span class="star">★</span>' : '')+'</span>' +
-    '<span class="rmeta num">'+[tm ? tm+' min' : null, k != null ? fmtNum(k)+' kcal' : null, prot != null ? t('mac_p')+' '+fmtNum(prot)+' g' : null].filter(Boolean).map((x, i, all) => '<span class="mi">'+esc(x)+(i < all.length - 1 ? '&nbsp;·' : '')+'</span>').join(' ')+'</span>' +
+    '<span class="rmeta num">'+[tm ? tm+' min' : null, k != null ? fmtNum(k)+' kcal' : null, prot != null ? t('mac_p')+' '+fmtNum(prot)+' g' : null, recipeAuthor(r) || null].filter(Boolean).map((x, i, all) => '<span class="mi">'+esc(x)+(i < all.length - 1 ? '&nbsp;·' : '')+'</span>').join(' ')+'</span>' +
     (extra ? '<span class="rextra">'+extra+'</span>' : '') +
     '<span class="rtags">' + (v.axisNone ? '<span class="pill err">'+esc(t('rc_axis_none'))+'</span>' : ex.length ? '<span class="pill err">'+esc(t('rc_excluded'))+'</span>' : '') +
       tags.map(x => '<span class="pill">'+esc(tagLabel(x))+'</span>').join('') +
@@ -364,7 +366,10 @@ function recipeMatchesFilter(r){
     else if (c === 'time:under-30'){ const tm = recipeTime(r); if (!(tm && tm <= 30)) return false; }
     else if ((r.tags||[]).map(tagCanon).indexOf(tagCanon(c)) < 0) return false;
   }
-  for (const tg of F.tags){ if ((r.tags||[]).map(tagCanon).indexOf(tagCanon(tg)) < 0) return false; }
+  for (const tg of F.tags){
+    if (String(tg).indexOf('by:') === 0){ if (recipeAuthor(r) !== String(tg).slice(3)) return false; continue; }
+    if ((r.tags||[]).map(tagCanon).indexOf(tagCanon(tg)) < 0) return false;
+  }
   if (F.origin !== 'all' && r.origin !== F.origin) return false;
   return true;
 }
@@ -409,6 +414,11 @@ function openTagBrowser(){
   const nss = Object.keys(byNs).sort((a,b) => (order.indexOf(a) < 0 ? 99 : order.indexOf(a)) - (order.indexOf(b) < 0 ? 99 : order.indexOf(b)));
   let b = '';
   if (!nss.length) b = '<p class="muted">'+esc(t('rl_empty'))+'</p>';
+  const au = {};
+  visibleRecipes().forEach(r => { const n = recipeAuthor(r); if (n) au[n] = (au[n] || 0) + 1; });
+  const names = Object.keys(au).sort((x, y) => au[y] - au[x] || x.localeCompare(y, locale()));
+  if (names.length) b += '<p class="eyebrow" style="margin-top:12px">'+esc(t('au_heading'))+'</p><div class="chips">' +
+    names.map(n => '<button class="chip" type="button" data-act="rtag-toggle" data-v="'+esc('by:' + n)+'" aria-pressed="'+(S.recipeFilter.tags.indexOf('by:' + n)>=0)+'">'+esc(n)+' <span class="tiny">'+au[n]+'</span></button>').join('') + '</div>';
   nss.forEach(ns => {
     b += '<p class="eyebrow" style="margin-top:12px">'+esc(t('tagns_'+ns) !== 'tagns_'+ns ? t('tagns_'+ns) : ns)+'</p><div class="chips">' +
       byNs[ns].sort((a,c) => counts[c] - counts[a]).map(tg =>
@@ -463,6 +473,7 @@ function renderRecipe(){
   if (v.axisNone) h += '<div class="notice" style="margin-bottom:10px">'+esc(t('rc_axis_none_note'))+'</div>';
   h += '<div class="rhero" data-thumb="'+esc(r.id)+'"><span>'+esc((r.title||'?').charAt(0).toUpperCase())+'</span></div>';
   h += '<h2 style="margin:12px 0 4px">'+esc(r.title)+'</h2>';
+  if (recipeAuthor(r)) h += '<p class="tiny rauthor" style="margin-bottom:6px">'+esc(t('au_by', {n: recipeAuthor(r)}))+'</p>';
   const sub = S.lang === 'cs' ? (r.titleCs || (r.titleEn !== r.title ? r.titleEn : '')) : (r.titleEn !== r.title ? r.titleEn : '');
   if (sub) h += '<p class="tiny" style="margin-bottom:6px">'+esc(sub)+'</p>';
   if (r.summary) h += '<p class="muted">'+esc(r.summary)+'</p>';
@@ -504,7 +515,7 @@ function renderRecipe(){
 
   if ((r.variations||[]).length || (r.tips||[]).length){
     h += '<div class="card"><h3>'+esc(t('rc_var_tips'))+'</h3>';
-    (r.variations||[]).forEach(v => { h += '<p><b>'+esc(v.label)+'.</b> '+esc(v.text)+srcRefs(v.from)+'</p>'; });
+    (r.variations||[]).forEach(v => { h += '<p><b>'+esc(v.label)+'.</b>'+(v.by ? ' <span class="pill">'+esc(v.by)+'</span>' : '')+' '+esc(v.text)+srcRefs(v.from)+'</p>'; });
     if ((r.tips||[]).length) h += '<ul class="tips">' + r.tips.map(x => '<li>'+esc(typeof x === 'string' ? x : x.text)+srcRefs(x.from)+'</li>').join('') + '</ul>';
     h += '</div>';
   }
