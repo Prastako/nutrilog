@@ -7,7 +7,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ECEAE6" id="metaThemeColor">
 <script>
-const VERSION = '0.2.9';
+const VERSION = '0.3.0';
 const SCHEMA = 2;
 </script>
 <meta name="mobile-web-app-capable" content="yes">
@@ -910,6 +910,44 @@ body.quickmode, body.quickmode *, body.quickmode *::before, body.quickmode *::af
 body.chatmode #s-chat.on{display:flex;flex-direction:column;min-height:calc(100dvh - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
 body.chatmode #s-chat .chatlog{flex:1}
 body.chatmode #s-chat .chatlog > p.tiny:only-child{margin:auto 0 !important}
+/* tabs-log-today: two or three tabs keep the width of one of five and sit centred */
+@media (max-width: 899.98px){
+  #tabbar[data-n="2"]{grid-template-columns:repeat(2,calc((100% - 8px) / 5));justify-content:center}
+  #tabbar[data-n="3"]{grid-template-columns:repeat(3,calc((100% - 8px) / 5));justify-content:center}
+  #tabbar[data-n="4"]{grid-template-columns:repeat(4,calc((100% - 8px) / 5));justify-content:center}
+}
+/* cook-timers: step countdown and the corner pill */
+.steptimer{margin-left:6px;vertical-align:middle}
+.steptimer.run{display:inline-flex;align-items:center;gap:2px}
+.steptimer .tm-count{background:none;border:0;color:var(--accent-ink);font:inherit;padding:0 4px;cursor:pointer}
+#timerPill{position:fixed;right:12px;bottom:calc(env(safe-area-inset-bottom) + 76px);z-index:65;animation:tp-in var(--t-base) var(--e-arrive)}
+body.notabs #timerPill{bottom:calc(env(safe-area-inset-bottom) + 12px)}
+@media (min-width: 900px){ #timerPill{bottom:calc(env(safe-area-inset-bottom) + 16px)} }
+#timerPill .tp-main{height:40px;display:inline-flex;align-items:center;gap:6px;padding:0 14px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+#timerPill .tp-main svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round}
+#timerPill .tp-more{color:var(--ink2);font-size:13px}
+#timerPill .tp-list{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px;width:min(320px, calc(100vw - 24px));box-shadow:0 6px 20px rgba(0,0,0,.22)}
+#timerPill .tp-row{display:flex;align-items:center;gap:8px;padding:4px}
+#timerPill .tp-open{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;background:none;border:0;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+#timerPill .tp-title{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#timerPill.ended .tp-main, .steptimer.ended .tm-count, #timerPill .tp-row.ended .num{color:var(--accent-ink);animation:tm-pulse 1.2s ease-in-out infinite}
+@keyframes tm-pulse{0%,100%{text-shadow:0 0 0 transparent}50%{text-shadow:0 0 10px var(--glow-strong)}}
+@keyframes tp-in{from{opacity:0}}
+@media (prefers-reduced-motion: reduce){ #timerPill, #timerPill.ended .tp-main, .steptimer.ended .tm-count, #timerPill .tp-row.ended .num{animation:none} }
+/* cook-mode: one step at a time */
+.cook-text{font-family:var(--font-display);font-weight:var(--display-weight);font-size:26px;line-height:1.3;margin:8px 0 14px}
+@media (max-width: 359.98px){ .cook-text{font-size:22px} }
+.cook-ings{list-style:none;padding:0;margin:0 0 14px}
+.cook-ings li{padding:6px 0;border-bottom:1px solid var(--line)}
+.cook-timer{margin:6px 0 10px}
+.cook-timer .steptimer{margin-left:0}
+.cook-nav{justify-content:space-between;align-items:center;margin-top:18px}
+.cook-in-next{animation:ck-next var(--t-base) var(--e-arrive)}
+.cook-in-prev{animation:ck-prev var(--t-base) var(--e-arrive)}
+@keyframes ck-next{from{opacity:0;transform:translateX(12px)}}
+@keyframes ck-prev{from{opacity:0;transform:translateX(-12px)}}
+@keyframes ck-fade{from{opacity:0}}
+@media (prefers-reduced-motion: reduce){ .cook-in-next, .cook-in-prev{animation:ck-fade var(--t-base) linear} }
 
 </style>
 </head>
@@ -934,6 +972,8 @@ body.chatmode #s-chat .chatlog > p.tiny:only-child{margin:auto 0 !important}
 <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 8.5-8.5L22 6l-2 2 1.5 1.5-2 2L17.5 12l-2-2"/></symbol>
 <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l1.6-2.4h6.8L17 8h3v11H4V8Z"/><circle cx="12" cy="13.2" r="3.4"/></symbol>
 <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12 20 4l-5 16-3.2-6.8L4 12Z"/><path d="m11.8 13.2 3.6-3.6"/></symbol>
+<symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7"/><path d="M12 13.5V9.5"/><path d="M10 3h4"/><path d="M12 3v3.5"/><path d="m18 7 1.5-1.5"/></symbol>
+<symbol id="i-speaker" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4v-5Z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></symbol>
 
 </defs></svg>
 <svg id="ornDefs" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -959,6 +999,7 @@ body.chatmode #s-chat .chatlog > p.tiny:only-child{margin:auto 0 !important}
 </defs></svg>
 
 <div id="app">
+  <div id="timerPill" class="hide" aria-live="polite"></div>
   <nav id="tabbar"></nav>
   <header class="topbar">
     <button id="btnBack" class="iconbtn hide" type="button" aria-label="Back"><svg><use href="#i-back"/></svg></button>
@@ -979,6 +1020,8 @@ body.chatmode #s-chat .chatlog > p.tiny:only-child{margin:auto 0 !important}
     <section id="s-profile"  class="screen"></section>
     <section id="s-settings" class="screen"></section>
     <section id="s-quick"    class="screen"></section>
+    <section id="s-start"    class="screen"></section>
+    <section id="s-cook"     class="screen"></section>
   </main>
 
 
@@ -989,7 +1032,7 @@ body.chatmode #s-chat .chatlog > p.tiny:only-child{margin:auto 0 !important}
 
 <script>
 /* ============================================================
-   NutriLog 0.2.9. Built from src/ by tools/build.py.
+   NutriLog 0.3.0. Built from src/ by tools/build.py.
    Edit the files in src/, then run the build; do not edit this
    generated block by hand.
    ============================================================ */
@@ -1988,6 +2031,32 @@ Object.assign(STR.cs, {
 Object.assign(STR.en, {
   b_line_nobackup_new:'No backup yet. Join a profile with a link, or export by hand from time to time.', b_line_nobackup_data:'You have data and no backup. Clearing browser data would take it.', b_line_stale:'Backup has not succeeded for {h} hours.'
 });
+Object.assign(STR.cs, {
+  mod_h:'Funkce', mod_logging:'Zápis jídla', mod_logging_d:'Deník jídel po dnech, rychlý zápis, uložená jídla.', mod_goals:'Cíle', mod_goals_d:'Profil, cílové kalorie a makra, trend váhy, týdenní přehled.',
+  mod_supplements:'Doplňky', mod_supplements_d:'Seznam doplňků, rozvrh a připomínky.', mod_assistant:'Asistent', mod_assistant_d:'Chat, foto a popis jídla, komentář k přehledu. Potřebuje klíč Claude.',
+  mod_needs_logging:'Cíle potřebují zápis jídla; zapnul se také.', mod_goals_off:'Cíle se vypnuly, protože potřebují zápis jídla.'
+});
+Object.assign(STR.en, {
+  mod_h:'Features', mod_logging:'Food log', mod_logging_d:'A diary of what you eat, day by day, with quick logging.', mod_goals:'Goals', mod_goals_d:'Profile, calorie and macro targets, weight trend, the weekly Review.',
+  mod_supplements:'Supplements', mod_supplements_d:'Your supplements, their schedule and reminders.', mod_assistant:'Assistant', mod_assistant_d:'Chat, food photos and descriptions, Review commentary. Needs a Claude key.',
+  mod_needs_logging:'Goals need the food log; it was turned on too.', mod_goals_off:'Goals were turned off because they need the food log.'
+});
+Object.assign(STR.cs, { t_start:'Začínáme', fs_step:'{i} ze {n}', fs_on:'Zapnout', fs_skip:'Přeskočit' });
+Object.assign(STR.en, { t_start:'Getting started', fs_step:'{i} of {n}', fs_on:'Turn on', fs_skip:'Skip' });
+Object.assign(STR.cs, { st_personal:'Osobní', st_advanced:'Pokročilé', st_look:'Vzhled a jazyk', st_profile:'Profil a cíle', st_features:'Funkce', st_supps:'Doplňky', st_recipes:'Recepty',
+  st_sync:'Synchronizace a přátelé', st_claude:'Klíč Claude a modely', st_spend:'Výdaje', st_backup:'Záloha, export a import', st_diag:'Diagnostika', st_danger:'Nebezpečná zóna', st_about:'O aplikaci',
+  arch_load:'Načíst recepty ze souboru' });
+Object.assign(STR.en, { st_personal:'Personal', st_advanced:'Advanced', st_look:'Look and language', st_profile:'Profile and goals', st_features:'Features', st_supps:'Supplements', st_recipes:'Recipes',
+  st_sync:'Sync and friends', st_claude:'Claude key and models', st_spend:'Spend', st_backup:'Backup, export and import', st_diag:'Diagnostics', st_danger:'Danger zone', st_about:'About',
+  arch_load:'Load recipes from a file' });
+Object.assign(STR.cs, { tm_start:'Spustit {m} min', tm_step:'Krok {n}', tm_done:'Hotovo', tm_cancel:'Zrušit časovač' });
+Object.assign(STR.en, { tm_start:'Start {m} min', tm_step:'Step {n}', tm_done:'Done', tm_cancel:'Cancel timer' });
+Object.assign(STR.cs, { rc_cook:'Vařit', ck_step:'Krok {i} z {n}', ck_prev:'Předchozí', ck_next:'Další', ck_finish:'Dovařeno', ck_done:'Uvařeno. Dobrou chuť.', ck_read:'Přečíst krok' });
+Object.assign(STR.en, { rc_cook:'Cook', ck_step:'Step {i} of {n}', ck_prev:'Previous', ck_next:'Next', ck_finish:'Done cooking', ck_done:'Cooked. Enjoy.', ck_read:'Read the step' });
+Object.assign(STR.cs, { cat_loading:'Stahuji sdílené recepty…', cat_failed:'Sdílené recepty se nepodařilo stáhnout; zkusím to příště.', orig_catalog:'Sdílené recepty' });
+Object.assign(STR.en, { cat_loading:'Downloading the shared recipes…', cat_failed:'The shared recipes could not be downloaded; will try again next time.', orig_catalog:'Shared recipes' });
+Object.assign(STR.cs, { au_name_label:'Vaše jméno, jak ho uvidí ostatní', au_name_err:'Jméno musí mít 1 až 40 znaků.', au_offline:'Jste offline; jméno se neuložilo.', au_by:'Poslal(a) {n}', au_heading:'Poslali' });
+Object.assign(STR.en, { au_name_label:'Your name, as others will see it', au_name_err:'The name must be 1 to 40 characters.', au_offline:'You are offline; the name was not saved.', au_by:'Sent by {n}', au_heading:'Sent by' });
 
 /* ---- core.js ---- */
 /* ============================================================
@@ -2498,9 +2567,28 @@ async function loadState(){
     S.profile = migrateDietV3(S.profile);
     await recPut(S.profile);
   }
+  /* One-time upgrade: when modules are not set and the user already has data, turn everything on. */
+  if (S.prefs.modules === undefined || S.prefs.modules === null){
+    var has = S.profile !== null || S.secrets.anthropic !== '' || (await recByType('food_entry')).length > 0 || (await recByType('supplement')).length > 0;
+    if (has){
+      S.prefs.modules = {logging:true, goals:true, supplements:true, assistant:true};
+      await kvSet('prefs', S.prefs);
+    }
+  }
 }
 
 async function savePrefs(){ S.prefs.lang = S.lang; S.prefs.theme = S.theme; S.prefs.look = S.look; S.prefs.type = S.type; await kvSet('prefs', S.prefs); }
+const MODULES = ['logging', 'goals', 'supplements', 'assistant'];
+function moduleOn(name){ return !!(S.prefs.modules && S.prefs.modules[name] === true); }
+function setModule(name, on){
+  var m = Object.assign({logging:false, goals:false, supplements:false, assistant:false}, S.prefs.modules || {});
+  m[name] = !!on;
+  var toasts = [];
+  if (name === 'goals' && on && !m.logging){ m.logging = true; toasts.push('mod_needs_logging'); }
+  if (name === 'logging' && !on && m.goals){ m.goals = false; toasts.push('mod_goals_off'); }
+  S.prefs.modules = m;
+  return toasts;
+}
 async function saveMeta(){ await kvSet('meta', S.meta); }
 
 /* ---------- 5. Migration from schema 1 (v0.1) ----------
@@ -4773,7 +4861,7 @@ function recipeFromAi(r, origin){
     difficulty: r.difficulty || null,
     ingredients: (r.ingredients || []).map(i => ({group: i.group || null, item: i.item, qty: i.qty == null ? null : Number(i.qty), unit: i.unit || null,
       grams: i.grams == null ? null : Number(i.grams), prep: i.prep || null, optional: !!i.optional})),
-    steps: (r.steps || []).map(s => ({text: s.text, minutes: s.minutes == null ? null : Number(s.minutes)})),
+    steps: (r.steps || []).map(s => ({text: s.text, minutes: s.minutes == null ? null : Number(s.minutes), timerSec: s.timerSec == null ? null : Number(s.timerSec)})),
     tips: (r.tips || []).map(x => typeof x === 'string' ? {text: x} : x),
     variations: (r.variations || []).map(v => ({label: v.label, text: v.text})),
     storage: r.storage || null,
@@ -4907,7 +4995,9 @@ function recipeTime(r){ return r && r.time ? (r.time.totalMin || ((r.time.prepMi
 function recipeText(r){ return [r.title, r.titleEn, (r.ingredients||[]).map(i => i.item + ' ' + (i.prep||'')).join(' ')].join(' '); }
 
 function tagCanon(tag){ return tag === 'diet:high-fiber' ? 'diet:high-fibre' : tag; }
+function recipeAuthor(r){ return r && r.author && r.author.name ? String(r.author.name) : ''; }
 function tagLabel(tag){
+  if (String(tag).indexOf('by:') === 0) return String(tag).slice(3);
   const [ns, val] = String(tag).split(':');
   const key = 'tag_' + ns + '_' + (val||'').replace(/[^a-z0-9]+/g,'_');
   const tr = t(key);
@@ -5053,7 +5143,7 @@ function recipeCard(r, extra){
   return '<button class="rcard" type="button" data-act="open-recipe" data-id="'+esc(r.id)+'">' +
     '<span class="rthumb" data-thumb="'+esc(r.id)+'"><span>'+initial+'</span></span>' +
     '<span class="rbody"><span class="rtitle">'+esc(r.title)+(note && note.favorite ? ' <span class="star">★</span>' : '')+'</span>' +
-    '<span class="rmeta num">'+[tm ? tm+' min' : null, k != null ? fmtNum(k)+' kcal' : null, prot != null ? t('mac_p')+' '+fmtNum(prot)+' g' : null].filter(Boolean).map((x, i, all) => '<span class="mi">'+esc(x)+(i < all.length - 1 ? '&nbsp;·' : '')+'</span>').join(' ')+'</span>' +
+    '<span class="rmeta num">'+[tm ? tm+' min' : null, k != null ? fmtNum(k)+' kcal' : null, prot != null ? t('mac_p')+' '+fmtNum(prot)+' g' : null, recipeAuthor(r) || null].filter(Boolean).map((x, i, all) => '<span class="mi">'+esc(x)+(i < all.length - 1 ? '&nbsp;·' : '')+'</span>').join(' ')+'</span>' +
     (extra ? '<span class="rextra">'+extra+'</span>' : '') +
     '<span class="rtags">' + (v.axisNone ? '<span class="pill err">'+esc(t('rc_axis_none'))+'</span>' : ex.length ? '<span class="pill err">'+esc(t('rc_excluded'))+'</span>' : '') +
       tags.map(x => '<span class="pill">'+esc(tagLabel(x))+'</span>').join('') +
@@ -5069,6 +5159,8 @@ function renderRecipes(){
     '<button type="button" role="tab" aria-selected="'+(S.recipeTab==='suggest')+'" class="'+(S.recipeTab==='suggest'?'on':'')+'" data-act="rtab" data-v="suggest">'+esc(t('rt_suggest'))+'</button>' +
     '<button type="button" role="tab" aria-selected="'+(S.recipeTab==='all')+'" class="'+(S.recipeTab==='all'?'on':'')+'" data-act="rtab" data-v="all">'+esc(t('rt_all'))+'</button>' +
     '</div>';
+  if (S.catalogBusy) h += '<p class="tiny" id="catLine">'+esc(t('cat_loading'))+'</p>';
+  else if (S.catalogFailed) h += '<p class="tiny" id="catLine">'+esc(t('cat_failed'))+'</p>';
   h += '<div id="rtabBody"></div>';
   host.innerHTML = h;
   if (S.recipeTab === 'suggest') renderSuggestions();
@@ -5090,7 +5182,10 @@ function recipeMatchesFilter(r){
     else if (c === 'time:under-30'){ const tm = recipeTime(r); if (!(tm && tm <= 30)) return false; }
     else if ((r.tags||[]).map(tagCanon).indexOf(tagCanon(c)) < 0) return false;
   }
-  for (const tg of F.tags){ if ((r.tags||[]).map(tagCanon).indexOf(tagCanon(tg)) < 0) return false; }
+  for (const tg of F.tags){
+    if (String(tg).indexOf('by:') === 0){ if (recipeAuthor(r) !== String(tg).slice(3)) return false; continue; }
+    if ((r.tags||[]).map(tagCanon).indexOf(tagCanon(tg)) < 0) return false;
+  }
   if (F.origin !== 'all' && r.origin !== F.origin) return false;
   return true;
 }
@@ -5135,6 +5230,11 @@ function openTagBrowser(){
   const nss = Object.keys(byNs).sort((a,b) => (order.indexOf(a) < 0 ? 99 : order.indexOf(a)) - (order.indexOf(b) < 0 ? 99 : order.indexOf(b)));
   let b = '';
   if (!nss.length) b = '<p class="muted">'+esc(t('rl_empty'))+'</p>';
+  const au = {};
+  visibleRecipes().forEach(r => { const n = recipeAuthor(r); if (n) au[n] = (au[n] || 0) + 1; });
+  const names = Object.keys(au).sort((x, y) => au[y] - au[x] || x.localeCompare(y, locale()));
+  if (names.length) b += '<p class="eyebrow" style="margin-top:12px">'+esc(t('au_heading'))+'</p><div class="chips">' +
+    names.map(n => '<button class="chip" type="button" data-act="rtag-toggle" data-v="'+esc('by:' + n)+'" aria-pressed="'+(S.recipeFilter.tags.indexOf('by:' + n)>=0)+'">'+esc(n)+' <span class="tiny">'+au[n]+'</span></button>').join('') + '</div>';
   nss.forEach(ns => {
     b += '<p class="eyebrow" style="margin-top:12px">'+esc(t('tagns_'+ns) !== 'tagns_'+ns ? t('tagns_'+ns) : ns)+'</p><div class="chips">' +
       byNs[ns].sort((a,c) => counts[c] - counts[a]).map(tg =>
@@ -5189,6 +5289,7 @@ function renderRecipe(){
   if (v.axisNone) h += '<div class="notice" style="margin-bottom:10px">'+esc(t('rc_axis_none_note'))+'</div>';
   h += '<div class="rhero" data-thumb="'+esc(r.id)+'"><span>'+esc((r.title||'?').charAt(0).toUpperCase())+'</span></div>';
   h += '<h2 style="margin:12px 0 4px">'+esc(r.title)+'</h2>';
+  if (recipeAuthor(r)) h += '<p class="tiny rauthor" style="margin-bottom:6px">'+esc(t('au_by', {n: recipeAuthor(r)}))+'</p>';
   const sub = S.lang === 'cs' ? (r.titleCs || (r.titleEn !== r.title ? r.titleEn : '')) : (r.titleEn !== r.title ? r.titleEn : '');
   if (sub) h += '<p class="tiny" style="margin-bottom:6px">'+esc(sub)+'</p>';
   if (r.summary) h += '<p class="muted">'+esc(r.summary)+'</p>';
@@ -5201,10 +5302,11 @@ function renderRecipe(){
     '<div><span class="k">'+esc(t('rc_difficulty'))+'</span><span class="v">'+esc(r.difficulty ? t('diff_'+r.difficulty) : '–')+'</span></div>' +
     '</div>';
   h += '<div class="btnrow" style="margin:12px 0">' +
-    '<button class="btn" type="button" data-act="recipe-log" data-id="'+esc(r.id)+'">'+icon('log')+esc(t('rc_log'))+'</button>' +
+    (moduleOn('logging') ? '<button class="btn" type="button" data-act="recipe-log" data-id="'+esc(r.id)+'">'+icon('log')+esc(t('rc_log'))+'</button>' : '') +
+    '<button class="btn quiet" type="button" data-act="recipe-cook" data-id="'+esc(r.id)+'">'+esc(t('rc_cook'))+'</button>' +
     '<button class="btn quiet" type="button" data-act="recipe-fav" data-id="'+esc(r.id)+'">'+(note.favorite ? '★ ' : '☆ ')+esc(t('rc_fav'))+'</button>' +
     '<button class="btn quiet" type="button" data-act="recipe-missing" data-id="'+esc(r.id)+'">'+esc(t('rc_missing_btn'))+'</button>' +
-    '<button class="btn quiet" type="button" data-act="recipe-ask" data-id="'+esc(r.id)+'">'+icon('chat')+esc(t('rc_ask'))+'</button>' +
+    (moduleOn('assistant') ? '<button class="btn quiet" type="button" data-act="recipe-ask" data-id="'+esc(r.id)+'">'+icon('chat')+esc(t('rc_ask'))+'</button>' : '') +
     '</div>';
   if ((r.tags||[]).length) h += '<div class="chips" style="margin-bottom:12px">' + r.tags.map(tg => '<span class="pill">'+esc(tagLabel(tg))+'</span>').join('') + '</div>';
 
@@ -5225,11 +5327,11 @@ function renderRecipe(){
 
   /* steps */
   h += '<div class="card"><h3>'+esc(t('rc_steps'))+'</h3><ol class="steps">' +
-    v.steps.map(s => '<li>'+esc(s.text)+(s.minutes ? ' <span class="pill">'+esc(s.minutes)+' min</span>' : '')+'</li>').join('') + '</ol></div>';
+    v.steps.map((s, i) => '<li>'+esc(s.text)+stepTimerHtml(r.id, i, s)+'</li>').join('') + '</ol></div>';
 
   if ((r.variations||[]).length || (r.tips||[]).length){
     h += '<div class="card"><h3>'+esc(t('rc_var_tips'))+'</h3>';
-    (r.variations||[]).forEach(v => { h += '<p><b>'+esc(v.label)+'.</b> '+esc(v.text)+srcRefs(v.from)+'</p>'; });
+    (r.variations||[]).forEach(v => { h += '<p><b>'+esc(v.label)+'.</b>'+(v.by ? ' <span class="pill">'+esc(v.by)+'</span>' : '')+' '+esc(v.text)+srcRefs(v.from)+'</p>'; });
     if ((r.tips||[]).length) h += '<ul class="tips">' + r.tips.map(x => '<li>'+esc(typeof x === 'string' ? x : x.text)+srcRefs(x.from)+'</li>').join('') + '</ul>';
     h += '</div>';
   }
@@ -5278,6 +5380,8 @@ function renderRecipe(){
   }
   host.innerHTML = h;
   fillThumbs(host);
+  if (S.scrollToStep != null){ const li = $$('#s-recipe .steps li')[S.scrollToStep]; S.scrollToStep = null; if (li) setTimeout(() => li.scrollIntoView({block:'center'}), 60); }
+  if (S.afterCookLog && S.afterCookLog === r.id){ S.afterCookLog = null; recipeLogSheet(r.id); }
   $$('[data-rver]', host).forEach(b => b.addEventListener('click', () => { S.recipeAxis = b.getAttribute('data-rver'); renderRecipe(); }));
   const ta = $('#rnote');
   ta.addEventListener('change', () => saveRecipeNote(r.id, {notes: ta.value}));
@@ -5424,7 +5528,7 @@ async function renderSuggestions(){
   if (!S.profile) h += '<div class="notice warn">'+esc(t('sg_noprofile'))+'</div>';
   if (!visibleRecipes().length) h += '<div class="notice">'+esc(t('sg_norecipes'))+'</div>';
   h += '<div id="sgSlots"></div>';
-  h += '<div class="card flat" style="margin-top:6px"><h3>'+esc(t('sg_prep_h'))+'</h3><p class="tiny" style="margin-bottom:10px">'+esc(t('sg_prep_p'))+'</p>' +
+  if (moduleOn('assistant')) h += '<div class="card flat" style="margin-top:6px"><h3>'+esc(t('sg_prep_h'))+'</h3><p class="tiny" style="margin-bottom:10px">'+esc(t('sg_prep_p'))+'</p>' +
     '<button class="btn quiet" type="button" data-act="ai-mealprep">'+icon('suggest')+esc(t('sg_prep_btn'))+'</button></div>';
   host.innerHTML = h;
   let sh = '';
@@ -5436,7 +5540,7 @@ async function renderSuggestions(){
     if (!res.items.length) sh += '<p class="tiny">'+esc(t('sg_none_slot'))+'</p>';
     sh += '<div class="rlist">' + res.items.map(x => recipeCard(x.r,
       (x.serv !== 1 ? esc(t('sg_servings', {n: fmtQty(x.serv), k: fmtNum(x.kcal)})) + ' · ' : '') + esc(x.reasons.slice(0,2).join(' · ')))).join('') + '</div>';
-    sh += '<div class="btnrow" style="margin-top:10px"><button class="btn ghost" type="button" data-act="ai-recipes" data-slot="'+slot+'" data-kcal="'+(res.target ? Math.round(res.target) : '')+'">'+icon('suggest')+esc(t('sg_ai_btn'))+'</button></div>';
+    if (moduleOn('assistant')) sh += '<div class="btnrow" style="margin-top:10px"><button class="btn ghost" type="button" data-act="ai-recipes" data-slot="'+slot+'" data-kcal="'+(res.target ? Math.round(res.target) : '')+'">'+icon('suggest')+esc(t('sg_ai_btn'))+'</button></div>';
     sh += '</div>';
   }
   const slotsEl = $('#sgSlots');
@@ -5540,24 +5644,11 @@ async function recipeIndexForAi(limit){
 /* Wide screens (900 px and more) show Today and the diary in two columns. */
 function isWide(){ return !!(window.matchMedia && window.matchMedia('(min-width: 900px)').matches); }
 
-async function renderToday(){
-  const host = $('#s-today');
-  const now = new Date();
-  const today = localDateKey();
-  let h = '<p class="eyebrow">'+esc(fmtLongDate(now))+'</p>';
-
-  if (!S.profile){
-    h += '<div class="card"><h2>'+esc(t('today_noprofile_h'))+'</h2>' +
-         '<p class="muted">'+esc(t('today_noprofile_p'))+'</p>' +
-         '<div class="btnrow" style="margin-top:12px"><button class="btn" type="button" data-act="go-profile">'+esc(t('today_setup_btn'))+'</button></div></div>';
-  }
-  const g = computeTargets(S.profile);
-  const d = await dayTotals(today);
+/* Energy band, macro grid and fibre line of a day (Today's top block, now at the top of Log). */
+function logBandHtml(d, g){
   const tot = d.total;
   const eaten = tot.kcal || 0;
-
-  const wide = isWide();
-  if (wide) h += '<div class="cols"><div class="col">';
+  let h = '';
   h += '<div class="band">';
   h += '<p class="eyebrow">'+esc(t('td_eaten'))+'</p>';
   h += '<div class="val num">'+esc(fmtNum(eaten))+'<span class="unit">'+esc(t('kcal'))+'</span></div>';
@@ -5586,28 +5677,7 @@ async function renderToday(){
     const fib = tot.fib || 0;
     h += '<div class="card flat" style="margin-top:12px;padding:12px 14px"><div class="kv" style="border:0;padding:0 0 6px"><span class="k">'+esc(t('nut_fib'))+'</span><span class="v num">'+esc(fmtNum(fib))+' / 25 g</span></div>'+rangeBar(fib, 25, 40, 'progress')+'</div>';
   }
-
-  /* meals */
-  h += '<div class="orn"><i></i></div><div class="card"><h3 style="margin-bottom:6px">'+esc(t('td_meals'))+'</h3>';
-  SLOTS.forEach(s => {
-    const n = d.bySlot[s];
-    const cnt = d.entries.filter(e => e.slot === s).length;
-    h += '<button class="rowbtn" type="button" data-act="add-food" data-slot="'+s+'"><span class="k">'+esc(t('slot_'+s))+'</span>' +
-      '<span class="v num">'+(cnt ? esc(fmtNum(n.kcal||0))+' kcal' : '<span class="tiny">'+esc(t('td_add'))+'</span>')+'</span><span class="plus">+</span></button>';
-  });
-  h += '</div>';
-
-  /* supplements */
-  if (wide) h += '</div><div class="col">';
-  h += '<div id="todaySupps"></div>';
-
-  /* next meal */
-  h += '<div id="todayNext"></div>';
-  if (wide) h += '</div></div>';
-
-  host.innerHTML = h;
-  renderSuppChecklist($('#todaySupps'), today, false, true);
-  renderNextMeal($('#todayNext'), d);
+  return h;
 }
 
 async function renderNextMeal(el, d){
@@ -5653,12 +5723,11 @@ async function renderLog(){
   await foodDbForNames();
   const day = S.logDate || localDateKey();
   const d = await dayTotals(day);
-  const g = computeTargets(S.profile);
+  const g = moduleOn('goals') ? computeTargets(S.profile) : null;
   const navH = '<div class="daynav"><button class="iconbtn sm" type="button" data-act="ldate" data-d="-1" aria-label="'+esc(t('lg_prev'))+'">'+icon('back')+'</button>' +
     '<label class="datepick"><span class="num">'+esc(day === localDateKey() ? t('today') : fmtLongDate(dateFromKey(day)))+'</span><input type="date" id="logDateInp" value="'+esc(day)+'"></label>' +
     '<button class="iconbtn sm flip" type="button" data-act="ldate" data-d="1" aria-label="'+esc(t('lg_next'))+'">'+icon('back')+'</button></div>';
-  const totH = '<div class="card flat totals"><div class="num"><b>'+esc(fmtNum(d.total.kcal||0))+'</b> kcal'+(g ? ' <span class="tiny">/ '+esc(fmtNum(g.low))+'–'+esc(fmtNum(g.high))+'</span>' : '')+'</div>' +
-    '<div class="tiny num">'+esc(macroLine(d.total))+' · '+esc(t('nut_fib'))+' '+esc(fmtNum(d.total.fib||0))+' g</div></div>';
+  const totH = logBandHtml(d, g);
   let h = '';
   const slots = SLOTS.slice();
   if (d.entries.some(e => SLOTS.indexOf(e.slot) < 0)) slots.push('other');
@@ -5677,10 +5746,12 @@ async function renderLog(){
     });
     h += '</div>';
   });
-  const restH = '<div id="logSupps"></div>' +
+  const isToday = day === localDateKey();
+  const restH = '<div id="logSupps"></div>' + (isToday ? '<div id="logNext"></div>' : '') +
     '<div class="btnrow" style="margin:6px 0 16px"><button class="btn quiet" type="button" data-act="copy-day">'+esc(t('lg_copy_prev'))+'</button></div>';
-  host.innerHTML = isWide() ? '<div class="cols"><div class="col">' + navH + h + '</div><div class="col">' + totH + restH + '</div></div>' : navH + totH + h + restH;
+  host.innerHTML = isWide() ? '<div class="cols"><div class="col">' + navH + totH + h + '</div><div class="col">' + restH + '</div></div>' : navH + totH + h + restH;
   renderSuppChecklist($('#logSupps'), day, true);
+  if (isToday) renderNextMeal($('#logNext'), d);
   $('#logDateInp').addEventListener('change', e => { if (e.target.value){ S.logDate = e.target.value; renderLog(); } });
 }
 
@@ -5707,7 +5778,7 @@ function openAddSheet(slot, date){
   ADD.slot = slot || guessSlot();
   ADD.date = date || S.logDate || localDateKey();
   ADD.food = null;
-  const modes = ['search','scan','photo','describe','recipe','manual'];
+  const modes = ['search','scan','photo','describe','recipe','manual'].filter(m => moduleOn('assistant') || (m !== 'photo' && m !== 'describe'));
   const b = (quickOn() ? '' : '<div class="seg small" id="addModes">' + modes.map(m =>
       '<button type="button" data-mode="'+m+'" class="'+(m==='search'?'on':'')+'">'+esc(t('am_'+m))+'</button>').join('') + '</div>') +
     '<div id="addBody"></div>';
@@ -5756,7 +5827,7 @@ async function addSearchUI(body){
     res.forEach((f,i) => FOOD_ROWS['s'+i] = {food:f});
     out.innerHTML = (res.length ? res.map((f,i) => foodRow(f, 's'+i)).join('') : '<p class="tiny">'+esc(t('fs_none'))+'</p>') +
       '<div class="btnrow" style="margin:12px 0"><button class="btn quiet" type="button" id="offBtn">'+esc(t('fs_off'))+'</button>' +
-      '<button class="btn quiet" type="button" id="estBtn">'+esc(t('fs_est'))+'</button></div><div id="offRes"></div>';
+      '<button class="btn quiet'+(moduleOn('assistant') ? '' : ' hide')+'" type="button" id="estBtn">'+esc(t('fs_est'))+'</button></div><div id="offRes"></div>';
     $('#offBtn').addEventListener('click', async () => {
       const box = $('#offRes');
       box.innerHTML = '<p class="tiny">'+esc(t('loading'))+'</p>';
@@ -6062,6 +6133,7 @@ function suppScheduledOn(s, dateKey){
 
 async function renderSuppChecklist(el, dateKey, showManage, withButton){
   if (!el) return;
+  if (!moduleOn('supplements')){ el.innerHTML = ''; return; }
   const supps = (await recByType('supplement')).filter(s => s.active !== false);
   const intakes = await recByTypeDate('supplement_intake', dateKey, dateKey);
   if (!supps.length && !showManage && !withButton){ el.innerHTML = ''; return; }
@@ -6109,7 +6181,7 @@ async function toggleSuppIntake(suppId, dateKey, on){
   }
 }
 
-async function openSuppManager(){
+async function openSuppManager(host){
   const supps = await recByType('supplement');
   let b = '';
   if (!supps.length) b += '<p class="muted">'+esc(t('sp_none_long'))+'</p>';
@@ -6122,7 +6194,9 @@ async function openSuppManager(){
   b += '<p class="eyebrow" style="margin-top:16px">'+esc(t('sp_presets'))+'</p><div class="chips">' +
     SUPP_PRESETS.filter(p => !p.hidden).map(p => '<button class="chip add" type="button" data-preset="'+p.key+'">+ '+esc(L(p.name))+'</button>').join('') + '</div>' +
     '<p class="tiny" style="margin-top:8px">'+esc(t('sp_presets_note'))+'</p>';
-  const sheet = openSheet(esc(t('sp_manage')), b, '<button class="btn" type="button" id="sNew">'+esc(t('sp_new'))+'</button>', {tall:true});
+  let sheet;
+  if (host){ host.innerHTML = b + '<div class="btnrow" style="margin-top:14px"><button class="btn" type="button" id="sNew">'+esc(t('sp_new'))+'</button></div>'; sheet = host; }
+  else sheet = openSheet(esc(t('sp_manage')), b, '<button class="btn" type="button" id="sNew">'+esc(t('sp_new'))+'</button>', {tall:true});
   $('#sNew').addEventListener('click', () => suppForm(null));
   sheet.addEventListener('click', e => {
     const ed = e.target.closest('[data-sedit]');
@@ -6185,7 +6259,7 @@ function suppForm(s){
     $('#sdaysrow').style.display = isAlt ? 'none' : '';
     $('#sstartrow').style.display = isAlt ? '' : 'none';
   }));
-  if (!isNew) $('#sDel').addEventListener('click', async () => { await recDelete(s.id); S.afterSheet = openSuppManager; closeSheet(); toast(t('lg_deleted')); });
+  if (!isNew) $('#sDel').addEventListener('click', async () => { await recDelete(s.id); S.afterSheet = suppAfterEdit; closeSheet(); toast(t('lg_deleted')); });
   $('#sSave').addEventListener('click', async () => {
     const name = $('#sn').value.trim();
     if (!name){ toast(t('or_need_title')); return; }
@@ -6213,16 +6287,18 @@ function suppForm(s){
     Object.assign(rec, {type:'supplement', name, form: $('#sf').value, unitLabel: $('#sul').value.trim(), defaultUnits: Number($('#su').value) || 1,
       perUnit: per, extra, active: $('#sact').checked, schedule: sch});
     await recPut(rec);
-    S.afterSheet = openSuppManager;
+    S.afterSheet = suppAfterEdit;
     closeSheet(); toast(t('lg_saved'));
   });
 }
+/* After a supplement edit: back to the Supplements screen in Settings, or to the manager sheet. */
+function suppAfterEdit(){ if (S.screen === 'settings' && S.settingsCat === 'supps') renderSettings(); else openSuppManager(); }
 
 /* ---- quick.js ---- */
 /* ---------- quick mode ---------- */
 
 function quickOn() {
-  return S.prefs.quickMode === 'on';
+  return S.prefs.quickMode === 'on' && moduleOn('logging');
 }
 
 async function setQuickMode(on) {
@@ -6233,7 +6309,7 @@ async function setQuickMode(on) {
 }
 
 function maybeOfferQuick() {
-  if (S.prefs.quickModeAsked || quickOn() || window.innerWidth >= 340) return;
+  if (S.prefs.quickModeAsked || quickOn() || !moduleOn('logging') || window.innerWidth >= 340) return;
   var foot = '<button class="btn" type="button" id="qmYes">' + esc(t('qm_offer_yes')) + '</button>'
     + '<button class="btn quiet" type="button" id="qmNo">' + esc(t('qm_offer_no')) + '</button>';
   openSheet(esc(t('qm_title')), '<p>' + esc(t('qm_offer')) + '</p>', foot);
@@ -6453,9 +6529,9 @@ function renderPhotoResult(r, warn){
     sv.disabled = true; sv.textContent = t('sg_saved');
   });
   $('#phChat').addEventListener('click', () => {
+    const seed = t('ph_chat_seed', {name: r.name, verdict: r.verdict});
+    S.afterSheet = () => openChatSheet(seed);
     closeSheet();
-    S.chatSeed = t('ph_chat_seed', {name: r.name, verdict: r.verdict});
-    go('chat');
   });
 }
 
@@ -6919,7 +6995,7 @@ async function renderReview(){
 
   /* Claude commentary */
   const saved = (await recByType('summary')).filter(s => s.periodKey === P.range.key).sort((a,b) => cmpIso(b.updatedAt, a.updatedAt))[0];
-  h += '<div class="card"><h3>'+esc(t('rv_ai_h'))+'</h3>' +
+  if (moduleOn('assistant')) h += '<div class="card"><h3>'+esc(t('rv_ai_h'))+'</h3>' +
     (saved ? '<div class="aitext">'+mdLite(saved.text)+'</div><p class="tiny" style="margin-top:8px">'+esc(t('rv_ai_when', {d: fmtDateTime(saved.updatedAt)}))+'</p>' : '<p class="tiny">'+esc(t('rv_ai_p'))+'</p>') +
     '<div class="btnrow" style="margin-top:10px"><button class="btn quiet" type="button" data-act="rv-ai" id="rvAi">'+icon('chat')+esc(saved ? t('rv_ai_again') : t('rv_ai_btn'))+'</button></div></div>';
   host.innerHTML = h;
@@ -7036,7 +7112,11 @@ async function reviewWithClaude(){
 const EXPORT_KV_KEYS = ['prefs'];
 
 async function buildPayload(){
-  const kv = (await dbAll('kv')).filter(r => EXPORT_KV_KEYS.indexOf(r.key) >= 0);
+  /* prefs.modules is device-local: never exported */
+  const kv = (await dbAll('kv')).filter(r => EXPORT_KV_KEYS.indexOf(r.key) >= 0).map(r => {
+    if (r.key !== 'prefs' || !r.value) return r;
+    const v = Object.assign({}, r.value); delete v.modules; return {key: r.key, value: v};
+  });
   const records = await dbAll('records');
   const recipes = (await dbAll('recipes')).filter(r => (r.origin === 'claude' || r.origin === 'own') && !r.deleted).map(r => { const c = Object.assign({}, r); delete c._search; return c; });
   return {
@@ -7063,11 +7143,19 @@ function validatePayload(obj){
   return {ok:true};
 }
 
+/* A restored file never changes which modules this device has on. */
+function keepDeviceModules(rec){
+  if (!rec || rec.key !== 'prefs' || !rec.value) return rec;
+  const v = Object.assign({}, rec.value); delete v.modules;
+  if (S.prefs && S.prefs.modules) v.modules = deepCopy(S.prefs.modules);
+  return {key: rec.key, value: v};
+}
+
 async function applyPayload(obj){
   if (obj.schema === 1){
     /* a v0.1 backup: profile and weight history become records */
     await dbClear('records');
-    for (const rec of obj.data.kv) if (rec.key === 'prefs') await dbPut('kv', rec);
+    for (const rec of obj.data.kv) if (rec.key === 'prefs') await dbPut('kv', keepDeviceModules(rec));
     const prof = (obj.data.kv.find(r => r.key === 'profile') || {}).value;
     if (prof){
       const r = profileFromV1(prof);
@@ -7079,7 +7167,7 @@ async function applyPayload(obj){
     }
   } else {
     await dbClear('records');
-    for (const rec of obj.data.kv) await dbPut('kv', rec);
+    for (const rec of obj.data.kv) await dbPut('kv', keepDeviceModules(rec));
     await dbPutMany('records', obj.data.records || []);
     const own = (await dbAll('recipes')).filter(r => r.origin === 'claude' || r.origin === 'own');
     for (const r of own) await dbDel('recipes', r.id);
@@ -7203,7 +7291,7 @@ const BACKUP_TARGETS = {
 };
 
 function backupTarget(){ return BACKUP_TARGETS[S.prefs.backup.target] || BACKUP_TARGETS.github; }
-function backupConfigured(){ return backupTarget().configured(); }
+function backupConfigured(){ return false; }  /* GitHub backup removed (brief settings-screens); export, import and snapshots stay */
 
 let backupTimer = null;
 let backupAttempt = 0;
@@ -7372,10 +7460,10 @@ async function syncFetch(method, path, body, key, opts) {
   var url = syncBase() + path;
   var init = {
     method: method,
-    headers: {
-      Authorization: 'Bearer ' + (key || S.secrets.sync)
-    }
+    headers: {}
   };
+  var k = (opts && opts.noAuth) ? '' : (key || S.secrets.sync);
+  if (k) init.headers.Authorization = 'Bearer ' + k;
   if (opts && opts.keepalive) init.keepalive = true;
   if (body !== undefined) {
     init.headers['Content-Type'] = 'application/json';
@@ -7701,6 +7789,12 @@ async function syncFlush() {
     syncPush({ keepalive: true }).catch(function(){});
   }
 }
+/* ---- display name (brief author) ---- */
+function syncNameOk(name) { var n = String(name || '').trim(); return n.length >= 1 && n.length <= 40 && !/[\r\n]/.test(n); }
+async function syncPutName(name, key) {
+  var data = await syncFetch('PUT', '/v1/me', {name: String(name).trim()}, key);
+  return data.user;
+}
 
 /* ---- catalog.js ---- */
 /* ---- catalog ---- */
@@ -7719,15 +7813,20 @@ async function catalogRun(force) {
 }
 
 async function catalogPull() {
-  if (!S.secrets.sync || S.meta.sync.state === 'revoked' || navigator.onLine === false) {
+  var first = !S.meta.catalog.cursor;
+  if (navigator.onLine === false) {
+    if (first) { S.catalogFailed = true; catalogShow(); }
     return false;
   }
+  /* open catalog (brief open-catalog): no key when there is none or it was revoked */
+  var noAuth = !S.secrets.sync || S.meta.sync.state === 'revoked';
+  S.catalogBusy = first; S.catalogFailed = false; if (first) catalogShow();
 
   try {
     var cursor = S.meta.catalog.cursor;
 
     while (true) {
-      var j = await syncFetch('GET', '/v1/catalog?after=' + cursor);
+      var j = await syncFetch('GET', '/v1/catalog?after=' + cursor, undefined, undefined, {noAuth: noAuth});
 
       for (var i = 0; i < j.items.length; i++) {
         var item = j.items[i];
@@ -7761,18 +7860,24 @@ async function catalogPull() {
       if (all[k].origin === 'catalog') S.meta.catalog.count++;
     }
     S.meta.catalog.lastError = '';
+    if (S.meta.catalog.count > 0 && !S.meta.catalog.starterOff) { S.meta.catalog.starterOff = true; S.prefs.archive.showStarter = false; await savePrefs(); }
     await saveMeta();
-    if (typeof loadRecipes === 'function') loadRecipes();
+    if (typeof loadRecipes === 'function') await loadRecipes();
+    S.catalogBusy = false; catalogShow();
     return true;
   } catch (err) {
     if (err.status === 401) {
+      S.catalogBusy = false; if (first) { S.catalogFailed = true; } catalogShow();
       throw err;
     }
     S.meta.catalog.lastError = String(err.message);
     await saveMeta();
+    S.catalogBusy = false; if (first) { S.catalogFailed = true; } catalogShow();
     return false;
   }
 }
+/* Recipes shows the first-download line while it runs and after it failed (brief open-catalog). */
+function catalogShow() { if (S.screen === 'recipes' && typeof renderRecipes === 'function') renderRecipes(); }
 
 /* ---- submit.js ---- */
 /* ---- submit: send recipes to the shared catalog & list submissions ---- */
@@ -7934,6 +8039,9 @@ function syncCardInner() {
   }
   h += '</div>';
   if (joined) {
+    h += '<div class="field" style="margin-top:10px"><label for="syncNameSet">' + esc(t('au_name_label')) + '</label>' +
+      '<input id="syncNameSet" type="text" autocomplete="off" value="' + esc(S.meta.sync.name || '') + '"></div>' +
+      '<div class="btnrow"><button class="btn quiet" type="button" data-sync="name">' + esc(t('save')) + '</button></div>';
     h += '<p class="tiny">' + esc(t('sy_leave_note')) + '</p>';
     h += submitListHtml();
   }
@@ -7966,6 +8074,7 @@ function bindSyncCard() {
     else if (action == 'now') { await syncRun('now', true); await submissionsFetch(); renderSyncCard(); }
     else if (action == 'share') await openShareSheet();
     else if (action == 'submit') openSubmitSheet();
+    else if (action == 'name') await syncSaveName();
   });
   if (S.secrets.sync) submissionsFetch().then(renderSyncCard);
 }
@@ -7997,10 +8106,16 @@ async function syncCheckKey(key) {
   closeSheet();
   const foot = '<button class="btn" type="button" id="syncJoinYes">' + esc(t('confirm')) + '</button>' +
     '<button class="btn quiet" type="button" id="syncJoinNo">' + esc(t('cancel')) + '</button>';
-  openSheet(esc(t('sy_join_confirm', {name: user.name})), '<p>' + esc(note) + '</p>', foot);
+  openSheet(esc(t('sy_join_confirm', {name: user.name})), '<p>' + esc(note) + '</p>' +
+    '<div class="field" style="margin-top:12px"><label for="syncName">' + esc(t('au_name_label')) + '</label>' +
+    '<input id="syncName" type="text" autocomplete="off" value="' + esc(user.name || '') + '"></div><p class="tiny" id="syncNameErr"></p>', foot);
   $('#syncJoinYes').addEventListener('click', async () => {
+    const nm = String(($('#syncName') || {}).value || '').trim();
+    if (!syncNameOk(nm)) { const er = $('#syncNameErr'); if (er) er.textContent = t('au_name_err'); return; }
     closeSheet();
-    await syncJoin(key, user);
+    let u = user;
+    if (nm !== (user.name || '')) { try { u = (await syncPutName(nm, key)) || Object.assign({}, user, {name: nm}); } catch (err) { u = user; } }
+    await syncJoin(key, u);
   });
   $('#syncJoinNo').addEventListener('click', () => {
     closeSheet();
@@ -8075,6 +8190,20 @@ async function submitSheetSend() {
   } else if (r.err == 'sy_revoked') {
     closeSheet();
     renderSyncCard();
+  }
+}
+/* Sync and friends: save the name others see (brief author). */
+async function syncSaveName() {
+  const nm = String(($('#syncNameSet') || {}).value || '').trim();
+  if (!syncNameOk(nm)) { toast(t('au_name_err')); return; }
+  if (navigator.onLine === false) { toast(t('au_offline')); return; }
+  try {
+    const u = await syncPutName(nm);
+    S.meta.sync.name = (u && u.name) || nm;
+    await saveMeta();
+    toast(t('sg_saved'));
+  } catch (err) {
+    toast(err && err.status ? t('sy_err', {msg: err.message}) : t('au_offline'));
   }
 }
 
@@ -8222,6 +8351,7 @@ function renderProfile(){
   const num = (path, id, label, attrs, hint) => '<div class="field"><label for="'+id+'">'+esc(label)+'</label><input id="'+id+'" type="number" '+attrs+' data-bind="'+path+'" value="'+esc(getPath(d, path) == null ? '' : getPath(d, path))+'">'+(hint ? '<span class="fhint">'+esc(hint)+'</span>' : '')+'</div>';
   let h = '<p class="muted">'+esc(t('p_intro'))+'</p><div class="orn"><i></i></div>';
 
+  const goalsFrom = h.length;
   h += '<div class="card"><h3>'+esc(t('p_basics'))+'</h3>';
   h += '<div class="inline">' + num('person.age','f-age',t('p_age'),'inputmode="numeric" min="10" max="100"',t('p_years')) +
        num('person.heightCm','f-height',t('p_height'),'inputmode="numeric" min="100" max="250"',t('p_hint_height')) +
@@ -8302,6 +8432,7 @@ function renderProfile(){
     '<p class="tiny">' + esc(t('pg_slots_note')) + '</p>' +
     '<div id="slotPreviewBox">' + previewParts(d).slots + '</div></div>';
 
+  if (!moduleOn('goals')) h = h.slice(0, goalsFrom);
   /* exclusions */
   h += '<div class="card"><h3>'+esc(t('p_allergy_h'))+'</h3>' +
        '<p class="tiny" style="margin-bottom:10px">'+esc(t('p_allergy_intro'))+'</p>';
@@ -8387,6 +8518,7 @@ function renderProfile(){
 
 function profileMissing(d){
   const miss = [];
+  if (!moduleOn('goals')) return miss;
   const P = d.person, G = d.goals;
   if (!P.age) miss.push(t('p_age'));
   if (!P.weightKg) miss.push(t('p_weight'));
@@ -8442,7 +8574,8 @@ async function saveProfile(){
   await writeLocalSnapshot();
   toast(t('p_saved'));
   S.draft = null;
-  go('today');
+  if (S.afterStart){ S.afterStart = false; S.recipeTab = 'all'; go('recipes'); }
+  else go('today');
 }
 
 /* ---------- Connection tests (from v0.1) ---------- */
@@ -8530,6 +8663,7 @@ function keyField(id, labelKey, value, testAct, resultId, ph){
 function renderSettings(){
   const P = S.prefs;
   let h = '';
+  h += '<!--cat:look-->';
   h += '<div class="card"><h3>'+esc(t('set_look'))+'</h3>' +
     '<div class="field"><span class="flabel">'+esc(t('set_lookpick'))+'</span><div class="looks">' +
       LOOKS.map(l => '<button class="looktile" type="button" data-act="look" data-v="'+l.id+'" aria-pressed="'+(lookOf(S.look).id===l.id)+'" style="background:'+l.dark.ground+';color:'+l.dark.ink+';--lk-accent:'+l.dark.accent+'">' +
@@ -8548,40 +8682,37 @@ function renderSettings(){
       '<button type="button" class="'+(S.lang==='cs'?'on':'')+'" data-act="lang" data-v="cs" aria-pressed="'+(S.lang==='cs')+'">Čeština</button>' +
       '<button type="button" class="'+(S.lang==='en'?'on':'')+'" data-act="lang" data-v="en" aria-pressed="'+(S.lang==='en')+'">English</button>' +
     '</div></div>' +
-    '<label class="opt sq" style="margin-top:12px"><input type="checkbox" id="qmSwitch" '+(quickOn() ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('qm_title'))+'</span><span class="t2">'+esc(t('qm_note'))+'</span></span></label></div>';
+    (moduleOn('logging') ? '<label class="opt sq" style="margin-top:12px"><input type="checkbox" id="qmSwitch" '+(quickOn() ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('qm_title'))+'</span><span class="t2">'+esc(t('qm_note'))+'</span></span></label>' : '') + '</div>';
 
-  h += '<div class="card"><h3>'+esc(t('set_profile_h'))+'</h3>' +
-    '<div class="btnrow"><button class="btn quiet" type="button" data-act="go-profile">'+esc(t('set_profile_open'))+'</button></div></div>';
+  h += '<!--cat:features-->';
+  h += featuresCardHtml();
+  h += '<!--cat:supps--><div class="card" id="suppScreen"></div>';
 
+  h += '<!--cat:claude-->';
   h += '<div class="card"><h3>'+esc(t('set_keys_h'))+'</h3>' +
     '<p class="tiny" style="margin-bottom:12px">'+esc(t('set_keys_note'))+'</p>' +
-    keyField('k-anthropic','k_anthropic', S.secrets.anthropic, 'test-anthropic', 'r-anthropic') +
-    '<p class="tiny" style="margin:-4px 0 14px">'+esc(t('k_anthropic_tip'))+'</p>' +
-    keyField('k-github','k_github', S.secrets.github, null, null) +
-    '<div class="field"><label for="k-repo">'+esc(t('k_repo'))+'</label>' +
-      '<input id="k-repo" type="text" autocapitalize="off" spellcheck="false" data-set="prefs.backup.repo" value="'+esc(P.backup.repo)+'" placeholder="'+esc(t('k_repo_ph'))+'"></div>' +
-    '<div class="field"><label for="k-branch">'+esc(t('k_branch'))+'</label>' +
-      '<input id="k-branch" type="text" autocapitalize="off" spellcheck="false" data-set="prefs.backup.branch" value="'+esc(P.backup.branch)+'"></div>' +
-    '<div class="btnrow"><button class="btn quiet" type="button" data-act="test-github">'+esc(t('test_btn'))+'</button></div>' +
-    '<div id="r-github"></div></div>';
+    (moduleOn('assistant') ? keyField('k-anthropic','k_anthropic', S.secrets.anthropic, 'test-anthropic', 'r-anthropic') + '<p class="tiny" style="margin:-4px 0 14px">'+esc(t('k_anthropic_tip'))+'</p>' : '') +
+    '</div>';
 
   /* archive */
+  h += '<!--cat:recipes-->';
   const A = S.meta.archive;
   const counts = {archive:0, starter:0, claude:0, own:0};
   RECIPES.list.forEach(r => { counts[r.origin] = (counts[r.origin]||0) + 1; });
   h += '<div class="card"><h3>'+esc(t('arch_h'))+'</h3><p class="tiny" style="margin-bottom:10px">'+esc(t('arch_intro'))+'</p>' +
+    '<div class="kv"><span class="k">'+esc(t('orig_catalog'))+'</span><span class="v num">'+(S.meta.catalog.count || counts.catalog || 0)+'</span></div>' +
+    '<div class="kv"><span class="k">'+esc(t('arch_last'))+'</span><span class="v">'+esc(S.meta.catalog.lastOkAt ? fmtDateTime(S.meta.catalog.lastOkAt) : t('never'))+'</span></div>' +
     '<div class="kv"><span class="k">'+esc(t('orig_archive'))+'</span><span class="v num">'+counts.archive+'</span></div>' +
     '<div class="kv"><span class="k">'+esc(t('orig_claude'))+' / '+esc(t('orig_own'))+'</span><span class="v num">'+counts.claude+' / '+counts.own+'</span></div>' +
     '<div class="kv"><span class="k">'+esc(t('orig_starter'))+'</span><span class="v num">'+counts.starter+'</span></div>' +
-    '<div class="kv"><span class="k">'+esc(t('arch_last'))+'</span><span class="v">'+esc(A.lastSyncAt ? fmtDateTime(A.lastSyncAt) : t('never'))+'</span></div>' +
-    (A.lastError ? '<div class="notice bad" style="margin-top:8px"><div class="verbatim">'+esc(A.lastError)+'</div></div>' : '') +
-    '<div class="field" style="margin-top:10px"><label for="a-path">'+esc(t('arch_path'))+'</label><input id="a-path" type="text" autocapitalize="off" spellcheck="false" data-set="prefs.archive.path" value="'+esc(P.archive.path)+'"></div>' +
-    '<div class="btnrow"><button class="btn quiet" type="button" data-act="arch-sync">'+icon('refresh')+esc(t('arch_sync'))+'</button>' +
-    '<button class="btn quiet" type="button" data-act="arch-import">'+icon('up')+esc(t('arch_import'))+'</button></div>' +
+    '<div class="btnrow">' +
+    '<button class="btn quiet" type="button" data-act="arch-import">'+icon('up')+esc(t('arch_load'))+'</button></div>' +
     '<input type="file" id="archFile" accept="application/json,.json" class="hide">' +
     '<label class="opt sq" style="margin-top:12px"><input type="checkbox" id="a-starter" '+(P.archive.showStarter ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('arch_starter'))+'</span><span class="t2">'+esc(t('arch_starter_d'))+'</span></span></label></div>';
 
   /* models and spend */
+  const aiFrom = h.length;
+  h += '<!--cat:claude-->';
   h += '<div class="card"><h3>'+esc(t('set_models_h'))+'</h3>' +
     ['chat','vision','analysis'].map(role =>
       '<div class="field"><label for="m-'+role+'">'+esc(t('m_'+role))+'</label>' +
@@ -8589,6 +8720,7 @@ function renderSettings(){
     '<p class="tiny">'+esc(t('m_note'))+'</p></div>';
 
   const models = [P.models.chat, P.models.vision, P.models.analysis].filter((v,i,a) => a.indexOf(v) === i);
+  h += '<!--cat:spend-->';
   h += '<div class="card"><h3>'+esc(t('set_price_h'))+'</h3>' +
     '<div class="field"><label for="bud">'+esc(t('bud_label'))+'</label><input id="bud" type="number" inputmode="decimal" step="1" min="0" data-set="prefs.budget.monthlyUsd" value="'+esc(P.budget.monthlyUsd)+'"></div>' +
     '<div class="kv"><span class="k">'+esc(t('bud_month'))+'</span><span class="v num">'+esc(fmtNum(monthCost(),2))+' USD</span></div>' +
@@ -8614,15 +8746,16 @@ function renderSettings(){
     '<div class="kv"><span class="k">'+esc(t('usage_cost'))+'</span><span class="v num">'+esc(fmtNum(cost,2))+' USD</span></div>' +
     '<div class="btnrow" style="margin-top:8px"><button class="btn quiet" type="button" data-act="usage-reset">'+esc(t('usage_reset'))+'</button></div></div>';
 
+  if (!moduleOn('assistant')) h = h.slice(0, aiFrom);
+  h += '<!--cat:sync-->';
   h += syncCardHtml();
-  h += '<div class="card"><h3>'+esc(t('set_data_h'))+'</h3><div id="backupPanel"></div>' +
+  h += '<!--cat:backup-->';
+  h += '<div class="card"><h3>'+esc(t('set_data_h'))+'</h3>' +
     '<div class="btnrow" style="margin-top:12px">' +
-      '<button class="btn quiet" type="button" data-act="backup-now">'+icon('cloud')+esc(t('b_run_now'))+'</button>' +
       '<button class="btn quiet" type="button" data-act="export">'+icon('down')+esc(t('b_export'))+'</button>' +
     '</div><p class="tiny" style="margin-top:8px">'+esc(navigator.share ? t('b_export_note') : t('b_export_note_dl'))+'</p>' +
     '<div class="btnrow" style="margin-top:12px">' +
       '<button class="btn quiet" type="button" data-act="import">'+icon('up')+esc(t('b_import'))+'</button>' +
-      '<button class="btn quiet" type="button" data-act="restore-cloud">'+icon('cloud')+esc(t('b_restore_cloud'))+'</button>' +
     '</div>' +
     '<input type="file" id="importFile" accept="application/json,.json" class="hide">' +
     '<div class="notice warn" style="margin-top:10px">'+esc(t('b_restore_warn'))+'</div>' +
@@ -8633,17 +8766,20 @@ function renderSettings(){
     '<p class="tiny" style="margin-top:12px">'+esc(t('b_secrets_note'))+'</p>' +
     '<p class="tiny" style="margin-top:8px">'+esc(t('b_format_note'))+'</p></div>';
 
+  h += '<!--cat:diag-->';
   h += '<div class="card"><h3>'+esc(t('dg_h'))+'</h3><p class="muted">'+esc(t('dg_p'))+'</p>' +
     '<div id="diagPanel" style="margin-top:10px"></div>' +
     '<div class="btnrow" style="margin-top:12px">' +
       '<button class="btn quiet" type="button" data-act="diag-copy">'+icon('down')+esc(t('dg_copy'))+'</button>' +
     '</div></div>';
 
+  h += '<!--cat:danger-->';
   h += '<div class="card"><h3>'+esc(t('danger_h'))+'</h3><p class="muted">'+esc(t('danger_p'))+'</p>' +
     '<div class="field" style="margin-top:12px"><label for="eraseWord">'+esc(t('danger_type',{word:t('danger_word')}))+'</label>' +
     '<input id="eraseWord" type="text" autocapitalize="characters" autocomplete="off"></div>' +
     '<div class="btnrow"><button class="btn danger" type="button" data-act="erase">'+icon('trash')+esc(t('danger_btn'))+'</button></div></div>';
 
+  h += '<!--cat:about-->';
   h += '<div class="card"><h3>'+esc(t('about_h'))+'</h3>' +
     '<div class="kv"><span class="k">'+esc(t('about_version'))+'</span><span class="v num">'+esc(VERSION)+'</span></div>' +
     '<div class="kv"><span class="k">'+esc(t('about_schema'))+'</span><span class="v num">'+esc(SCHEMA)+'</span></div>' +
@@ -8655,18 +8791,19 @@ function renderSettings(){
     '</div>' +
     '<div class="orn"><i></i></div>' +
     '<p class="eyebrow">'+esc(t('about_clear_h'))+'</p><p class="tiny">'+esc(t('about_clear_p'))+'</p>' +
-    '<p class="eyebrow" style="margin-top:12px">'+esc(t('about_token_h'))+'</p><p class="tiny">'+esc(t('about_token_p'))+'</p>' +
-    '<p style="margin-top:10px"><a href="https://github.com/settings/personal-access-tokens" target="_blank" rel="noopener">'+esc(t('about_revoke'))+'</a></p>' +
     '</div>';
 
+  h = settingsLayout(h);
   $('#s-settings').innerHTML = h;
+  bindFeatures();
+  if (S.settingsCat === 'supps') openSuppManager($('#suppScreen'));
   bindSyncCard();
   renderBackupPanel();
   fillStorageInfo();
   fillSnapshots();
   renderDiagnostics();
   $('#a-starter').addEventListener('change', async e => { S.prefs.archive.showStarter = e.target.checked; await savePrefs(); });
-  $('#qmSwitch').addEventListener('change', e => setQuickMode(e.target.checked));
+  if ($('#qmSwitch')) $('#qmSwitch').addEventListener('change', e => setQuickMode(e.target.checked));
 }
 
 /* ---------- Diagnostics (from v0.1) ---------- */
@@ -8761,6 +8898,529 @@ async function fillSnapshots(){
     '<span class="v"><button class="btn quiet" type="button" style="min-height:36px;padding:6px 14px" data-act="snap-restore" data-date="'+esc(s.date)+'">'+esc(t('b_snapshot_restore'))+'</button></span></div>').join('');
 }
 
+function featuresCardHtml() {
+  let html = '<div class="card"><h3>' + esc(t('mod_h')) + '</h3>';
+  for (const name of MODULES) {
+    html += '<label class="opt sq"><input type="checkbox" id="mod-' + name + '" data-mod="' + name + '"'
+        + (moduleOn(name) ? ' checked' : '') + '><span class="mark"></span>'
+        + '<span class="txt"><span class="t1">' + esc(t('mod_' + name)) + '</span>'
+        + '<span class="t2">' + esc(t('mod_' + name + '_d')) + '</span></span></label>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function bindFeatures() {
+  for (const name of MODULES) {
+    const el = $('#mod-' + name);
+    if (el) {
+      el.addEventListener('change', async e => {
+        const keys = setModule(name, e.target.checked);
+        await savePrefs();
+        for (const key of keys) { toast(t(key)); }
+        renderTabs(); refreshChrome(); renderSettings();
+      });
+    }
+  }
+}
+
+/* ---------- Settings categories (brief settings-screens) ---------- */
+
+const SETTINGS_GROUPS = [
+  ['st_personal', ['look', 'profile', 'features', 'supps', 'recipes', 'sync']],
+  ['st_advanced', ['claude', 'spend', 'backup', 'diag', 'danger', 'about']]
+];
+function settingsRowOn(cat){
+  if (cat === 'profile') return moduleOn('goals');
+  if (cat === 'supps') return moduleOn('supplements');
+  if (cat === 'claude' || cat === 'spend') return moduleOn('assistant');
+  return true;
+}
+function settingsListHtml(){
+  return SETTINGS_GROUPS.map(([head, cats]) => '<p class="eyebrow">'+esc(t(head))+'</p><div class="card" style="padding-top:6px;padding-bottom:6px">' +
+    cats.filter(settingsRowOn).map(c => '<button class="rowbtn" type="button" ' + (c === 'profile' ? 'data-act="go-profile"' : 'data-act="set-cat" data-v="'+c+'"') + '>' +
+      '<span class="k">'+esc(t('st_'+c))+'</span><span class="plus">›</span></button>').join('') + '</div>').join('');
+}
+/* The cards carry <!--cat:x--> marks; the list shows alone, or one category shows and the others stay hidden. */
+function settingsLayout(h){
+  if (S.settingsCat && !settingsRowOn(S.settingsCat)) S.settingsCat = null;
+  const parts = h.split(/<!--cat:([a-z]+)-->/);
+  let out = parts[0];
+  for (let i = 1; i < parts.length; i += 2)
+    out += '<div class="setcat'+(S.settingsCat === parts[i] ? '' : ' hide')+'" data-cat="'+parts[i]+'">' + parts[i+1] + '</div>';
+  return (S.settingsCat ? '' : settingsListHtml()) + out;
+}
+function openSettingsCat(cat){
+  S.settingsCat = cat;
+  try { history.pushState({screen:'settings', cat: cat}, '', '#settings'); } catch(e){}
+  refreshChrome();
+  renderSettings();
+  window.scrollTo(0, 0);
+}
+
+/* ---- start.js ---- */
+/* First start (brief first-start): one page per module; nothing is saved before the last page. */
+const START = { page: 0, mods: null };
+
+function startReset() {
+  START.page = 0;
+  START.mods = {logging:false, goals:false, supplements:false, assistant:false};
+}
+
+async function needsStart() {
+  if (S.prefs.modules !== undefined && S.prefs.modules !== null) return false;
+  if (S.profile) return false;
+  return (await dbAll('records')).length === 0;
+}
+
+function renderStart() {
+  if (START.mods === null) startReset();
+  var name = MODULES[START.page];
+  var h = '';
+  if (START.page === 0) {
+    h += '<div class="seg" style="margin-bottom:14px">';
+    h += '<button type="button" class="' + (S.lang==='cs'?'on':'') + '" data-act="lang" data-v="cs" aria-pressed="' + (S.lang==='cs'?'true':'false') + '">Čeština</button>';
+    h += '<button type="button" class="' + (S.lang==='en'?'on':'') + '" data-act="lang" data-v="en" aria-pressed="' + (S.lang==='en'?'true':'false') + '">English</button>';
+    h += '</div>';
+  }
+  h += '<p class="eyebrow">' + esc(t('fs_step', {i: START.page + 1, n: MODULES.length})) + '</p>';
+  h += '<h2>' + esc(t('mod_' + name)) + '</h2>';
+  h += '<p class="muted" style="margin:10px 0 22px">' + esc(t('mod_' + name + '_d')) + '</p>';
+  h += '<div class="btnrow"><button class="btn" type="button" id="startOn">' + esc(t('fs_on')) + '</button><button class="btn quiet" type="button" id="startSkip">' + esc(t('fs_skip')) + '</button></div>';
+  $('#s-start').innerHTML = h;
+  $('#startOn').addEventListener('click', () => startChoose(true));
+  $('#startSkip').addEventListener('click', () => startChoose(false));
+  refreshChrome();
+}
+
+function startChoose(on) {
+  var name = MODULES[START.page];
+  START.mods[name] = on;
+  if (name === 'goals' && on && !START.mods.logging) {
+    START.mods.logging = true;
+    toast(t('mod_needs_logging'));
+  }
+  if (name === 'logging' && !on && START.mods.goals) {
+    START.mods.goals = false;
+    toast(t('mod_goals_off'));
+  }
+  START.page += 1;
+  if (START.page < MODULES.length) {
+    renderStart();
+  } else {
+    finishStart();
+  }
+}
+
+function startBack() {
+  if (START.page > 0) {
+    START.page -= 1;
+    renderStart();
+  }
+}
+
+async function finishStart() {
+  S.prefs.modules = Object.assign({}, START.mods);
+  await savePrefs();
+  START.mods = null;
+  START.page = 0;
+  try { history.replaceState({screen:'recipes'}, '', '#recipes'); } catch(e){}
+  if (moduleOn('goals')) {
+    S.draft = null;
+    S.afterStart = true;
+    go('profile');
+  } else {
+    S.recipeTab = 'all';
+    go('recipes');
+  }
+}
+
+/* ---- timers.js ---- */
+/* Cooking timers (brief cook-timers): stored on the device in S.meta.timers, always counted from endsAt. */
+const TIMERS = { iv: null, open: false };
+
+function stepTimerSec(step) {
+  if (step && Number(step.timerSec) > 0) return Math.round(Number(step.timerSec));
+  if (step && Number(step.minutes) > 0) return Math.round(Number(step.minutes) * 60);
+  return 0;
+}
+
+function fmtTimer(sec) {
+  var s = Math.max(0, Math.round(sec));
+  var h = Math.floor(s / 3600);
+  var m = Math.floor((s % 3600) / 60);
+  var x = s % 60;
+  function p(n) { return (n < 10 ? '0' : '') + n; }
+  if (h > 0) return h + ':' + p(m) + ':' + p(x);
+  return m + ':' + p(x);
+}
+
+function timersAll() {
+  if (Array.isArray(S.meta.timers)) return S.meta.timers;
+  return [];
+}
+
+function timerLeft(tm, now) {
+  if (now === undefined || now === null) now = Date.now();
+  return Math.max(0, Math.ceil((Date.parse(tm.endsAt) - now) / 1000));
+}
+
+function timerFor(recipeId, stepIndex) {
+  var list = timersAll();
+  for (var i = 0; i < list.length; i++) {
+    if (list[i].recipeId === recipeId && list[i].stepIndex === stepIndex) return list[i];
+  }
+  return null;
+}
+
+function timersSoonest() {
+  var list = timersAll();
+  var copy = list.slice();
+  copy.sort(function(a, b) { return Date.parse(a.endsAt) - Date.parse(b.endsAt); });
+  return copy;
+}
+
+async function timerStart(recipeId, stepIndex, sec, label) {
+  var existing = timerFor(recipeId, stepIndex);
+  if (existing) return existing;
+  var tm = {
+    id: 'tm' + Date.now().toString(36) + Math.floor(Math.random() * 1e6).toString(36),
+    recipeId: recipeId,
+    stepIndex: stepIndex,
+    endsAt: new Date(Date.now() + sec * 1000).toISOString(),
+    label: String(label || '').slice(0, 40)
+  };
+  S.meta.timers = timersAll().concat([tm]);
+  await saveMeta();
+  if (typeof timersTick === 'function') timersTick();
+  return tm;
+}
+
+async function timerCancel(id) {
+  S.meta.timers = timersAll().filter(function(x) { return x.id !== id; });
+  await saveMeta();
+  if (typeof timersTick === 'function') timersTick();
+}
+
+function stepTimerHtml(recipeId, i, step) {
+  var sec = stepTimerSec(step);
+  if (sec === 0) return '';
+  var tm = timerFor(recipeId, i);
+  if (!tm) {
+    return ' <button class="btn quiet sm steptimer" type="button" data-act="timer-start" data-step="' + i + '" data-sec="' + sec + '" data-label="' + esc(String(step.text || '').slice(0, 40)) + '">' + esc(t('tm_start', {m: Math.max(1, Math.round(sec / 60))})) + '</button>';
+  }
+  var left = timerLeft(tm);
+  return ' <span class="steptimer run' + (left === 0 ? ' ended' : '') + '" data-timer-id="' + tm.id + '"><button class="tm-count" type="button" data-act="timer-dismiss" data-id="' + tm.id + '"><span class="num">' + fmtTimer(left) + '</span></button><button class="iconbtn sm" type="button" data-act="timer-cancel" data-id="' + tm.id + '" aria-label="' + esc(t('tm_cancel')) + '">' + icon('close') + '</button></span>';
+}
+
+function timersTick() {
+  var now = Date.now();
+  var list = timersAll();
+  var changed = false;
+  for (var i = 0; i < list.length; i++) {
+    var tm = list[i];
+    if (!tm.rang && timerLeft(tm, now) === 0) {
+      tm.rang = true;
+      changed = true;
+      timerAlarm(tm);
+    }
+  }
+  if (changed) saveMeta();
+  var els = document.querySelectorAll('[data-timer-id]');
+  for (var j = 0; j < els.length; j++) {
+    var el = els[j];
+    var id = el.getAttribute('data-timer-id');
+    var match = null;
+    for (var k = 0; k < list.length; k++) {
+      if (list[k].id === id) { match = list[k]; break; }
+    }
+    var n = el.querySelector('.num');
+    if (match && n) {
+      n.textContent = fmtTimer(timerLeft(match, now));
+      el.classList.toggle('ended', timerLeft(match, now) === 0);
+    }
+  }
+  renderTimerPill();
+  if (list.length > 0 && !TIMERS.iv) {
+    TIMERS.iv = setInterval(timersTick, 1000);
+  }
+  if (list.length === 0 && TIMERS.iv) {
+    clearInterval(TIMERS.iv);
+    TIMERS.iv = null;
+  }
+}
+
+function timerStepVisible(tm) {
+  if (!((S.screen === 'recipe' && S.recipeId === tm.recipeId) || (S.screen === 'cook' && COOK.recipeId === tm.recipeId))) return false;
+  var el = document.querySelector('[data-timer-id="' + tm.id + '"]');
+  if (!el || !el.getBoundingClientRect) return false;
+  var r = el.getBoundingClientRect();
+  return r.bottom > 0 && r.top < window.innerHeight;
+}
+
+function renderTimerPill() {
+  var el = $('#timerPill');
+  if (!el) return;
+  var now = Date.now();
+  var list = timersSoonest();
+  var hide = list.length === 0 || S.screen === 'quick' || timerStepVisible(list[0]);
+  el.classList.toggle('hide', hide);
+  if (hide) {
+    TIMERS.open = false;
+    el.innerHTML = '';
+    return;
+  }
+  var first = list[0];
+  var left = timerLeft(first, now);
+  el.classList.toggle('ended', left === 0);
+  if (!TIMERS.open) {
+    el.innerHTML = '<button type="button" class="tp-main" data-tp="main"' + (left === 0 ? ' aria-label="' + esc(t('tm_done')) + '"' : '') + '>' + icon('timer') + '<span class="num">' + fmtTimer(left) + '</span>' + (list.length > 1 ? '<span class="tp-more">+' + (list.length - 1) + '</span>' : '') + '</button>';
+  } else {
+    var rows = '';
+    for (var i = 0; i < list.length; i++) {
+      var tm = list[i];
+      var tLeft = timerLeft(tm, now);
+      var ended = tLeft === 0;
+      var title = (RECIPES.byId[tm.recipeId] || {}).title || '';
+      rows += '<div class="tp-row' + (ended ? ' ended' : '') + '"><button type="button" class="tp-open" data-tp="open" data-id="' + tm.id + '"><span class="tp-title">' + esc(title) + '</span><span class="tiny">' + esc(t('tm_step', {n: tm.stepIndex + 1})) + ' · ' + esc(tm.label || '') + '</span></button><span class="num">' + fmtTimer(tLeft) + '</span><button type="button" class="iconbtn sm" data-tp="cancel" data-id="' + tm.id + '" aria-label="' + esc(t('tm_cancel')) + '">' + icon('close') + '</button></div>';
+    }
+    el.innerHTML = '<div class="tp-list">' + rows + '</div>';
+  }
+}
+
+function timerAlarm() {
+  try { if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]); } catch(e) {}
+  try {
+    var C = window.AudioContext || window.webkitAudioContext;
+    if (!C) return;
+    var ac = new C();
+    [0, 0.3, 0.6].forEach(function(t0) {
+      var o = ac.createOscillator();
+      var g = ac.createGain();
+      o.frequency.value = 880;
+      g.gain.value = 0.2;
+      o.connect(g);
+      g.connect(ac.destination);
+      o.start(ac.currentTime + t0);
+      o.stop(ac.currentTime + t0 + 0.15);
+    });
+  } catch(e) {}
+}
+
+async function timerPillClick(e) {
+  var b = e.target.closest('[data-tp]');
+  if (!b) return;
+  var k = b.getAttribute('data-tp');
+  var id = b.getAttribute('data-id');
+  if (k === 'main') {
+    var first = timersSoonest()[0];
+    if (first && timerLeft(first) === 0) {
+      await timerCancel(first.id);
+    } else {
+      TIMERS.open = true;
+      renderTimerPill();
+    }
+  } else if (k === 'cancel') {
+    await timerCancel(id);
+  } else if (k === 'open') {
+    var tm = null;
+    var all = timersAll();
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].id === id) { tm = all[i]; break; }
+    }
+    TIMERS.open = false;
+    if (tm) {
+      S.recipeId = tm.recipeId;
+      S.recipeServings = null;
+      S.recipeAxis = null;
+      S.scrollToStep = tm.stepIndex;
+      go('recipe');
+    }
+  }
+}
+
+function timersInit() {
+  var all = timersAll();
+  for (var i = 0; i < all.length; i++) {
+    if (timerLeft(all[i]) === 0) all[i].rang = true;
+  }
+  var el = $('#timerPill');
+  if (el) el.addEventListener('click', function(e) { e.stopPropagation(); timerPillClick(e); });
+  document.addEventListener('click', function(e) {
+    if (TIMERS.open && !(e.target.closest && e.target.closest('#timerPill'))) {
+      TIMERS.open = false;
+      renderTimerPill();
+    }
+  });
+  timersTick();
+}
+
+/* ---- cook.js ---- */
+/* Cook mode (brief cook-mode): one step at a time, the screen kept awake, the step read aloud. */
+const COOK = { recipeId: null, step: 0, dir: 0, lock: null, speaking: false, bound: false };
+
+function cookOpen(recipeId) {
+  COOK.recipeId = recipeId;
+  COOK.step = 0;
+  COOK.dir = 0;
+  go('cook');
+}
+
+function cookData() {
+  var r = RECIPES.byId[COOK.recipeId];
+  if (!r) return null;
+  return { r: r, v: recipeView(r, { axis: S.recipeAxis || undefined, servings: S.recipeServings || undefined }) };
+}
+
+function cookStepIngredients(r, v, i) {
+  var step = v.steps[i];
+  var keys;
+  if (Array.isArray(step.uses) && step.uses.length > 0) {
+    keys = step.uses;
+  } else {
+    var stepText = r.steps[i] && r.steps[i].text;
+    keys = [];
+    if (stepText) {
+      var re = /\{([A-Za-z0-9_-]+)\}/g;
+      var m;
+      while ((m = re.exec(stepText)) !== null) {
+        keys.push(m[1]);
+      }
+    }
+  }
+  var result = [];
+  for (var k = 0; k < keys.length; k++) {
+    var key = keys[k];
+    for (var j = 0; j < v.ingredients.length; j++) {
+      if (v.ingredients[j].slot === key) {
+        result.push(v.ingredients[j]);
+        break;
+      }
+    }
+  }
+  return result;
+}
+
+function cookCanSpeak() {
+  return !!(window.speechSynthesis && window.SpeechSynthesisUtterance);
+}
+
+function renderCook() {
+  var host = $('#s-cook');
+  var d = cookData();
+  if (!d) { host.innerHTML = ''; return; }
+  var r = d.r, v = d.v, n = v.steps.length;
+  COOK.step = Math.max(0, Math.min(COOK.step, n - 1));
+  var i = COOK.step;
+  var step = v.steps[i];
+  var ings = cookStepIngredients(r, v, i);
+  var h = '<div class="cook-step' + (COOK.dir > 0 ? ' cook-in-next' : COOK.dir < 0 ? ' cook-in-prev' : '') + '">';
+  h += '<p class="eyebrow">' + esc(t('ck_step', { i: i + 1, n: n })) + '</p>';
+  h += '<p class="cook-text">' + esc(step.text) + '</p>';
+  if (ings.length) {
+    h += '<ul class="cook-ings">';
+    for (var g = 0; g < ings.length; g++) {
+      h += '<li>' + esc(ings[g].name + ' ' + ingAmount(ings[g], v.schema2)) + '</li>';
+    }
+    h += '</ul>';
+  }
+  h += '<div class="cook-timer">' + stepTimerHtml(r.id, i, step) + '</div>';
+  h += '</div>';
+  h += '<div class="btnrow cook-nav">';
+  if (i > 0) {
+    h += '<button class="btn quiet" type="button" data-act="cook-prev">' + esc(t('ck_prev')) + '</button>';
+  }
+  h += '<button class="btn quiet" type="button" data-act="cook-next">' + esc(i === n - 1 ? t('ck_finish') : t('ck_next')) + '</button>';
+  if (cookCanSpeak()) {
+    h += '<button class="iconbtn" type="button" data-act="cook-read" aria-label="' + esc(t('ck_read')) + '">' + icon('speaker') + '</button>';
+  }
+  h += '</div>';
+  host.innerHTML = h;
+  cookBind(host);
+  if (!COOK.lock) cookLock();
+}
+
+function cookGo(delta) {
+  cookStopSpeech();
+  var d = cookData();
+  if (!d) return;
+  var next = COOK.step + delta;
+  if (next < 0) return;
+  if (next >= d.v.steps.length) { cookFinish(); return; }
+  COOK.step = next;
+  COOK.dir = delta;
+  renderCook();
+}
+
+async function cookFinish() {
+  cookStopSpeech();
+  var d = cookData();
+  if (!d) return;
+  var s = await startCookingSession(d.r.id, { axis: d.v.axis, flags: d.v.flagsApplied, servings: d.v.servings });
+  await finishCookingSession(s);
+  toast(t('ck_done'));
+  if (moduleOn('logging')) S.afterCookLog = d.r.id;
+  goBack();
+}
+
+async function cookLock() {
+  if (!(navigator.wakeLock && navigator.wakeLock.request)) return;
+  try { COOK.lock = await navigator.wakeLock.request('screen'); }
+  catch (e) { COOK.lock = null; }
+}
+
+function cookUnlock() {
+  if (COOK.lock) {
+    try { COOK.lock.release(); } catch (e) {}
+    COOK.lock = null;
+  }
+}
+
+function cookRead() {
+  if (!cookCanSpeak()) return;
+  if (COOK.speaking) { cookStopSpeech(); return; }
+  var d = cookData();
+  if (!d) return;
+  var u = new SpeechSynthesisUtterance(d.v.steps[COOK.step].text);
+  u.lang = S.lang === 'cs' ? 'cs-CZ' : 'en-GB';
+  u.onend = function () { COOK.speaking = false; };
+  COOK.speaking = true;
+  window.speechSynthesis.speak(u);
+}
+
+function cookStopSpeech() {
+  if (cookCanSpeak()) {
+    window.speechSynthesis.cancel();
+    COOK.speaking = false;
+  }
+}
+
+function cookLeave() {
+  cookStopSpeech();
+  cookUnlock();
+}
+
+function cookBind(host) {
+  if (COOK.bound) return;
+  COOK.bound = true;
+  var x0 = null;
+  host.addEventListener('touchstart', function (e) {
+    x0 = e.touches && e.touches[0] ? e.touches[0].clientX : null;
+  });
+  host.addEventListener('touchend', function (e) {
+    if (x0 === null) return;
+    var x = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientX : x0;
+    var dx = x - x0;
+    x0 = null;
+    if (Math.abs(dx) > 50) cookGo(dx < 0 ? 1 : -1);
+  });
+  document.addEventListener('visibilitychange', function () {
+    if (S.screen !== 'cook') return;
+    if (document.visibilityState === 'visible') cookLock();
+    else cookUnlock();
+  });
+}
+
 /* ---- app.js ---- */
 /* ============================================================
    Routing, events, boot.
@@ -8769,27 +9429,41 @@ async function fillSnapshots(){
    ============================================================ */
 
 const TABS = [
-  {id:'today',   icon:'today',   key:'nav_today'},
-  {id:'log',     icon:'log',     key:'nav_log'},
   {id:'recipes', icon:'suggest', key:'nav_recipes'},
-  {id:'chat',    icon:'chat',    key:'nav_chat'},
+  {id:'log',     icon:'log',     key:'nav_log'},
   {id:'review',  icon:'review',  key:'nav_review'}
 ];
-const SUBSCREENS = ['profile','settings','recipe'];
+const SUBSCREENS = ['profile','settings','recipe','cook'];
+/* Modules: a screen exists only while its module is on. Recipes, the recipe page, Profile and Settings always exist. */
+function screenOn(screen){
+  if (screen === 'today' || screen === 'log' || screen === 'quick') return moduleOn('logging');
+  if (screen === 'review') return moduleOn('goals');
+  if (screen === 'chat') return false;  /* the chat is a sheet (brief tabs-log-today) */
+  return true;
+}
 
 function renderTabs(){
   const cur = S.screen === 'recipe' ? 'recipes' : S.screen;
-  $('#tabbar').innerHTML = TABS.map(tab =>
+  $('#tabbar').innerHTML = TABS.filter(tab => screenOn(tab.id)).map(tab =>
     '<button class="tab" type="button" data-go="'+tab.id+'"'+(cur===tab.id?' aria-current="page"':'')+'>'+
       icon(tab.icon)+'<span>'+esc(t(tab.key))+'</span><span class="dot"></span>'+
     '</button>').join('');
+  const nTabs = TABS.filter(tab => screenOn(tab.id)).length;
+  $('#tabbar').setAttribute('data-n', String(nTabs));
+  const noTabs = ['start','profile','settings','cook'].indexOf(S.screen) >= 0 || nTabs < 2;
+  $('#tabbar').classList.toggle('hide', noTabs);
+  document.body.classList.toggle('notabs', noTabs);
 }
 
 function go(screen, push){
+  if (screen === 'today'){ screen = 'log'; S.logDate = localDateKey(); }
+  if (push !== false) S.settingsCat = null;
+  if (S.screen === 'cook' && screen !== 'cook') cookLeave();
   if (quickOn() && ['quick','settings','profile'].indexOf(screen) < 0){
     screen = 'quick';
     if (push === false){ try { history.replaceState({screen:'quick'}, '', '#quick'); } catch(e){} }
   }
+  if (!screenOn(screen)) screen = 'recipes';
   if (S.sheetOpen) closeSheet(true);
   S.screen = screen;
   $$('.screen').forEach(s => s.classList.remove('on'));
@@ -8799,6 +9473,7 @@ function go(screen, push){
   renderTabs();
   renderScreen(screen);
   renderBackupBar();
+  renderTimerPill();
   window.scrollTo(0, 0);
   if (push !== false){
     try { history.pushState({screen}, '', '#'+screen); } catch(e){}
@@ -8806,21 +9481,24 @@ function go(screen, push){
 }
 
 function goBack(){
-  if (history.state && history.state.screen && history.state.screen !== 'today') history.back();
-  else go('today');
+  if (S.screen === 'start'){ startBack(); return; }
+  if (history.state && history.state.screen && history.state.screen !== 'recipes') history.back();
+  else go('recipes');
 }
 
 /* Header label: the screen name; Quick mode has no navigator, so it keeps the short date. */
 function headerLabel(){
   if (S.screen === 'quick') return fmtShortDate(localDateKey());
+  if (S.screen === 'settings' && S.settingsCat) return t('st_' + S.settingsCat);
+  if (S.screen === 'cook'){ const r = RECIPES.byId[COOK.recipeId]; return r ? r.title : ''; }
   return t('t_' + S.screen);
 }
 
 function refreshChrome(){
   const isSub = SUBSCREENS.indexOf(S.screen) >= 0;
-  $('#btnBack').classList.toggle('hide', !isSub);
-  $('#btnSettings').classList.toggle('hide', S.screen === 'settings');
-  const bc = $('#btnChat'); if (bc){ bc.classList.toggle('hide', S.screen === 'quick'); bc.classList.toggle('solo', S.screen === 'settings'); bc.setAttribute('aria-label', t('t_chat')); }
+  $('#btnBack').classList.toggle('hide', !(isSub || (S.screen === 'start' && START.page > 0)));
+  $('#btnSettings').classList.toggle('hide', S.screen === 'settings' || S.screen === 'start' || S.screen === 'cook');
+  const bc = $('#btnChat'); if (bc){ bc.classList.toggle('hide', S.screen === 'quick' || S.screen === 'start' || !moduleOn('assistant')); bc.classList.toggle('solo', S.screen === 'settings'); bc.setAttribute('aria-label', t('t_chat')); }
   $('#screenTitle').textContent = headerLabel();
 
   document.body.classList.toggle('chatmode', S.screen === 'chat');
@@ -8830,8 +9508,7 @@ function refreshChrome(){
 
 function renderScreen(name){
   meterSeq = 0;
-  if (name === 'today') renderToday();
-  else if (name === 'log') renderLog();
+  if (name === 'log') renderLog();
   else if (name === 'recipes') renderRecipes();
   else if (name === 'recipe') renderRecipe();
   else if (name === 'chat') renderChat();
@@ -8839,6 +9516,8 @@ function renderScreen(name){
   else if (name === 'profile') renderProfile();
   else if (name === 'settings') renderSettings();
   else if (name === 'quick') renderQuick();
+  else if (name === 'start') renderStart();
+  else if (name === 'cook') renderCook();
 }
 
 function renderAll(){
@@ -8891,6 +9570,7 @@ function bindEvents(){
     const id = b.getAttribute('data-id');
 
     if (act === 'go-profile'){ S.draft = null; go('profile'); }
+    else if (act === 'set-cat'){ openSettingsCat(b.getAttribute('data-v')); }
     else if (act === 'go-settings'){ go('settings'); }
     else if (act === 'why-range'){ showWhyRange(); }
     else if (act === 'profile-save'){ saveProfile().then(() => requestPersist()); }
@@ -8982,6 +9662,13 @@ function bindEvents(){
     else if (act === 'rtag-off'){ const c = S.recipeFilter.tags; c.splice(c.indexOf(b.getAttribute('data-v')), 1); renderRecipeList(); }
     else if (act === 'open-recipe'){ S.recipeId = id; S.recipeServings = null; S.recipeAxis = null; go('recipe'); }
     else if (act === 'recipe-log'){ recipeLogSheet(id); }
+    else if (act === 'recipe-cook'){ cookOpen(id); }
+    else if (act === 'cook-next'){ cookGo(1); }
+    else if (act === 'cook-prev'){ cookGo(-1); }
+    else if (act === 'cook-read'){ cookRead(); }
+    else if (act === 'timer-start'){ await timerStart(S.recipeId, Number(b.getAttribute('data-step')), Number(b.getAttribute('data-sec')), b.getAttribute('data-label') || ''); if (S.screen === 'cook') renderCook(); else renderRecipe(); }
+    else if (act === 'timer-cancel'){ await timerCancel(id); if (S.screen === 'recipe') renderRecipe(); else if (S.screen === 'cook') renderCook(); }
+    else if (act === 'timer-dismiss'){ const tm = timersAll().find(x => x.id === id); if (tm && timerLeft(tm) === 0){ await timerCancel(id); if (S.screen === 'recipe') renderRecipe(); else if (S.screen === 'cook') renderCook(); } }
     else if (act === 'recipe-fav'){ const n = recipeNote(id) || {}; await saveRecipeNote(id, {favorite: !n.favorite}); renderRecipe(); }
     else if (act === 'recipe-missing'){ recipeMissing(id); }
     else if (act === 'recipe-ask'){ const r = RECIPES.byId[id]; openChatSheet(t('rc_ask_seed', {t: r ? r.title : ''})); }
@@ -9112,7 +9799,8 @@ function bindEvents(){
     if ((location.hash || '').indexOf('#join=') === 0) return;
     if (S.swallowPop){ S.swallowPop = false; refreshScreenSoon(); return; }
     if (S.sheetOpen){ closeSheet(true); return; }
-    const scr = (e.state && e.state.screen) || 'today';
+    const scr = (e.state && e.state.screen) || 'recipes';
+    S.settingsCat = (e.state && e.state.cat) || null;
     go(scr, false);
   });
   window.addEventListener('hashchange', () => {
@@ -9189,15 +9877,18 @@ async function boot(){
   initOrnaments();
   document.documentElement.setAttribute('lang', S.lang);
   bindEvents();
+  timersInit();
   await ensureStarterRecipes();
   await loadRecipes();
 
   const hash = (location.hash || '').replace('#','');
-  if (hash === 'quick' && !quickOn()){ S.prefs.quickMode = 'on'; S.prefs.quickModeAsked = true; await savePrefs(); }
-  const known = TABS.map(x => x.id).concat(['profile','settings','quick']);
-  go(known.indexOf(hash) >= 0 ? hash : 'today', false);
+  if (hash === 'quick' && !quickOn() && moduleOn('logging')){ S.prefs.quickMode = 'on'; S.prefs.quickModeAsked = true; await savePrefs(); }
+  const known = TABS.map(x => x.id).concat(['today','profile','settings','quick']);
+  const fresh = await needsStart();
+  go(fresh ? 'start' : known.indexOf(hash) >= 0 ? hash : 'recipes', false);
   try { history.replaceState({screen:S.screen}, '', '#'+S.screen); } catch(e){}
   syncRun('app open');
+  if (!S.secrets.sync || S.meta.sync.state === 'revoked') catalogRun(!S.meta.catalog.cursor).catch(() => {});
   if (hash.indexOf('join=') === 0) syncHandleJoinLink(syncKeyFromInput('#' + hash));
   else maybeOfferQuick();
 
