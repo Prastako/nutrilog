@@ -137,12 +137,13 @@ with sync_playwright() as p:
 
     # first run: default language, no profile
     page.goto(BASE + '#today'); page.wait_for_timeout(1500)
+    page.evaluate("async () => { S.prefs.modules = {logging:true, goals:true, supplements:true, assistant:true}; await savePrefs(); location.hash = '#today'; }"); page.reload(); page.wait_for_timeout(1500)
     print('default language:', page.evaluate('S.lang'), '| html lang:', page.evaluate('document.documentElement.lang'))
     step(page, 'e00_first_run')
     page.click('#tabbar [data-go="log"]'); step(page, 'e01_log_empty', 600)
     page.click('#tabbar [data-go="recipes"]'); step(page, 'e02_recipes_noprofile', 1200)
-    page.click('#tabbar [data-go="chat"]'); step(page, 'e03_chat_empty', 600)
-    page.click('#tabbar [data-go="review"]'); step(page, 'e04_review_empty', 1000)
+    page.evaluate("openChatSheet('')"); step(page, 'e03_chat_empty', 600)
+    page.evaluate("closeSheet()"); page.wait_for_timeout(500); page.click('#tabbar [data-go="review"]'); step(page, 'e04_review_empty', 1000)
     page.evaluate("go('profile')"); step(page, 'e05_profile_blank', 600)
     page.evaluate("window.scrollTo(0, 1600)"); step(page, 'e05b_profile_blank_mid', 200)
     page.evaluate("window.scrollTo(0, 4000)"); step(page, 'e05c_profile_blank_end', 200)
@@ -155,7 +156,7 @@ with sync_playwright() as p:
       S.secrets.anthropic = 'sk-test'; await secretSet('anthropic','sk-test');
     }""")
     page.reload(); page.wait_for_timeout(1500)
-    page.click('#tabbar [data-go="today"]'); page.wait_for_timeout(1000)
+    page.evaluate("go('today')"); page.wait_for_timeout(1000)
     step(page, 'e06_today')
     if page.locator('[data-act="why-range"]').count():
         page.locator('[data-act="why-range"]').first.click(); step(page, 'e07_why_range', 400); page.click('[data-sheet-close]'); page.wait_for_timeout(300)
@@ -192,7 +193,7 @@ with sync_playwright() as p:
     page.set_input_files('#phFile', os.path.join(REPO, 'icon-512.png')); page.wait_for_timeout(800)
     page.click('#phGo'); step(page, 'e15_photo_result', 1500)
     page.click('#phLog'); page.wait_for_timeout(700)
-    page.click('#tabbar [data-go="today"]'); step(page, 'e16_today_after', 1000)
+    page.evaluate("go('today')"); step(page, 'e16_today_after', 1000)
 
     # supplements
     page.click('#tabbar [data-go="log"]'); page.wait_for_timeout(600)
@@ -229,15 +230,15 @@ with sync_playwright() as p:
         page.locator('[data-act="recipe-new"]').first.click(); step(page, 'e30_own_recipe', 400); page.click('[data-sheet-close]'); page.wait_for_timeout(300)
 
     # chat and pantry
-    page.click('#tabbar [data-go="chat"]'); page.wait_for_timeout(800)
+    page.evaluate("openChatSheet('')"); page.wait_for_timeout(800)
     page.fill('#chatText', 'I have eggs and spinach at home, milk ran out. What can I cook?')
     page.click('#chatSend'); step(page, 'e31_chat', 2500)
     for act, name in [('pantry', 'e32_pantry'), ('shopping', 'e33_shopping')]:
-        loc = page.locator('#s-chat [data-act="%s"]' % act)
+        loc = page.locator('.sheet [data-act="%s"]' % act)
         if loc.count(): loc.first.click(); step(page, name, 500); page.click('[data-sheet-close]'); page.wait_for_timeout(300)
 
     # review
-    page.click('#tabbar [data-go="review"]'); step(page, 'e34_review', 1500)
+    page.evaluate("closeSheet()"); page.wait_for_timeout(500); page.click('#tabbar [data-go="review"]'); step(page, 'e34_review', 1500)
     page.evaluate("window.scrollTo(0, 900)"); step(page, 'e34b_review_scrolled', 300)
     page.click('#rvAi'); step(page, 'e35_review_ai', 1500)
     page.evaluate("S.reviewMode = 'month'; renderScreen('review')"); step(page, 'e36_review_month', 1200)
@@ -246,10 +247,11 @@ with sync_playwright() as p:
     page.click('#btnSettings'); step(page, 'e37_settings', 800)
     for y, n in [(900, 'e37b'), (1800, 'e37c'), (2700, 'e37d'), (3600, 'e37e'), (6000, 'e37f')]:
         page.evaluate("window.scrollTo(0, %d)" % y); step(page, n + '_settings', 200)
+    page.evaluate("openSettingsCat('diag')"); page.wait_for_timeout(400)
     if page.locator('[data-act="diag-copy"]').count():
         page.locator('[data-act="diag-copy"]').first.click(); step(page, 'e38_diag', 600)
         if page.locator('.sheet').count(): page.click('[data-sheet-close]'); page.wait_for_timeout(300)
-    page.evaluate("window.scrollTo(0, 0)"); page.wait_for_timeout(200)
+    page.evaluate("S.settingsCat = null; refreshChrome(); renderSettings(); window.scrollTo(0, 0)"); page.wait_for_timeout(300)
     page.click('[data-act="go-profile"]'); step(page, 'e39_profile', 600)
     for y, n in [(1200, 'e39b'), (2400, 'e39c'), (3600, 'e39d'), (6000, 'e39e')]:
         page.evaluate("window.scrollTo(0, %d)" % y); step(page, n + '_profile', 200)

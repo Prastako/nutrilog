@@ -175,7 +175,7 @@ with sync_playwright() as p:
         page.click('[data-sheet-close]'); page.wait_for_timeout(300)
 
     # --- today
-    page.click('#tabbar [data-go="today"]'); page.wait_for_timeout(1000)
+    page.evaluate("go('today')"); page.wait_for_timeout(1000)
     shot(page, '06_today_after')
 
     # --- supplements
@@ -212,7 +212,7 @@ with sync_playwright() as p:
     page.click('[data-sheet-close]'); page.wait_for_timeout(500)
 
     # --- photo (mocked)
-    page.click('#tabbar [data-go="today"]'); page.wait_for_timeout(600)
+    page.evaluate("go('today')"); page.wait_for_timeout(600)
     open_add(page, 'photo')
     page.set_input_files('#phFile', os.path.join(V02, 'icon-512.png')); page.wait_for_timeout(800)
     page.click('#phGo'); page.wait_for_timeout(1500)
@@ -220,7 +220,7 @@ with sync_playwright() as p:
     page.click('#phLog'); page.wait_for_timeout(700)
 
     # --- chat (mocked streaming with a pantry tool call)
-    page.click('#tabbar [data-go="chat"]'); page.wait_for_timeout(800)
+    page.evaluate("openChatSheet('')"); page.wait_for_timeout(800)
     page.fill('#chatText', 'Mám doma vejce a špenát, došlo mléko. Co uvařím?')
     page.click('#chatSend'); page.wait_for_timeout(2500)
     shot(page, '14_chat')
@@ -228,7 +228,7 @@ with sync_playwright() as p:
     print('pantry after chat:', pantry)
 
     # --- review
-    page.click('#tabbar [data-go="review"]'); page.wait_for_timeout(1500)
+    page.evaluate("closeSheet()"); page.wait_for_timeout(500); page.click('#tabbar [data-go="review"]'); page.wait_for_timeout(1500)
     shot(page, '15_review')
     page.evaluate("window.scrollTo(0, 800)"); page.wait_for_timeout(300)
     shot(page, '15b_review_scrolled')
@@ -247,7 +247,7 @@ with sync_playwright() as p:
     print('payload:', payload)
 
     # --- back gesture closes sheets
-    page.click('#tabbar [data-go="log"]'); page.wait_for_timeout(500)
+    page.evaluate("go('log')"); page.wait_for_timeout(500)
     page.locator('#s-log [data-act="edit-entry"]').first.click(); page.wait_for_timeout(400)
     page.go_back(); page.wait_for_timeout(500)
     print('sheet closed by back:', page.locator('.sheetbg').count() == 0, 'screen:', page.evaluate('S.screen'))
@@ -256,7 +256,7 @@ with sync_playwright() as p:
     # --- dark mode and English
     page.emulate_media(color_scheme='dark')
     page.evaluate("async () => { S.lang = 'en'; await savePrefs(); applyLang(); }"); page.wait_for_timeout(600)
-    page.click('#tabbar [data-go="today"]'); page.wait_for_timeout(800)
+    page.evaluate("go('today')"); page.wait_for_timeout(800)
     shot(page, '20_today_dark_en')
     b.close()
 

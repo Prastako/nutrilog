@@ -67,7 +67,7 @@ with sync_playwright() as p:
     shot('u4_search_credit')
     for _ in range(3):
         if page.locator('[data-sheet-close]').count(): page.locator('[data-sheet-close]').first.click(); page.wait_for_timeout(300)
-    page.evaluate("go('settings')"); page.wait_for_timeout(800)
+    page.evaluate("go('settings'); openSettingsCat('about')"); page.wait_for_timeout(800)
     s = page.inner_text('body')
     ok('Product data' in s and 'Open Food Facts (openfoodfacts.org), ODbL' in s, 'About row in settings')
     if page.locator('text=Product data').count(): page.locator('text=Product data').first.scroll_into_view_if_needed()
@@ -85,6 +85,7 @@ with sync_playwright() as p:
     page = ctx.new_page(); page.on('pageerror', lambda e: errors.append(str(e))); page.on('dialog', lambda d: d.accept())
     shot = lambda n: page.screenshot(path=os.path.join(SHOTS, n + '.png'))
     page.goto(BASE + '#log'); page.wait_for_timeout(1500)
+    page.evaluate("async () => { S.prefs.modules = {logging:true, goals:true, supplements:true, assistant:true}; await savePrefs(); location.hash = '#log'; }"); page.reload(); page.wait_for_timeout(1500)
     page.click('#s-log [data-act="supp-manage"]'); page.wait_for_timeout(400)
     page.click('[data-preset="fe"]'); page.wait_for_timeout(400)
     page.click('#srep [data-rep="alt"]'); page.wait_for_timeout(200)
