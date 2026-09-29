@@ -992,3 +992,13 @@ Object.assign(STR.cs, {
 Object.assign(STR.en, {
   b_line_nobackup_new:'No backup yet. Join a profile with a link, or export by hand from time to time.', b_line_nobackup_data:'You have data and no backup. Clearing browser data would take it.', b_line_stale:'Backup has not succeeded for {h} hours.'
 });
+Object.assign(STR.cs, {
+  mod_h:'Funkce', mod_logging:'Zápis jídla', mod_logging_d:'Deník jídel po dnech, rychlý zápis, uložená jídla.', mod_goals:'Cíle', mod_goals_d:'Profil, cílové kalorie a makra, trend váhy, týdenní přehled.',
+  mod_supplements:'Doplňky', mod_supplements_d:'Seznam doplňků, rozvrh a připomínky.', mod_assistant:'Asistent', mod_assistant_d:'Chat, foto a popis jídla, komentář k přehledu. Potřebuje klíč Claude.',
+  mod_needs_logging:'Cíle potřebují zápis jídla; zapnul se také.', mod_goals_off:'Cíle se vypnuly, protože potřebují zápis jídla.'
+});
+Object.assign(STR.en, {
+  mod_h:'Features', mod_logging:'Food log', mod_logging_d:'A diary of what you eat, day by day, with quick logging.', mod_goals:'Goals', mod_goals_d:'Profile, calorie and macro targets, weight trend, the weekly Review.',
+  mod_supplements:'Supplements', mod_supplements_d:'Your supplements, their schedule and reminders.', mod_assistant:'Assistant', mod_assistant_d:'Chat, food photos and descriptions, Review commentary. Needs a Claude key.',
+  mod_needs_logging:'Goals need the food log; it was turned on too.', mod_goals_off:'Goals were turned off because they need the food log.'
+});

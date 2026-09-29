@@ -506,9 +506,28 @@ async function loadState(){
     S.profile = migrateDietV3(S.profile);
     await recPut(S.profile);
   }
+  /* One-time upgrade: when modules are not set and the user already has data, turn everything on. */
+  if (S.prefs.modules === undefined || S.prefs.modules === null){
+    var has = S.profile !== null || S.secrets.anthropic !== '' || (await recByType('food_entry')).length > 0 || (await recByType('supplement')).length > 0;
+    if (has){
+      S.prefs.modules = {logging:true, goals:true, supplements:true, assistant:true};
+      await kvSet('prefs', S.prefs);
+    }
+  }
 }
 
 async function savePrefs(){ S.prefs.lang = S.lang; S.prefs.theme = S.theme; S.prefs.look = S.look; S.prefs.type = S.type; await kvSet('prefs', S.prefs); }
+const MODULES = ['logging', 'goals', 'supplements', 'assistant'];
+function moduleOn(name){ return !!(S.prefs.modules && S.prefs.modules[name] === true); }
+function setModule(name, on){
+  var m = Object.assign({logging:false, goals:false, supplements:false, assistant:false}, S.prefs.modules || {});
+  m[name] = !!on;
+  var toasts = [];
+  if (name === 'goals' && on && !m.logging){ m.logging = true; toasts.push('mod_needs_logging'); }
+  if (name === 'logging' && !on && m.goals){ m.goals = false; toasts.push('mod_goals_off'); }
+  S.prefs.modules = m;
+  return toasts;
+}
 async function saveMeta(){ await kvSet('meta', S.meta); }
 
 /* ---------- 5. Migration from schema 1 (v0.1) ----------
