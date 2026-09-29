@@ -1010,3 +1010,5 @@ Object.assign(STR.cs, { st_personal:'Osobní', st_advanced:'Pokročilé', st_loo
 Object.assign(STR.en, { st_personal:'Personal', st_advanced:'Advanced', st_look:'Look and language', st_profile:'Profile and goals', st_features:'Features', st_supps:'Supplements', st_recipes:'Recipes',
   st_sync:'Sync and friends', st_claude:'Claude key and models', st_spend:'Spend', st_backup:'Backup, export and import', st_diag:'Diagnostics', st_danger:'Danger zone', st_about:'About',
   arch_load:'Load recipes from a file' });
+Object.assign(STR.cs, { tm_start:'Spustit {m} min', tm_step:'Krok {n}', tm_done:'Hotovo', tm_cancel:'Zrušit časovač' });
+Object.assign(STR.en, { tm_start:'Start {m} min', tm_step:'Step {n}', tm_done:'Done', tm_cancel:'Cancel timer' });
