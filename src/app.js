@@ -26,6 +26,7 @@ function renderTabs(){
     '<button class="tab" type="button" data-go="'+tab.id+'"'+(cur===tab.id?' aria-current="page"':'')+'>'+
       icon(tab.icon)+'<span>'+esc(t(tab.key))+'</span><span class="dot"></span>'+
     '</button>').join('');
+  $('#tabbar').classList.toggle('hide', S.screen === 'start' || TABS.filter(tab => screenOn(tab.id)).length < 2);
 }
 
 function go(screen, push){
@@ -50,6 +51,7 @@ function go(screen, push){
 }
 
 function goBack(){
+  if (S.screen === 'start'){ startBack(); return; }
   if (history.state && history.state.screen && history.state.screen !== 'today') history.back();
   else go('today');
 }
@@ -62,9 +64,9 @@ function headerLabel(){
 
 function refreshChrome(){
   const isSub = SUBSCREENS.indexOf(S.screen) >= 0;
-  $('#btnBack').classList.toggle('hide', !isSub);
-  $('#btnSettings').classList.toggle('hide', S.screen === 'settings');
-  const bc = $('#btnChat'); if (bc){ bc.classList.toggle('hide', S.screen === 'quick' || !moduleOn('assistant')); bc.classList.toggle('solo', S.screen === 'settings'); bc.setAttribute('aria-label', t('t_chat')); }
+  $('#btnBack').classList.toggle('hide', !(isSub || (S.screen === 'start' && START.page > 0)));
+  $('#btnSettings').classList.toggle('hide', S.screen === 'settings' || S.screen === 'start');
+  const bc = $('#btnChat'); if (bc){ bc.classList.toggle('hide', S.screen === 'quick' || S.screen === 'start' || !moduleOn('assistant')); bc.classList.toggle('solo', S.screen === 'settings'); bc.setAttribute('aria-label', t('t_chat')); }
   $('#screenTitle').textContent = headerLabel();
 
   document.body.classList.toggle('chatmode', S.screen === 'chat');
@@ -83,6 +85,7 @@ function renderScreen(name){
   else if (name === 'profile') renderProfile();
   else if (name === 'settings') renderSettings();
   else if (name === 'quick') renderQuick();
+  else if (name === 'start') renderStart();
 }
 
 function renderAll(){
@@ -439,7 +442,8 @@ async function boot(){
   const hash = (location.hash || '').replace('#','');
   if (hash === 'quick' && !quickOn() && moduleOn('logging')){ S.prefs.quickMode = 'on'; S.prefs.quickModeAsked = true; await savePrefs(); }
   const known = TABS.map(x => x.id).concat(['profile','settings','quick']);
-  go(known.indexOf(hash) >= 0 ? hash : 'today', false);
+  const fresh = await needsStart();
+  go(fresh ? 'start' : known.indexOf(hash) >= 0 ? hash : 'today', false);
   try { history.replaceState({screen:S.screen}, '', '#'+S.screen); } catch(e){}
   syncRun('app open');
   if (hash.indexOf('join=') === 0) syncHandleJoinLink(syncKeyFromInput('#' + hash));
