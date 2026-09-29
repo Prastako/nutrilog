@@ -544,7 +544,7 @@ async function toggleSuppIntake(suppId, dateKey, on){
   }
 }
 
-async function openSuppManager(){
+async function openSuppManager(host){
   const supps = await recByType('supplement');
   let b = '';
   if (!supps.length) b += '<p class="muted">'+esc(t('sp_none_long'))+'</p>';
@@ -557,7 +557,9 @@ async function openSuppManager(){
   b += '<p class="eyebrow" style="margin-top:16px">'+esc(t('sp_presets'))+'</p><div class="chips">' +
     SUPP_PRESETS.filter(p => !p.hidden).map(p => '<button class="chip add" type="button" data-preset="'+p.key+'">+ '+esc(L(p.name))+'</button>').join('') + '</div>' +
     '<p class="tiny" style="margin-top:8px">'+esc(t('sp_presets_note'))+'</p>';
-  const sheet = openSheet(esc(t('sp_manage')), b, '<button class="btn" type="button" id="sNew">'+esc(t('sp_new'))+'</button>', {tall:true});
+  let sheet;
+  if (host){ host.innerHTML = b + '<div class="btnrow" style="margin-top:14px"><button class="btn" type="button" id="sNew">'+esc(t('sp_new'))+'</button></div>'; sheet = host; }
+  else sheet = openSheet(esc(t('sp_manage')), b, '<button class="btn" type="button" id="sNew">'+esc(t('sp_new'))+'</button>', {tall:true});
   $('#sNew').addEventListener('click', () => suppForm(null));
   sheet.addEventListener('click', e => {
     const ed = e.target.closest('[data-sedit]');
@@ -620,7 +622,7 @@ function suppForm(s){
     $('#sdaysrow').style.display = isAlt ? 'none' : '';
     $('#sstartrow').style.display = isAlt ? '' : 'none';
   }));
-  if (!isNew) $('#sDel').addEventListener('click', async () => { await recDelete(s.id); S.afterSheet = openSuppManager; closeSheet(); toast(t('lg_deleted')); });
+  if (!isNew) $('#sDel').addEventListener('click', async () => { await recDelete(s.id); S.afterSheet = suppAfterEdit; closeSheet(); toast(t('lg_deleted')); });
   $('#sSave').addEventListener('click', async () => {
     const name = $('#sn').value.trim();
     if (!name){ toast(t('or_need_title')); return; }
@@ -648,7 +650,9 @@ function suppForm(s){
     Object.assign(rec, {type:'supplement', name, form: $('#sf').value, unitLabel: $('#sul').value.trim(), defaultUnits: Number($('#su').value) || 1,
       perUnit: per, extra, active: $('#sact').checked, schedule: sch});
     await recPut(rec);
-    S.afterSheet = openSuppManager;
+    S.afterSheet = suppAfterEdit;
     closeSheet(); toast(t('lg_saved'));
   });
 }
+/* After a supplement edit: back to the Supplements screen in Settings, or to the manager sheet. */
+function suppAfterEdit(){ if (S.screen === 'settings' && S.settingsCat === 'supps') renderSettings(); else openSuppManager(); }

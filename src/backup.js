@@ -189,7 +189,7 @@ const BACKUP_TARGETS = {
 };
 
 function backupTarget(){ return BACKUP_TARGETS[S.prefs.backup.target] || BACKUP_TARGETS.github; }
-function backupConfigured(){ return backupTarget().configured(); }
+function backupConfigured(){ return false; }  /* GitHub backup removed (brief settings-screens); export, import and snapshots stay */
 
 let backupTimer = null;
 let backupAttempt = 0;

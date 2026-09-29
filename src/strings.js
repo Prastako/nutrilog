@@ -1004,3 +1004,9 @@ Object.assign(STR.en, {
 });
 Object.assign(STR.cs, { t_start:'Začínáme', fs_step:'{i} ze {n}', fs_on:'Zapnout', fs_skip:'Přeskočit' });
 Object.assign(STR.en, { t_start:'Getting started', fs_step:'{i} of {n}', fs_on:'Turn on', fs_skip:'Skip' });
+Object.assign(STR.cs, { st_personal:'Osobní', st_advanced:'Pokročilé', st_look:'Vzhled a jazyk', st_profile:'Profil a cíle', st_features:'Funkce', st_supps:'Doplňky', st_recipes:'Recepty',
+  st_sync:'Synchronizace a přátelé', st_claude:'Klíč Claude a modely', st_spend:'Výdaje', st_backup:'Záloha, export a import', st_diag:'Diagnostika', st_danger:'Nebezpečná zóna', st_about:'O aplikaci',
+  arch_load:'Načíst recepty ze souboru' });
+Object.assign(STR.en, { st_personal:'Personal', st_advanced:'Advanced', st_look:'Look and language', st_profile:'Profile and goals', st_features:'Features', st_supps:'Supplements', st_recipes:'Recipes',
+  st_sync:'Sync and friends', st_claude:'Claude key and models', st_spend:'Spend', st_backup:'Backup, export and import', st_diag:'Diagnostics', st_danger:'Danger zone', st_about:'About',
+  arch_load:'Load recipes from a file' });
