@@ -474,6 +474,7 @@ function renderRecipe(){
     '</div>';
   h += '<div class="btnrow" style="margin:12px 0">' +
     (moduleOn('logging') ? '<button class="btn" type="button" data-act="recipe-log" data-id="'+esc(r.id)+'">'+icon('log')+esc(t('rc_log'))+'</button>' : '') +
+    '<button class="btn quiet" type="button" data-act="recipe-cook" data-id="'+esc(r.id)+'">'+esc(t('rc_cook'))+'</button>' +
     '<button class="btn quiet" type="button" data-act="recipe-fav" data-id="'+esc(r.id)+'">'+(note.favorite ? '★ ' : '☆ ')+esc(t('rc_fav'))+'</button>' +
     '<button class="btn quiet" type="button" data-act="recipe-missing" data-id="'+esc(r.id)+'">'+esc(t('rc_missing_btn'))+'</button>' +
     (moduleOn('assistant') ? '<button class="btn quiet" type="button" data-act="recipe-ask" data-id="'+esc(r.id)+'">'+icon('chat')+esc(t('rc_ask'))+'</button>' : '') +
@@ -551,6 +552,7 @@ function renderRecipe(){
   host.innerHTML = h;
   fillThumbs(host);
   if (S.scrollToStep != null){ const li = $$('#s-recipe .steps li')[S.scrollToStep]; S.scrollToStep = null; if (li) setTimeout(() => li.scrollIntoView({block:'center'}), 60); }
+  if (S.afterCookLog && S.afterCookLog === r.id){ S.afterCookLog = null; recipeLogSheet(r.id); }
   $$('[data-rver]', host).forEach(b => b.addEventListener('click', () => { S.recipeAxis = b.getAttribute('data-rver'); renderRecipe(); }));
   const ta = $('#rnote');
   ta.addEventListener('change', () => saveRecipeNote(r.id, {notes: ta.value}));

@@ -113,7 +113,7 @@ function timersTick() {
 }
 
 function timerStepVisible(tm) {
-  if (S.screen !== 'recipe' || S.recipeId !== tm.recipeId) return false;
+  if (!((S.screen === 'recipe' && S.recipeId === tm.recipeId) || (S.screen === 'cook' && COOK.recipeId === tm.recipeId))) return false;
   var el = document.querySelector('[data-timer-id="' + tm.id + '"]');
   if (!el || !el.getBoundingClientRect) return false;
   var r = el.getBoundingClientRect();

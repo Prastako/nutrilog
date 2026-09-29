@@ -550,3 +550,17 @@ body.notabs #timerPill{bottom:calc(env(safe-area-inset-bottom) + 12px)}
 @keyframes tm-pulse{0%,100%{text-shadow:0 0 0 transparent}50%{text-shadow:0 0 10px var(--glow-strong)}}
 @keyframes tp-in{from{opacity:0}}
 @media (prefers-reduced-motion: reduce){ #timerPill, #timerPill.ended .tp-main, .steptimer.ended .tm-count, #timerPill .tp-row.ended .num{animation:none} }
+/* cook-mode: one step at a time */
+.cook-text{font-family:var(--font-display);font-weight:var(--display-weight);font-size:26px;line-height:1.3;margin:8px 0 14px}
+@media (max-width: 359.98px){ .cook-text{font-size:22px} }
+.cook-ings{list-style:none;padding:0;margin:0 0 14px}
+.cook-ings li{padding:6px 0;border-bottom:1px solid var(--line)}
+.cook-timer{margin:6px 0 10px}
+.cook-timer .steptimer{margin-left:0}
+.cook-nav{justify-content:space-between;align-items:center;margin-top:18px}
+.cook-in-next{animation:ck-next var(--t-base) var(--e-arrive)}
+.cook-in-prev{animation:ck-prev var(--t-base) var(--e-arrive)}
+@keyframes ck-next{from{opacity:0;transform:translateX(12px)}}
+@keyframes ck-prev{from{opacity:0;transform:translateX(-12px)}}
+@keyframes ck-fade{from{opacity:0}}
+@media (prefers-reduced-motion: reduce){ .cook-in-next, .cook-in-prev{animation:ck-fade var(--t-base) linear} }
