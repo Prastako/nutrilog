@@ -26,7 +26,9 @@ function renderTabs(){
     '</button>').join('');
   const nTabs = TABS.filter(tab => screenOn(tab.id)).length;
   $('#tabbar').setAttribute('data-n', String(nTabs));
-  $('#tabbar').classList.toggle('hide', ['start','profile','settings'].indexOf(S.screen) >= 0 || nTabs < 2);
+  const noTabs = ['start','profile','settings'].indexOf(S.screen) >= 0 || nTabs < 2;
+  $('#tabbar').classList.toggle('hide', noTabs);
+  document.body.classList.toggle('notabs', noTabs);
 }
 
 function go(screen, push){
@@ -46,6 +48,7 @@ function go(screen, push){
   renderTabs();
   renderScreen(screen);
   renderBackupBar();
+  renderTimerPill();
   window.scrollTo(0, 0);
   if (push !== false){
     try { history.pushState({screen}, '', '#'+screen); } catch(e){}
@@ -232,6 +235,9 @@ function bindEvents(){
     else if (act === 'rtag-off'){ const c = S.recipeFilter.tags; c.splice(c.indexOf(b.getAttribute('data-v')), 1); renderRecipeList(); }
     else if (act === 'open-recipe'){ S.recipeId = id; S.recipeServings = null; S.recipeAxis = null; go('recipe'); }
     else if (act === 'recipe-log'){ recipeLogSheet(id); }
+    else if (act === 'timer-start'){ await timerStart(S.recipeId, Number(b.getAttribute('data-step')), Number(b.getAttribute('data-sec')), b.getAttribute('data-label') || ''); renderRecipe(); }
+    else if (act === 'timer-cancel'){ await timerCancel(id); if (S.screen === 'recipe') renderRecipe(); }
+    else if (act === 'timer-dismiss'){ const tm = timersAll().find(x => x.id === id); if (tm && timerLeft(tm) === 0){ await timerCancel(id); if (S.screen === 'recipe') renderRecipe(); } }
     else if (act === 'recipe-fav'){ const n = recipeNote(id) || {}; await saveRecipeNote(id, {favorite: !n.favorite}); renderRecipe(); }
     else if (act === 'recipe-missing'){ recipeMissing(id); }
     else if (act === 'recipe-ask'){ const r = RECIPES.byId[id]; openChatSheet(t('rc_ask_seed', {t: r ? r.title : ''})); }
@@ -440,6 +446,7 @@ async function boot(){
   initOrnaments();
   document.documentElement.setAttribute('lang', S.lang);
   bindEvents();
+  timersInit();
   await ensureStarterRecipes();
   await loadRecipes();
 

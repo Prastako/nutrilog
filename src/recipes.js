@@ -45,7 +45,7 @@ function recipeFromAi(r, origin){
     difficulty: r.difficulty || null,
     ingredients: (r.ingredients || []).map(i => ({group: i.group || null, item: i.item, qty: i.qty == null ? null : Number(i.qty), unit: i.unit || null,
       grams: i.grams == null ? null : Number(i.grams), prep: i.prep || null, optional: !!i.optional})),
-    steps: (r.steps || []).map(s => ({text: s.text, minutes: s.minutes == null ? null : Number(s.minutes)})),
+    steps: (r.steps || []).map(s => ({text: s.text, minutes: s.minutes == null ? null : Number(s.minutes), timerSec: s.timerSec == null ? null : Number(s.timerSec)})),
     tips: (r.tips || []).map(x => typeof x === 'string' ? {text: x} : x),
     variations: (r.variations || []).map(v => ({label: v.label, text: v.text})),
     storage: r.storage || null,
@@ -497,7 +497,7 @@ function renderRecipe(){
 
   /* steps */
   h += '<div class="card"><h3>'+esc(t('rc_steps'))+'</h3><ol class="steps">' +
-    v.steps.map(s => '<li>'+esc(s.text)+(s.minutes ? ' <span class="pill">'+esc(s.minutes)+' min</span>' : '')+'</li>').join('') + '</ol></div>';
+    v.steps.map((s, i) => '<li>'+esc(s.text)+stepTimerHtml(r.id, i, s)+'</li>').join('') + '</ol></div>';
 
   if ((r.variations||[]).length || (r.tips||[]).length){
     h += '<div class="card"><h3>'+esc(t('rc_var_tips'))+'</h3>';
@@ -550,6 +550,7 @@ function renderRecipe(){
   }
   host.innerHTML = h;
   fillThumbs(host);
+  if (S.scrollToStep != null){ const li = $$('#s-recipe .steps li')[S.scrollToStep]; S.scrollToStep = null; if (li) setTimeout(() => li.scrollIntoView({block:'center'}), 60); }
   $$('[data-rver]', host).forEach(b => b.addEventListener('click', () => { S.recipeAxis = b.getAttribute('data-rver'); renderRecipe(); }));
   const ta = $('#rnote');
   ta.addEventListener('change', () => saveRecipeNote(r.id, {notes: ta.value}));
