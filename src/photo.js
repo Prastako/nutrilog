@@ -123,8 +123,8 @@ function renderPhotoResult(r, warn){
     sv.disabled = true; sv.textContent = t('sg_saved');
   });
   $('#phChat').addEventListener('click', () => {
+    const seed = t('ph_chat_seed', {name: r.name, verdict: r.verdict});
+    S.afterSheet = () => openChatSheet(seed);
     closeSheet();
-    S.chatSeed = t('ph_chat_seed', {name: r.name, verdict: r.verdict});
-    go('chat');
   });
 }

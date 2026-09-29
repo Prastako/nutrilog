@@ -526,3 +526,9 @@ body.quickmode, body.quickmode *, body.quickmode *::before, body.quickmode *::af
 body.chatmode #s-chat.on{display:flex;flex-direction:column;min-height:calc(100dvh - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
 body.chatmode #s-chat .chatlog{flex:1}
 body.chatmode #s-chat .chatlog > p.tiny:only-child{margin:auto 0 !important}
+/* tabs-log-today: two or three tabs keep the width of one of five and sit centred */
+@media (max-width: 899.98px){
+  #tabbar[data-n="2"]{grid-template-columns:repeat(2,calc((100% - 8px) / 5));justify-content:center}
+  #tabbar[data-n="3"]{grid-template-columns:repeat(3,calc((100% - 8px) / 5));justify-content:center}
+  #tabbar[data-n="4"]{grid-template-columns:repeat(4,calc((100% - 8px) / 5));justify-content:center}
+}
