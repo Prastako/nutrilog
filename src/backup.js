@@ -250,27 +250,20 @@ function backupHoursStale(){
   return (Date.now() - new Date(S.meta.backup.lastVerifiedAt).getTime()) / 3600000;
 }
 
+function backupLine(){
+  if (syncFresh()) return '';
+  if (!backupConfigured() && !S.profile) return '<p id="backupLine">' + esc(t('b_line_nobackup_new')) + '</p>';
+  if (!backupConfigured() && S.profile) return '<p id="backupLine">' + esc(t('b_line_nobackup_data')) + ' <button class="btn quiet" type="button" data-act="export">' + esc(t('bar_export')) + '</button></p>';
+  if (backupHoursStale() > 48 && isFinite(backupHoursStale())){
+    const h = Math.floor(backupHoursStale());
+    return '<p id="backupLine">' + esc(t('b_line_stale', {h: h})) + ' <button class="btn quiet" type="button" data-act="backup-now">' + esc(t('b_run_now')) + '</button><button class="btn quiet" type="button" data-act="export">' + esc(t('bar_export')) + '</button></p>';
+  }
+  return '';
+}
+
 function renderBackupBar(){
   const bar = $('#backupBar');
-  const b = S.meta.backup;
-  const hasData = !!S.profile;
-  let cls = 'bar', html = '';
-  if (typeof syncFresh === 'function' && syncFresh()){ bar.className = 'bar hide'; bar.innerHTML = ''; return; }
-  if (!backupConfigured()){
-    if (hasData) cls += ' bad';
-    html = '<div>' + esc(hasData ? t('bar_unconf_data') : t('bar_unconf_new')) + '</div>' +
-      '<div class="btnrow"><button class="btn quiet" type="button" data-act="go-settings">'+esc(t('bar_setup'))+'</button>' +
-      (hasData ? '<button class="btn quiet" type="button" data-act="export">'+esc(t('bar_export'))+'</button>' : '') + '</div>';
-  } else if (backupHoursStale() > 48){
-    cls += ' bad';
-    const h = isFinite(backupHoursStale()) ? Math.floor(backupHoursStale()) : null;
-    html = '<div>' + esc(h === null ? t('bar_unconf_data') : t('bar_stale', {h: h})) + '</div>' +
-      (b.lastError ? '<div class="verbatim">'+esc(b.lastError)+'</div>' : '') +
-      '<div class="btnrow"><button class="btn quiet" type="button" data-act="backup-now">'+esc(t('b_run_now'))+'</button>' +
-      '<button class="btn quiet" type="button" data-act="export">'+esc(t('bar_export'))+'</button></div>';
-  }
-  bar.className = cls + (html ? '' : ' hide');
-  bar.innerHTML = html;
+  if (bar){ bar.className = 'bar hide'; bar.innerHTML = ''; }
 }
 
 /* ============================================================
