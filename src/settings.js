@@ -310,7 +310,8 @@ async function saveProfile(){
   await writeLocalSnapshot();
   toast(t('p_saved'));
   S.draft = null;
-  go('today');
+  if (S.afterStart){ S.afterStart = false; S.recipeTab = 'all'; go('recipes'); }
+  else go('today');
 }
 
 /* ---------- Connection tests (from v0.1) ---------- */
