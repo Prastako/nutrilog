@@ -13,12 +13,12 @@ async function renderToday(){
   const today = localDateKey();
   let h = '<p class="eyebrow">'+esc(fmtLongDate(now))+'</p>';
 
-  if (!S.profile){
+  if (!S.profile && moduleOn('goals')){
     h += '<div class="card"><h2>'+esc(t('today_noprofile_h'))+'</h2>' +
          '<p class="muted">'+esc(t('today_noprofile_p'))+'</p>' +
          '<div class="btnrow" style="margin-top:12px"><button class="btn" type="button" data-act="go-profile">'+esc(t('today_setup_btn'))+'</button></div></div>';
   }
-  const g = computeTargets(S.profile);
+  const g = moduleOn('goals') ? computeTargets(S.profile) : null;
   const d = await dayTotals(today);
   const tot = d.total;
   const eaten = tot.kcal || 0;
@@ -120,7 +120,7 @@ async function renderLog(){
   await foodDbForNames();
   const day = S.logDate || localDateKey();
   const d = await dayTotals(day);
-  const g = computeTargets(S.profile);
+  const g = moduleOn('goals') ? computeTargets(S.profile) : null;
   const navH = '<div class="daynav"><button class="iconbtn sm" type="button" data-act="ldate" data-d="-1" aria-label="'+esc(t('lg_prev'))+'">'+icon('back')+'</button>' +
     '<label class="datepick"><span class="num">'+esc(day === localDateKey() ? t('today') : fmtLongDate(dateFromKey(day)))+'</span><input type="date" id="logDateInp" value="'+esc(day)+'"></label>' +
     '<button class="iconbtn sm flip" type="button" data-act="ldate" data-d="1" aria-label="'+esc(t('lg_next'))+'">'+icon('back')+'</button></div>';
@@ -174,7 +174,7 @@ function openAddSheet(slot, date){
   ADD.slot = slot || guessSlot();
   ADD.date = date || S.logDate || localDateKey();
   ADD.food = null;
-  const modes = ['search','scan','photo','describe','recipe','manual'];
+  const modes = ['search','scan','photo','describe','recipe','manual'].filter(m => moduleOn('assistant') || (m !== 'photo' && m !== 'describe'));
   const b = (quickOn() ? '' : '<div class="seg small" id="addModes">' + modes.map(m =>
       '<button type="button" data-mode="'+m+'" class="'+(m==='search'?'on':'')+'">'+esc(t('am_'+m))+'</button>').join('') + '</div>') +
     '<div id="addBody"></div>';
@@ -223,7 +223,7 @@ async function addSearchUI(body){
     res.forEach((f,i) => FOOD_ROWS['s'+i] = {food:f});
     out.innerHTML = (res.length ? res.map((f,i) => foodRow(f, 's'+i)).join('') : '<p class="tiny">'+esc(t('fs_none'))+'</p>') +
       '<div class="btnrow" style="margin:12px 0"><button class="btn quiet" type="button" id="offBtn">'+esc(t('fs_off'))+'</button>' +
-      '<button class="btn quiet" type="button" id="estBtn">'+esc(t('fs_est'))+'</button></div><div id="offRes"></div>';
+      '<button class="btn quiet'+(moduleOn('assistant') ? '' : ' hide')+'" type="button" id="estBtn">'+esc(t('fs_est'))+'</button></div><div id="offRes"></div>';
     $('#offBtn').addEventListener('click', async () => {
       const box = $('#offRes');
       box.innerHTML = '<p class="tiny">'+esc(t('loading'))+'</p>';
@@ -529,6 +529,7 @@ function suppScheduledOn(s, dateKey){
 
 async function renderSuppChecklist(el, dateKey, showManage, withButton){
   if (!el) return;
+  if (!moduleOn('supplements')){ el.innerHTML = ''; return; }
   const supps = (await recByType('supplement')).filter(s => s.active !== false);
   const intakes = await recByTypeDate('supplement_intake', dateKey, dateKey);
   if (!supps.length && !showManage && !withButton){ el.innerHTML = ''; return; }
