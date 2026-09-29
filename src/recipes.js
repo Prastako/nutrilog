@@ -341,6 +341,8 @@ function renderRecipes(){
     '<button type="button" role="tab" aria-selected="'+(S.recipeTab==='suggest')+'" class="'+(S.recipeTab==='suggest'?'on':'')+'" data-act="rtab" data-v="suggest">'+esc(t('rt_suggest'))+'</button>' +
     '<button type="button" role="tab" aria-selected="'+(S.recipeTab==='all')+'" class="'+(S.recipeTab==='all'?'on':'')+'" data-act="rtab" data-v="all">'+esc(t('rt_all'))+'</button>' +
     '</div>';
+  if (S.catalogBusy) h += '<p class="tiny" id="catLine">'+esc(t('cat_loading'))+'</p>';
+  else if (S.catalogFailed) h += '<p class="tiny" id="catLine">'+esc(t('cat_failed'))+'</p>';
   h += '<div id="rtabBody"></div>';
   host.innerHTML = h;
   if (S.recipeTab === 'suggest') renderSuggestions();

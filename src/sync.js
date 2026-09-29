@@ -30,10 +30,10 @@ async function syncFetch(method, path, body, key, opts) {
   var url = syncBase() + path;
   var init = {
     method: method,
-    headers: {
-      Authorization: 'Bearer ' + (key || S.secrets.sync)
-    }
+    headers: {}
   };
+  var k = (opts && opts.noAuth) ? '' : (key || S.secrets.sync);
+  if (k) init.headers.Authorization = 'Bearer ' + k;
   if (opts && opts.keepalive) init.keepalive = true;
   if (body !== undefined) {
     init.headers['Content-Type'] = 'application/json';

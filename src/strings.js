@@ -1014,3 +1014,5 @@ Object.assign(STR.cs, { tm_start:'Spustit {m} min', tm_step:'Krok {n}', tm_done:
 Object.assign(STR.en, { tm_start:'Start {m} min', tm_step:'Step {n}', tm_done:'Done', tm_cancel:'Cancel timer' });
 Object.assign(STR.cs, { rc_cook:'Vařit', ck_step:'Krok {i} z {n}', ck_prev:'Předchozí', ck_next:'Další', ck_finish:'Dovařeno', ck_done:'Uvařeno. Dobrou chuť.', ck_read:'Přečíst krok' });
 Object.assign(STR.en, { rc_cook:'Cook', ck_step:'Step {i} of {n}', ck_prev:'Previous', ck_next:'Next', ck_finish:'Done cooking', ck_done:'Cooked. Enjoy.', ck_read:'Read the step' });
+Object.assign(STR.cs, { cat_loading:'Stahuji sdílené recepty…', cat_failed:'Sdílené recepty se nepodařilo stáhnout; zkusím to příště.', orig_catalog:'Sdílené recepty' });
+Object.assign(STR.en, { cat_loading:'Downloading the shared recipes…', cat_failed:'The shared recipes could not be downloaded; will try again next time.', orig_catalog:'Shared recipes' });
