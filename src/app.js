@@ -106,6 +106,9 @@ function bindEvents(){
   bindQuick();
   $('#btnBack').addEventListener('click', goBack);
   $('#btnSettings').addEventListener('click', () => go('settings'));
+  const dateHintUpd = (e) => { const el = e.target; if (!el || !el.matches || !el.id || !el.matches('input[type="date"]')) return;
+    const h = document.querySelector('[data-hint-for="' + el.id + '"]'); if (h) h.textContent = el.value ? numDate(el.value, true) : ''; };
+  document.addEventListener('input', dateHintUpd); document.addEventListener('change', dateHintUpd);
   document.addEventListener('pointerup', (e) => {
     const b = e.target && e.target.closest ? e.target.closest('.btn') : null;
     if (!b || b.classList.contains('quiet') || b.classList.contains('ghost') || b.classList.contains('danger')) return;
