@@ -56,6 +56,7 @@ function refreshChrome(){
   const isSub = SUBSCREENS.indexOf(S.screen) >= 0;
   $('#btnBack').classList.toggle('hide', !isSub);
   $('#btnSettings').classList.toggle('hide', S.screen === 'settings');
+  const bc = $('#btnChat'); if (bc){ bc.classList.toggle('hide', S.screen === 'quick'); bc.classList.toggle('solo', S.screen === 'settings'); bc.setAttribute('aria-label', t('t_chat')); }
   $('#screenTitle').textContent = headerLabel();
 
   document.body.classList.toggle('chatmode', S.screen === 'chat');
@@ -105,6 +106,7 @@ function bindEvents(){
   bindQuick();
   $('#btnBack').addEventListener('click', goBack);
   $('#btnSettings').addEventListener('click', () => go('settings'));
+  $('#btnChat').addEventListener('click', () => openChatSheet(''));
   const dateHintUpd = (e) => { const el = e.target; if (!el || !el.matches || !el.id || !el.matches('input[type="date"]')) return;
     const h = document.querySelector('[data-hint-for="' + el.id + '"]'); if (h) h.textContent = el.value ? numDate(el.value, true) : ''; };
   document.addEventListener('input', dateHintUpd); document.addEventListener('change', dateHintUpd);
@@ -218,7 +220,7 @@ function bindEvents(){
     else if (act === 'recipe-log'){ recipeLogSheet(id); }
     else if (act === 'recipe-fav'){ const n = recipeNote(id) || {}; await saveRecipeNote(id, {favorite: !n.favorite}); renderRecipe(); }
     else if (act === 'recipe-missing'){ recipeMissing(id); }
-    else if (act === 'recipe-ask'){ const r = RECIPES.byId[id]; S.chatSeed = t('rc_ask_seed', {t: r ? r.title : ''}); go('chat'); }
+    else if (act === 'recipe-ask'){ const r = RECIPES.byId[id]; openChatSheet(t('rc_ask_seed', {t: r ? r.title : ''})); }
     else if (act === 'recipe-del'){
       const ok = await confirmSheet(t('rc_delete'), '<p class="muted">'+esc((RECIPES.byId[id]||{}).title||'')+'</p>', t('rc_delete'), true);
       if (ok){ const rec = await dbGet('recipes', id); if (rec){ rec.deleted = true; rec.updatedAt = nowIso(); await dbPut('recipes', rec); } markDirty('recipe deleted'); await loadRecipes(); go('recipes'); }

@@ -511,3 +511,18 @@ body.quickmode, body.quickmode *, body.quickmode *::before, body.quickmode *::af
   .topbar{min-height:calc(env(safe-area-inset-top) + 56px);box-sizing:border-box}
   #btnBack,#btnSettings{top:calc(env(safe-area-inset-top) + 8px)}
 }
+/* chat button and chat sheet (brief nutrilog-260929-chat-overlay) */
+#btnChat{position:absolute;top:calc(env(safe-area-inset-top) + 14px);right:54px}
+#btnChat.solo{right:12px}
+.topbar .brand{max-width:calc(100% - 184px)}
+@media (max-width: 359.98px){ #btnChat{top:calc(env(safe-area-inset-top) + 8px);right:60px} #btnChat.solo{right:12px} }
+.sheetbg:has(> .sheet.full){align-items:stretch}
+.sheet.full{max-width:560px;height:calc(100dvh - env(safe-area-inset-top));max-height:none;margin-top:env(safe-area-inset-top);border-radius:0;display:flex;flex-direction:column;overflow:hidden}
+.sheet.full .sheetbody{flex:1;min-height:0;display:flex;flex-direction:column}
+.chatsheet{flex:1;min-height:0;display:flex;flex-direction:column}
+.chatsheet .chatlog{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.chatsheet .chatlog > p.tiny:only-child{margin:auto 0 !important}
+.chatsheet .chatin{position:static;flex:none}
+body.chatmode #s-chat.on{display:flex;flex-direction:column;min-height:calc(100dvh - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+body.chatmode #s-chat .chatlog{flex:1}
+body.chatmode #s-chat .chatlog > p.tiny:only-child{margin:auto 0 !important}
