@@ -10,7 +10,11 @@
 const EXPORT_KV_KEYS = ['prefs'];
 
 async function buildPayload(){
-  const kv = (await dbAll('kv')).filter(r => EXPORT_KV_KEYS.indexOf(r.key) >= 0);
+  /* prefs.modules is device-local: never exported */
+  const kv = (await dbAll('kv')).filter(r => EXPORT_KV_KEYS.indexOf(r.key) >= 0).map(r => {
+    if (r.key !== 'prefs' || !r.value) return r;
+    const v = Object.assign({}, r.value); delete v.modules; return {key: r.key, value: v};
+  });
   const records = await dbAll('records');
   const recipes = (await dbAll('recipes')).filter(r => (r.origin === 'claude' || r.origin === 'own') && !r.deleted).map(r => { const c = Object.assign({}, r); delete c._search; return c; });
   return {
@@ -37,11 +41,19 @@ function validatePayload(obj){
   return {ok:true};
 }
 
+/* A restored file never changes which modules this device has on. */
+function keepDeviceModules(rec){
+  if (!rec || rec.key !== 'prefs' || !rec.value) return rec;
+  const v = Object.assign({}, rec.value); delete v.modules;
+  if (S.prefs && S.prefs.modules) v.modules = deepCopy(S.prefs.modules);
+  return {key: rec.key, value: v};
+}
+
 async function applyPayload(obj){
   if (obj.schema === 1){
     /* a v0.1 backup: profile and weight history become records */
     await dbClear('records');
-    for (const rec of obj.data.kv) if (rec.key === 'prefs') await dbPut('kv', rec);
+    for (const rec of obj.data.kv) if (rec.key === 'prefs') await dbPut('kv', keepDeviceModules(rec));
     const prof = (obj.data.kv.find(r => r.key === 'profile') || {}).value;
     if (prof){
       const r = profileFromV1(prof);
@@ -53,7 +65,7 @@ async function applyPayload(obj){
     }
   } else {
     await dbClear('records');
-    for (const rec of obj.data.kv) await dbPut('kv', rec);
+    for (const rec of obj.data.kv) await dbPut('kv', keepDeviceModules(rec));
     await dbPutMany('records', obj.data.records || []);
     const own = (await dbAll('recipes')).filter(r => r.origin === 'claude' || r.origin === 'own');
     for (const r of own) await dbDel('recipes', r.id);
