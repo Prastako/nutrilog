@@ -22,7 +22,7 @@ function periodLabel(mode, r){
   const f = dateFromKey(r.from), tt = dateFromKey(r.to);
   if (mode === 'month') return new Intl.DateTimeFormat(locale(), {month:'long', year:'numeric'}).format(f);
   const o = {day:'numeric', month:'numeric'};
-  return new Intl.DateTimeFormat(locale(), o).format(f) + ' – ' + new Intl.DateTimeFormat(locale(), o).format(tt);
+  return numDate(f) + ' – ' + numDate(tt);
 }
 
 async function periodData(mode, anchor){

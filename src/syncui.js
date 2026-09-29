@@ -5,7 +5,7 @@ function syncStateText() {
   if (S.meta.sync.state == 'offline') return t('sy_offline');
   if (S.meta.sync.state == 'error') return t('sy_err', {msg: S.meta.sync.lastError});
   if (S.meta.sync.state == 'revoked') return t('sy_revoked');
-  return t('sy_on', {name: S.meta.sync.name, when: ago(S.meta.sync.lastOkAt)});
+  return t('sy_on', {name: S.meta.sync.name, when: fmtDateTime(S.meta.sync.lastOkAt)});
 }
 
 function catalogStateText() {
@@ -120,7 +120,7 @@ function submitListHtml() {
         (item.status == 'published' || item.status == 'merged' || item.status == 'duplicate') &&
         typeof RECIPES !== 'undefined' && RECIPES.list &&
         RECIPES.list.some(function(r) { return r.id == item.recipeId && r.origin == 'catalog'; });
-      var date = new Date(item.createdAt).toLocaleDateString(S.lang === 'cs' ? 'cs-CZ' : 'en-GB');
+      var date = numDate(new Date(item.createdAt), true);
       var label = esc(submissionLabel(item));
       var status = esc(date + ' · ' + submissionStatus(item));
       if (canOpen) {
