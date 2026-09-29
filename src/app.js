@@ -12,10 +12,17 @@ const TABS = [
   {id:'review',  icon:'review',  key:'nav_review'}
 ];
 const SUBSCREENS = ['profile','settings','recipe'];
+/* Modules: a screen exists only while its module is on. Recipes, the recipe page, Profile and Settings always exist. */
+function screenOn(screen){
+  if (screen === 'today' || screen === 'log' || screen === 'quick') return moduleOn('logging');
+  if (screen === 'review') return moduleOn('goals');
+  if (screen === 'chat') return moduleOn('assistant');
+  return true;
+}
 
 function renderTabs(){
   const cur = S.screen === 'recipe' ? 'recipes' : S.screen;
-  $('#tabbar').innerHTML = TABS.map(tab =>
+  $('#tabbar').innerHTML = TABS.filter(tab => screenOn(tab.id)).map(tab =>
     '<button class="tab" type="button" data-go="'+tab.id+'"'+(cur===tab.id?' aria-current="page"':'')+'>'+
       icon(tab.icon)+'<span>'+esc(t(tab.key))+'</span><span class="dot"></span>'+
     '</button>').join('');
@@ -26,6 +33,7 @@ function go(screen, push){
     screen = 'quick';
     if (push === false){ try { history.replaceState({screen:'quick'}, '', '#quick'); } catch(e){} }
   }
+  if (!screenOn(screen)) screen = 'recipes';
   if (S.sheetOpen) closeSheet(true);
   S.screen = screen;
   $$('.screen').forEach(s => s.classList.remove('on'));
@@ -56,7 +64,7 @@ function refreshChrome(){
   const isSub = SUBSCREENS.indexOf(S.screen) >= 0;
   $('#btnBack').classList.toggle('hide', !isSub);
   $('#btnSettings').classList.toggle('hide', S.screen === 'settings');
-  const bc = $('#btnChat'); if (bc){ bc.classList.toggle('hide', S.screen === 'quick'); bc.classList.toggle('solo', S.screen === 'settings'); bc.setAttribute('aria-label', t('t_chat')); }
+  const bc = $('#btnChat'); if (bc){ bc.classList.toggle('hide', S.screen === 'quick' || !moduleOn('assistant')); bc.classList.toggle('solo', S.screen === 'settings'); bc.setAttribute('aria-label', t('t_chat')); }
   $('#screenTitle').textContent = headerLabel();
 
   document.body.classList.toggle('chatmode', S.screen === 'chat');
@@ -429,7 +437,7 @@ async function boot(){
   await loadRecipes();
 
   const hash = (location.hash || '').replace('#','');
-  if (hash === 'quick' && !quickOn()){ S.prefs.quickMode = 'on'; S.prefs.quickModeAsked = true; await savePrefs(); }
+  if (hash === 'quick' && !quickOn() && moduleOn('logging')){ S.prefs.quickMode = 'on'; S.prefs.quickModeAsked = true; await savePrefs(); }
   const known = TABS.map(x => x.id).concat(['profile','settings','quick']);
   go(known.indexOf(hash) >= 0 ? hash : 'today', false);
   try { history.replaceState({screen:S.screen}, '', '#'+S.screen); } catch(e){}

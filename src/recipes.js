@@ -473,10 +473,10 @@ function renderRecipe(){
     '<div><span class="k">'+esc(t('rc_difficulty'))+'</span><span class="v">'+esc(r.difficulty ? t('diff_'+r.difficulty) : '–')+'</span></div>' +
     '</div>';
   h += '<div class="btnrow" style="margin:12px 0">' +
-    '<button class="btn" type="button" data-act="recipe-log" data-id="'+esc(r.id)+'">'+icon('log')+esc(t('rc_log'))+'</button>' +
+    (moduleOn('logging') ? '<button class="btn" type="button" data-act="recipe-log" data-id="'+esc(r.id)+'">'+icon('log')+esc(t('rc_log'))+'</button>' : '') +
     '<button class="btn quiet" type="button" data-act="recipe-fav" data-id="'+esc(r.id)+'">'+(note.favorite ? '★ ' : '☆ ')+esc(t('rc_fav'))+'</button>' +
     '<button class="btn quiet" type="button" data-act="recipe-missing" data-id="'+esc(r.id)+'">'+esc(t('rc_missing_btn'))+'</button>' +
-    '<button class="btn quiet" type="button" data-act="recipe-ask" data-id="'+esc(r.id)+'">'+icon('chat')+esc(t('rc_ask'))+'</button>' +
+    (moduleOn('assistant') ? '<button class="btn quiet" type="button" data-act="recipe-ask" data-id="'+esc(r.id)+'">'+icon('chat')+esc(t('rc_ask'))+'</button>' : '') +
     '</div>';
   if ((r.tags||[]).length) h += '<div class="chips" style="margin-bottom:12px">' + r.tags.map(tg => '<span class="pill">'+esc(tagLabel(tg))+'</span>').join('') + '</div>';
 
@@ -696,7 +696,7 @@ async function renderSuggestions(){
   if (!S.profile) h += '<div class="notice warn">'+esc(t('sg_noprofile'))+'</div>';
   if (!visibleRecipes().length) h += '<div class="notice">'+esc(t('sg_norecipes'))+'</div>';
   h += '<div id="sgSlots"></div>';
-  h += '<div class="card flat" style="margin-top:6px"><h3>'+esc(t('sg_prep_h'))+'</h3><p class="tiny" style="margin-bottom:10px">'+esc(t('sg_prep_p'))+'</p>' +
+  if (moduleOn('assistant')) h += '<div class="card flat" style="margin-top:6px"><h3>'+esc(t('sg_prep_h'))+'</h3><p class="tiny" style="margin-bottom:10px">'+esc(t('sg_prep_p'))+'</p>' +
     '<button class="btn quiet" type="button" data-act="ai-mealprep">'+icon('suggest')+esc(t('sg_prep_btn'))+'</button></div>';
   host.innerHTML = h;
   let sh = '';
@@ -708,7 +708,7 @@ async function renderSuggestions(){
     if (!res.items.length) sh += '<p class="tiny">'+esc(t('sg_none_slot'))+'</p>';
     sh += '<div class="rlist">' + res.items.map(x => recipeCard(x.r,
       (x.serv !== 1 ? esc(t('sg_servings', {n: fmtQty(x.serv), k: fmtNum(x.kcal)})) + ' · ' : '') + esc(x.reasons.slice(0,2).join(' · ')))).join('') + '</div>';
-    sh += '<div class="btnrow" style="margin-top:10px"><button class="btn ghost" type="button" data-act="ai-recipes" data-slot="'+slot+'" data-kcal="'+(res.target ? Math.round(res.target) : '')+'">'+icon('suggest')+esc(t('sg_ai_btn'))+'</button></div>';
+    if (moduleOn('assistant')) sh += '<div class="btnrow" style="margin-top:10px"><button class="btn ghost" type="button" data-act="ai-recipes" data-slot="'+slot+'" data-kcal="'+(res.target ? Math.round(res.target) : '')+'">'+icon('suggest')+esc(t('sg_ai_btn'))+'</button></div>';
     sh += '</div>';
   }
   const slotsEl = $('#sgSlots');

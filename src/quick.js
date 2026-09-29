@@ -1,7 +1,7 @@
 /* ---------- quick mode ---------- */
 
 function quickOn() {
-  return S.prefs.quickMode === 'on';
+  return S.prefs.quickMode === 'on' && moduleOn('logging');
 }
 
 async function setQuickMode(on) {
@@ -12,7 +12,7 @@ async function setQuickMode(on) {
 }
 
 function maybeOfferQuick() {
-  if (S.prefs.quickModeAsked || quickOn() || window.innerWidth >= 340) return;
+  if (S.prefs.quickModeAsked || quickOn() || !moduleOn('logging') || window.innerWidth >= 340) return;
   var foot = '<button class="btn" type="button" id="qmYes">' + esc(t('qm_offer_yes')) + '</button>'
     + '<button class="btn quiet" type="button" id="qmNo">' + esc(t('qm_offer_no')) + '</button>';
   openSheet(esc(t('qm_title')), '<p>' + esc(t('qm_offer')) + '</p>', foot);
