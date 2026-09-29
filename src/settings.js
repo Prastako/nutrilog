@@ -399,6 +399,7 @@ function keyField(id, labelKey, value, testAct, resultId, ph){
 function renderSettings(){
   const P = S.prefs;
   let h = '';
+  h += '<!--cat:look-->';
   h += '<div class="card"><h3>'+esc(t('set_look'))+'</h3>' +
     '<div class="field"><span class="flabel">'+esc(t('set_lookpick'))+'</span><div class="looks">' +
       LOOKS.map(l => '<button class="looktile" type="button" data-act="look" data-v="'+l.id+'" aria-pressed="'+(lookOf(S.look).id===l.id)+'" style="background:'+l.dark.ground+';color:'+l.dark.ink+';--lk-accent:'+l.dark.accent+'">' +
@@ -419,22 +420,18 @@ function renderSettings(){
     '</div></div>' +
     (moduleOn('logging') ? '<label class="opt sq" style="margin-top:12px"><input type="checkbox" id="qmSwitch" '+(quickOn() ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('qm_title'))+'</span><span class="t2">'+esc(t('qm_note'))+'</span></span></label>' : '') + '</div>';
 
+  h += '<!--cat:features-->';
   h += featuresCardHtml();
-  h += '<div class="card"><h3>'+esc(t('set_profile_h'))+'</h3>' +
-    '<div class="btnrow"><button class="btn quiet" type="button" data-act="go-profile">'+esc(t('set_profile_open'))+'</button></div></div>';
+  h += '<!--cat:supps--><div class="card" id="suppScreen"></div>';
 
+  h += '<!--cat:claude-->';
   h += '<div class="card"><h3>'+esc(t('set_keys_h'))+'</h3>' +
     '<p class="tiny" style="margin-bottom:12px">'+esc(t('set_keys_note'))+'</p>' +
     (moduleOn('assistant') ? keyField('k-anthropic','k_anthropic', S.secrets.anthropic, 'test-anthropic', 'r-anthropic') + '<p class="tiny" style="margin:-4px 0 14px">'+esc(t('k_anthropic_tip'))+'</p>' : '') +
-    keyField('k-github','k_github', S.secrets.github, null, null) +
-    '<div class="field"><label for="k-repo">'+esc(t('k_repo'))+'</label>' +
-      '<input id="k-repo" type="text" autocapitalize="off" spellcheck="false" data-set="prefs.backup.repo" value="'+esc(P.backup.repo)+'" placeholder="'+esc(t('k_repo_ph'))+'"></div>' +
-    '<div class="field"><label for="k-branch">'+esc(t('k_branch'))+'</label>' +
-      '<input id="k-branch" type="text" autocapitalize="off" spellcheck="false" data-set="prefs.backup.branch" value="'+esc(P.backup.branch)+'"></div>' +
-    '<div class="btnrow"><button class="btn quiet" type="button" data-act="test-github">'+esc(t('test_btn'))+'</button></div>' +
-    '<div id="r-github"></div></div>';
+    '</div>';
 
   /* archive */
+  h += '<!--cat:recipes-->';
   const A = S.meta.archive;
   const counts = {archive:0, starter:0, claude:0, own:0};
   RECIPES.list.forEach(r => { counts[r.origin] = (counts[r.origin]||0) + 1; });
@@ -442,16 +439,14 @@ function renderSettings(){
     '<div class="kv"><span class="k">'+esc(t('orig_archive'))+'</span><span class="v num">'+counts.archive+'</span></div>' +
     '<div class="kv"><span class="k">'+esc(t('orig_claude'))+' / '+esc(t('orig_own'))+'</span><span class="v num">'+counts.claude+' / '+counts.own+'</span></div>' +
     '<div class="kv"><span class="k">'+esc(t('orig_starter'))+'</span><span class="v num">'+counts.starter+'</span></div>' +
-    '<div class="kv"><span class="k">'+esc(t('arch_last'))+'</span><span class="v">'+esc(A.lastSyncAt ? fmtDateTime(A.lastSyncAt) : t('never'))+'</span></div>' +
-    (A.lastError ? '<div class="notice bad" style="margin-top:8px"><div class="verbatim">'+esc(A.lastError)+'</div></div>' : '') +
-    '<div class="field" style="margin-top:10px"><label for="a-path">'+esc(t('arch_path'))+'</label><input id="a-path" type="text" autocapitalize="off" spellcheck="false" data-set="prefs.archive.path" value="'+esc(P.archive.path)+'"></div>' +
-    '<div class="btnrow"><button class="btn quiet" type="button" data-act="arch-sync">'+icon('refresh')+esc(t('arch_sync'))+'</button>' +
-    '<button class="btn quiet" type="button" data-act="arch-import">'+icon('up')+esc(t('arch_import'))+'</button></div>' +
+    '<div class="btnrow">' +
+    '<button class="btn quiet" type="button" data-act="arch-import">'+icon('up')+esc(t('arch_load'))+'</button></div>' +
     '<input type="file" id="archFile" accept="application/json,.json" class="hide">' +
     '<label class="opt sq" style="margin-top:12px"><input type="checkbox" id="a-starter" '+(P.archive.showStarter ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('arch_starter'))+'</span><span class="t2">'+esc(t('arch_starter_d'))+'</span></span></label></div>';
 
   /* models and spend */
   const aiFrom = h.length;
+  h += '<!--cat:claude-->';
   h += '<div class="card"><h3>'+esc(t('set_models_h'))+'</h3>' +
     ['chat','vision','analysis'].map(role =>
       '<div class="field"><label for="m-'+role+'">'+esc(t('m_'+role))+'</label>' +
@@ -459,6 +454,7 @@ function renderSettings(){
     '<p class="tiny">'+esc(t('m_note'))+'</p></div>';
 
   const models = [P.models.chat, P.models.vision, P.models.analysis].filter((v,i,a) => a.indexOf(v) === i);
+  h += '<!--cat:spend-->';
   h += '<div class="card"><h3>'+esc(t('set_price_h'))+'</h3>' +
     '<div class="field"><label for="bud">'+esc(t('bud_label'))+'</label><input id="bud" type="number" inputmode="decimal" step="1" min="0" data-set="prefs.budget.monthlyUsd" value="'+esc(P.budget.monthlyUsd)+'"></div>' +
     '<div class="kv"><span class="k">'+esc(t('bud_month'))+'</span><span class="v num">'+esc(fmtNum(monthCost(),2))+' USD</span></div>' +
@@ -485,15 +481,15 @@ function renderSettings(){
     '<div class="btnrow" style="margin-top:8px"><button class="btn quiet" type="button" data-act="usage-reset">'+esc(t('usage_reset'))+'</button></div></div>';
 
   if (!moduleOn('assistant')) h = h.slice(0, aiFrom);
+  h += '<!--cat:sync-->';
   h += syncCardHtml();
-  h += '<div class="card"><h3>'+esc(t('set_data_h'))+'</h3><div id="backupPanel"></div>' +
+  h += '<!--cat:backup-->';
+  h += '<div class="card"><h3>'+esc(t('set_data_h'))+'</h3>' +
     '<div class="btnrow" style="margin-top:12px">' +
-      '<button class="btn quiet" type="button" data-act="backup-now">'+icon('cloud')+esc(t('b_run_now'))+'</button>' +
       '<button class="btn quiet" type="button" data-act="export">'+icon('down')+esc(t('b_export'))+'</button>' +
     '</div><p class="tiny" style="margin-top:8px">'+esc(navigator.share ? t('b_export_note') : t('b_export_note_dl'))+'</p>' +
     '<div class="btnrow" style="margin-top:12px">' +
       '<button class="btn quiet" type="button" data-act="import">'+icon('up')+esc(t('b_import'))+'</button>' +
-      '<button class="btn quiet" type="button" data-act="restore-cloud">'+icon('cloud')+esc(t('b_restore_cloud'))+'</button>' +
     '</div>' +
     '<input type="file" id="importFile" accept="application/json,.json" class="hide">' +
     '<div class="notice warn" style="margin-top:10px">'+esc(t('b_restore_warn'))+'</div>' +
@@ -504,17 +500,20 @@ function renderSettings(){
     '<p class="tiny" style="margin-top:12px">'+esc(t('b_secrets_note'))+'</p>' +
     '<p class="tiny" style="margin-top:8px">'+esc(t('b_format_note'))+'</p></div>';
 
+  h += '<!--cat:diag-->';
   h += '<div class="card"><h3>'+esc(t('dg_h'))+'</h3><p class="muted">'+esc(t('dg_p'))+'</p>' +
     '<div id="diagPanel" style="margin-top:10px"></div>' +
     '<div class="btnrow" style="margin-top:12px">' +
       '<button class="btn quiet" type="button" data-act="diag-copy">'+icon('down')+esc(t('dg_copy'))+'</button>' +
     '</div></div>';
 
+  h += '<!--cat:danger-->';
   h += '<div class="card"><h3>'+esc(t('danger_h'))+'</h3><p class="muted">'+esc(t('danger_p'))+'</p>' +
     '<div class="field" style="margin-top:12px"><label for="eraseWord">'+esc(t('danger_type',{word:t('danger_word')}))+'</label>' +
     '<input id="eraseWord" type="text" autocapitalize="characters" autocomplete="off"></div>' +
     '<div class="btnrow"><button class="btn danger" type="button" data-act="erase">'+icon('trash')+esc(t('danger_btn'))+'</button></div></div>';
 
+  h += '<!--cat:about-->';
   h += '<div class="card"><h3>'+esc(t('about_h'))+'</h3>' +
     '<div class="kv"><span class="k">'+esc(t('about_version'))+'</span><span class="v num">'+esc(VERSION)+'</span></div>' +
     '<div class="kv"><span class="k">'+esc(t('about_schema'))+'</span><span class="v num">'+esc(SCHEMA)+'</span></div>' +
@@ -526,12 +525,12 @@ function renderSettings(){
     '</div>' +
     '<div class="orn"><i></i></div>' +
     '<p class="eyebrow">'+esc(t('about_clear_h'))+'</p><p class="tiny">'+esc(t('about_clear_p'))+'</p>' +
-    '<p class="eyebrow" style="margin-top:12px">'+esc(t('about_token_h'))+'</p><p class="tiny">'+esc(t('about_token_p'))+'</p>' +
-    '<p style="margin-top:10px"><a href="https://github.com/settings/personal-access-tokens" target="_blank" rel="noopener">'+esc(t('about_revoke'))+'</a></p>' +
     '</div>';
 
+  h = settingsLayout(h);
   $('#s-settings').innerHTML = h;
   bindFeatures();
+  if (S.settingsCat === 'supps') openSuppManager($('#suppScreen'));
   bindSyncCard();
   renderBackupPanel();
   fillStorageInfo();
@@ -657,4 +656,38 @@ function bindFeatures() {
       });
     }
   }
+}
+
+/* ---------- Settings categories (brief settings-screens) ---------- */
+
+const SETTINGS_GROUPS = [
+  ['st_personal', ['look', 'profile', 'features', 'supps', 'recipes', 'sync']],
+  ['st_advanced', ['claude', 'spend', 'backup', 'diag', 'danger', 'about']]
+];
+function settingsRowOn(cat){
+  if (cat === 'profile') return moduleOn('goals');
+  if (cat === 'supps') return moduleOn('supplements');
+  if (cat === 'claude' || cat === 'spend') return moduleOn('assistant');
+  return true;
+}
+function settingsListHtml(){
+  return SETTINGS_GROUPS.map(([head, cats]) => '<p class="eyebrow">'+esc(t(head))+'</p><div class="card" style="padding-top:6px;padding-bottom:6px">' +
+    cats.filter(settingsRowOn).map(c => '<button class="rowbtn" type="button" ' + (c === 'profile' ? 'data-act="go-profile"' : 'data-act="set-cat" data-v="'+c+'"') + '>' +
+      '<span class="k">'+esc(t('st_'+c))+'</span><span class="plus">›</span></button>').join('') + '</div>').join('');
+}
+/* The cards carry <!--cat:x--> marks; the list shows alone, or one category shows and the others stay hidden. */
+function settingsLayout(h){
+  if (S.settingsCat && !settingsRowOn(S.settingsCat)) S.settingsCat = null;
+  const parts = h.split(/<!--cat:([a-z]+)-->/);
+  let out = parts[0];
+  for (let i = 1; i < parts.length; i += 2)
+    out += '<div class="setcat'+(S.settingsCat === parts[i] ? '' : ' hide')+'" data-cat="'+parts[i]+'">' + parts[i+1] + '</div>';
+  return (S.settingsCat ? '' : settingsListHtml()) + out;
+}
+function openSettingsCat(cat){
+  S.settingsCat = cat;
+  try { history.pushState({screen:'settings', cat: cat}, '', '#settings'); } catch(e){}
+  refreshChrome();
+  renderSettings();
+  window.scrollTo(0, 0);
 }

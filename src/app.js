@@ -31,6 +31,7 @@ function renderTabs(){
 
 function go(screen, push){
   if (screen === 'today'){ screen = 'log'; S.logDate = localDateKey(); }
+  if (push !== false) S.settingsCat = null;
   if (quickOn() && ['quick','settings','profile'].indexOf(screen) < 0){
     screen = 'quick';
     if (push === false){ try { history.replaceState({screen:'quick'}, '', '#quick'); } catch(e){} }
@@ -60,6 +61,7 @@ function goBack(){
 /* Header label: the screen name; Quick mode has no navigator, so it keeps the short date. */
 function headerLabel(){
   if (S.screen === 'quick') return fmtShortDate(localDateKey());
+  if (S.screen === 'settings' && S.settingsCat) return t('st_' + S.settingsCat);
   return t('t_' + S.screen);
 }
 
@@ -138,6 +140,7 @@ function bindEvents(){
     const id = b.getAttribute('data-id');
 
     if (act === 'go-profile'){ S.draft = null; go('profile'); }
+    else if (act === 'set-cat'){ openSettingsCat(b.getAttribute('data-v')); }
     else if (act === 'go-settings'){ go('settings'); }
     else if (act === 'why-range'){ showWhyRange(); }
     else if (act === 'profile-save'){ saveProfile().then(() => requestPersist()); }
@@ -359,7 +362,8 @@ function bindEvents(){
     if ((location.hash || '').indexOf('#join=') === 0) return;
     if (S.swallowPop){ S.swallowPop = false; refreshScreenSoon(); return; }
     if (S.sheetOpen){ closeSheet(true); return; }
-    const scr = (e.state && e.state.screen) || 'today';
+    const scr = (e.state && e.state.screen) || 'recipes';
+    S.settingsCat = (e.state && e.state.cat) || null;
     go(scr, false);
   });
   window.addEventListener('hashchange', () => {
