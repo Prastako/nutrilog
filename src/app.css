@@ -203,7 +203,7 @@ main{padding-left:32px;padding-right:32px}
   .iconbtn{min-width:40px;min-height:40px}
   .topbar .hdr-orn{display:none}
 }
-body.quickmode #tabbar{display:none}
+body.quickpref #tabbar{display:none}
 body.quickmode main{padding-bottom:24px}
 body.quickmode::before{display:none}
 body.quickmode, body.quickmode *{text-shadow:none !important;box-shadow:none !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;filter:none !important;animation:none !important}

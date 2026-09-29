@@ -59,7 +59,8 @@ function refreshChrome(){
   $('#screenTitle').textContent = headerLabel();
 
   document.body.classList.toggle('chatmode', S.screen === 'chat');
-  document.body.classList.toggle('quickmode', quickOn());
+  document.body.classList.toggle('quickmode', quickOn() && S.screen === 'quick');
+  document.body.classList.toggle('quickpref', quickOn());
 }
 
 function renderScreen(name){
