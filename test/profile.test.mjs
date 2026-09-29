@@ -62,7 +62,7 @@ const settingsSrc = readFileSync(resolve(__dirname, '../src/settings.js'), 'utf8
 runInContext(settingsSrc, ctx);
 
 /* expose helpers */
-runInContext(';globalThis.__h = { S, renderProfile, profileMissing, blankProfile, previewParts };', ctx);
+runInContext(';S.prefs.modules = {logging:true, goals:true, supplements:true, assistant:true}; globalThis.__h = { S, renderProfile, profileMissing, blankProfile, previewParts };', ctx);
 
 const { S, renderProfile, profileMissing, blankProfile, previewParts } = ctx.__h;
 

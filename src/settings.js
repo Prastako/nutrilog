@@ -87,6 +87,7 @@ function renderProfile(){
   const num = (path, id, label, attrs, hint) => '<div class="field"><label for="'+id+'">'+esc(label)+'</label><input id="'+id+'" type="number" '+attrs+' data-bind="'+path+'" value="'+esc(getPath(d, path) == null ? '' : getPath(d, path))+'">'+(hint ? '<span class="fhint">'+esc(hint)+'</span>' : '')+'</div>';
   let h = '<p class="muted">'+esc(t('p_intro'))+'</p><div class="orn"><i></i></div>';
 
+  const goalsFrom = h.length;
   h += '<div class="card"><h3>'+esc(t('p_basics'))+'</h3>';
   h += '<div class="inline">' + num('person.age','f-age',t('p_age'),'inputmode="numeric" min="10" max="100"',t('p_years')) +
        num('person.heightCm','f-height',t('p_height'),'inputmode="numeric" min="100" max="250"',t('p_hint_height')) +
@@ -167,6 +168,7 @@ function renderProfile(){
     '<p class="tiny">' + esc(t('pg_slots_note')) + '</p>' +
     '<div id="slotPreviewBox">' + previewParts(d).slots + '</div></div>';
 
+  if (!moduleOn('goals')) h = h.slice(0, goalsFrom);
   /* exclusions */
   h += '<div class="card"><h3>'+esc(t('p_allergy_h'))+'</h3>' +
        '<p class="tiny" style="margin-bottom:10px">'+esc(t('p_allergy_intro'))+'</p>';
@@ -252,6 +254,7 @@ function renderProfile(){
 
 function profileMissing(d){
   const miss = [];
+  if (!moduleOn('goals')) return miss;
   const P = d.person, G = d.goals;
   if (!P.age) miss.push(t('p_age'));
   if (!P.weightKg) miss.push(t('p_weight'));
@@ -413,15 +416,14 @@ function renderSettings(){
       '<button type="button" class="'+(S.lang==='cs'?'on':'')+'" data-act="lang" data-v="cs" aria-pressed="'+(S.lang==='cs')+'">Čeština</button>' +
       '<button type="button" class="'+(S.lang==='en'?'on':'')+'" data-act="lang" data-v="en" aria-pressed="'+(S.lang==='en')+'">English</button>' +
     '</div></div>' +
-    '<label class="opt sq" style="margin-top:12px"><input type="checkbox" id="qmSwitch" '+(quickOn() ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('qm_title'))+'</span><span class="t2">'+esc(t('qm_note'))+'</span></span></label></div>';
+    (moduleOn('logging') ? '<label class="opt sq" style="margin-top:12px"><input type="checkbox" id="qmSwitch" '+(quickOn() ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('qm_title'))+'</span><span class="t2">'+esc(t('qm_note'))+'</span></span></label>' : '') + '</div>';
 
   h += '<div class="card"><h3>'+esc(t('set_profile_h'))+'</h3>' +
     '<div class="btnrow"><button class="btn quiet" type="button" data-act="go-profile">'+esc(t('set_profile_open'))+'</button></div></div>';
 
   h += '<div class="card"><h3>'+esc(t('set_keys_h'))+'</h3>' +
     '<p class="tiny" style="margin-bottom:12px">'+esc(t('set_keys_note'))+'</p>' +
-    keyField('k-anthropic','k_anthropic', S.secrets.anthropic, 'test-anthropic', 'r-anthropic') +
-    '<p class="tiny" style="margin:-4px 0 14px">'+esc(t('k_anthropic_tip'))+'</p>' +
+    (moduleOn('assistant') ? keyField('k-anthropic','k_anthropic', S.secrets.anthropic, 'test-anthropic', 'r-anthropic') + '<p class="tiny" style="margin:-4px 0 14px">'+esc(t('k_anthropic_tip'))+'</p>' : '') +
     keyField('k-github','k_github', S.secrets.github, null, null) +
     '<div class="field"><label for="k-repo">'+esc(t('k_repo'))+'</label>' +
       '<input id="k-repo" type="text" autocapitalize="off" spellcheck="false" data-set="prefs.backup.repo" value="'+esc(P.backup.repo)+'" placeholder="'+esc(t('k_repo_ph'))+'"></div>' +
@@ -447,6 +449,7 @@ function renderSettings(){
     '<label class="opt sq" style="margin-top:12px"><input type="checkbox" id="a-starter" '+(P.archive.showStarter ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('arch_starter'))+'</span><span class="t2">'+esc(t('arch_starter_d'))+'</span></span></label></div>';
 
   /* models and spend */
+  const aiFrom = h.length;
   h += '<div class="card"><h3>'+esc(t('set_models_h'))+'</h3>' +
     ['chat','vision','analysis'].map(role =>
       '<div class="field"><label for="m-'+role+'">'+esc(t('m_'+role))+'</label>' +
@@ -479,6 +482,7 @@ function renderSettings(){
     '<div class="kv"><span class="k">'+esc(t('usage_cost'))+'</span><span class="v num">'+esc(fmtNum(cost,2))+' USD</span></div>' +
     '<div class="btnrow" style="margin-top:8px"><button class="btn quiet" type="button" data-act="usage-reset">'+esc(t('usage_reset'))+'</button></div></div>';
 
+  if (!moduleOn('assistant')) h = h.slice(0, aiFrom);
   h += syncCardHtml();
   h += '<div class="card"><h3>'+esc(t('set_data_h'))+'</h3><div id="backupPanel"></div>' +
     '<div class="btnrow" style="margin-top:12px">' +
@@ -531,7 +535,7 @@ function renderSettings(){
   fillSnapshots();
   renderDiagnostics();
   $('#a-starter').addEventListener('change', async e => { S.prefs.archive.showStarter = e.target.checked; await savePrefs(); });
-  $('#qmSwitch').addEventListener('change', e => setQuickMode(e.target.checked));
+  if ($('#qmSwitch')) $('#qmSwitch').addEventListener('change', e => setQuickMode(e.target.checked));
 }
 
 /* ---------- Diagnostics (from v0.1) ---------- */

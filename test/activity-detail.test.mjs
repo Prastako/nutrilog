@@ -55,7 +55,7 @@ runInContext(readFileSync(resolve(__dirname, '../src/core.js'), 'utf8'), ctx);
 runInContext(readFileSync(resolve(__dirname, '../src/ui.js'), 'utf8'), ctx);
 runInContext(readFileSync(resolve(__dirname, '../src/settings.js'), 'utf8'), ctx);
 
-runInContext('globalThis.__h = { S, renderProfile, profileMissing, blankProfile };', ctx);
+runInContext('S.prefs.modules = {logging:true, goals:true, supplements:true, assistant:true}; globalThis.__h = { S, renderProfile, profileMissing, blankProfile };', ctx);
 
 const { S, renderProfile, profileMissing, blankProfile } = ctx.__h;
 
