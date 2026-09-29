@@ -506,3 +506,8 @@ body:not(.quickmode) .chip[aria-pressed="true"]::after, body:not(.quickmode) .se
 }
 body.quickmode, body.quickmode *, body.quickmode *::before, body.quickmode *::after{animation:none !important;transition:none !important}
 .sheetbg.closing{pointer-events:none}
+/* small-screen header (brief nutrilog-260929-quick-gear) */
+@media (max-width: 359.98px){
+  .topbar{min-height:calc(env(safe-area-inset-top) + 56px);box-sizing:border-box}
+  #btnBack,#btnSettings{top:calc(env(safe-area-inset-top) + 8px)}
+}
