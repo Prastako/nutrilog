@@ -5,10 +5,8 @@
    ============================================================ */
 
 const TABS = [
-  {id:'today',   icon:'today',   key:'nav_today'},
-  {id:'log',     icon:'log',     key:'nav_log'},
   {id:'recipes', icon:'suggest', key:'nav_recipes'},
-  {id:'chat',    icon:'chat',    key:'nav_chat'},
+  {id:'log',     icon:'log',     key:'nav_log'},
   {id:'review',  icon:'review',  key:'nav_review'}
 ];
 const SUBSCREENS = ['profile','settings','recipe'];
@@ -16,7 +14,7 @@ const SUBSCREENS = ['profile','settings','recipe'];
 function screenOn(screen){
   if (screen === 'today' || screen === 'log' || screen === 'quick') return moduleOn('logging');
   if (screen === 'review') return moduleOn('goals');
-  if (screen === 'chat') return moduleOn('assistant');
+  if (screen === 'chat') return false;  /* the chat is a sheet (brief tabs-log-today) */
   return true;
 }
 
@@ -26,10 +24,13 @@ function renderTabs(){
     '<button class="tab" type="button" data-go="'+tab.id+'"'+(cur===tab.id?' aria-current="page"':'')+'>'+
       icon(tab.icon)+'<span>'+esc(t(tab.key))+'</span><span class="dot"></span>'+
     '</button>').join('');
-  $('#tabbar').classList.toggle('hide', S.screen === 'start' || TABS.filter(tab => screenOn(tab.id)).length < 2);
+  const nTabs = TABS.filter(tab => screenOn(tab.id)).length;
+  $('#tabbar').setAttribute('data-n', String(nTabs));
+  $('#tabbar').classList.toggle('hide', ['start','profile','settings'].indexOf(S.screen) >= 0 || nTabs < 2);
 }
 
 function go(screen, push){
+  if (screen === 'today'){ screen = 'log'; S.logDate = localDateKey(); }
   if (quickOn() && ['quick','settings','profile'].indexOf(screen) < 0){
     screen = 'quick';
     if (push === false){ try { history.replaceState({screen:'quick'}, '', '#quick'); } catch(e){} }
@@ -52,8 +53,8 @@ function go(screen, push){
 
 function goBack(){
   if (S.screen === 'start'){ startBack(); return; }
-  if (history.state && history.state.screen && history.state.screen !== 'today') history.back();
-  else go('today');
+  if (history.state && history.state.screen && history.state.screen !== 'recipes') history.back();
+  else go('recipes');
 }
 
 /* Header label: the screen name; Quick mode has no navigator, so it keeps the short date. */
@@ -76,8 +77,7 @@ function refreshChrome(){
 
 function renderScreen(name){
   meterSeq = 0;
-  if (name === 'today') renderToday();
-  else if (name === 'log') renderLog();
+  if (name === 'log') renderLog();
   else if (name === 'recipes') renderRecipes();
   else if (name === 'recipe') renderRecipe();
   else if (name === 'chat') renderChat();
@@ -441,9 +441,9 @@ async function boot(){
 
   const hash = (location.hash || '').replace('#','');
   if (hash === 'quick' && !quickOn() && moduleOn('logging')){ S.prefs.quickMode = 'on'; S.prefs.quickModeAsked = true; await savePrefs(); }
-  const known = TABS.map(x => x.id).concat(['profile','settings','quick']);
+  const known = TABS.map(x => x.id).concat(['today','profile','settings','quick']);
   const fresh = await needsStart();
-  go(fresh ? 'start' : known.indexOf(hash) >= 0 ? hash : 'today', false);
+  go(fresh ? 'start' : known.indexOf(hash) >= 0 ? hash : 'recipes', false);
   try { history.replaceState({screen:S.screen}, '', '#'+S.screen); } catch(e){}
   syncRun('app open');
   if (hash.indexOf('join=') === 0) syncHandleJoinLink(syncKeyFromInput('#' + hash));
