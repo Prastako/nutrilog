@@ -46,10 +46,8 @@ function goBack(){
   else go('today');
 }
 
-/* Header label: the date on Today and Log, the screen name elsewhere (Review sets its period in renderReview). */
+/* Header label: the screen name; Quick mode has no navigator, so it keeps the short date. */
 function headerLabel(){
-  if (S.screen === 'today') return fmtLongDate(dateFromKey(localDateKey()));
-  if (S.screen === 'log') return fmtLongDate(dateFromKey(S.logDate || localDateKey()));
   if (S.screen === 'quick') return fmtShortDate(localDateKey());
   return t('t_' + S.screen);
 }
