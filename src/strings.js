@@ -986,3 +986,9 @@ Object.assign(STR.cs, {
 Object.assign(STR.en, {
   set_type:'Type', type_fraunces:'Fraunces and Figtree', type_marcellus:'Marcellus and Raleway', type_jost:'Jost', type_sample:'Aa 1,640 kcal'
 });
+Object.assign(STR.cs, {
+  b_line_nobackup_new:'Zatím bez zálohy. Připojte se odkazem k profilu, nebo občas exportujte ručně.', b_line_nobackup_data:'Máte data a nemáte zálohu. Když smažete data prohlížeče, zmizí.', b_line_stale:'Záloha se nepovedla už {h} hodin.'
+});
+Object.assign(STR.en, {
+  b_line_nobackup_new:'No backup yet. Join a profile with a link, or export by hand from time to time.', b_line_nobackup_data:'You have data and no backup. Clearing browser data would take it.', b_line_stale:'Backup has not succeeded for {h} hours.'
+});

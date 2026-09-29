@@ -18,6 +18,7 @@ function catalogStateText() {
 function syncCardInner() {
   const joined = !!S.secrets.sync;
   let h = '<h3>' + esc(t('sy_title')) + '</h3>';
+  if (typeof backupLine === 'function') h += backupLine();
   h += '<p class="tiny" id="syncState">' + esc(syncStateText()) + '</p>';
   if (joined) h += '<p class="tiny" id="catalogState">' + esc(catalogStateText()) + '</p>';
   h += '<p class="tiny">' + esc(t('sy_link_is_key')) + '</p>';
