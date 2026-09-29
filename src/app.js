@@ -9,7 +9,7 @@ const TABS = [
   {id:'log',     icon:'log',     key:'nav_log'},
   {id:'review',  icon:'review',  key:'nav_review'}
 ];
-const SUBSCREENS = ['profile','settings','recipe'];
+const SUBSCREENS = ['profile','settings','recipe','cook'];
 /* Modules: a screen exists only while its module is on. Recipes, the recipe page, Profile and Settings always exist. */
 function screenOn(screen){
   if (screen === 'today' || screen === 'log' || screen === 'quick') return moduleOn('logging');
@@ -26,7 +26,7 @@ function renderTabs(){
     '</button>').join('');
   const nTabs = TABS.filter(tab => screenOn(tab.id)).length;
   $('#tabbar').setAttribute('data-n', String(nTabs));
-  const noTabs = ['start','profile','settings'].indexOf(S.screen) >= 0 || nTabs < 2;
+  const noTabs = ['start','profile','settings','cook'].indexOf(S.screen) >= 0 || nTabs < 2;
   $('#tabbar').classList.toggle('hide', noTabs);
   document.body.classList.toggle('notabs', noTabs);
 }
@@ -34,6 +34,7 @@ function renderTabs(){
 function go(screen, push){
   if (screen === 'today'){ screen = 'log'; S.logDate = localDateKey(); }
   if (push !== false) S.settingsCat = null;
+  if (S.screen === 'cook' && screen !== 'cook') cookLeave();
   if (quickOn() && ['quick','settings','profile'].indexOf(screen) < 0){
     screen = 'quick';
     if (push === false){ try { history.replaceState({screen:'quick'}, '', '#quick'); } catch(e){} }
@@ -65,13 +66,14 @@ function goBack(){
 function headerLabel(){
   if (S.screen === 'quick') return fmtShortDate(localDateKey());
   if (S.screen === 'settings' && S.settingsCat) return t('st_' + S.settingsCat);
+  if (S.screen === 'cook'){ const r = RECIPES.byId[COOK.recipeId]; return r ? r.title : ''; }
   return t('t_' + S.screen);
 }
 
 function refreshChrome(){
   const isSub = SUBSCREENS.indexOf(S.screen) >= 0;
   $('#btnBack').classList.toggle('hide', !(isSub || (S.screen === 'start' && START.page > 0)));
-  $('#btnSettings').classList.toggle('hide', S.screen === 'settings' || S.screen === 'start');
+  $('#btnSettings').classList.toggle('hide', S.screen === 'settings' || S.screen === 'start' || S.screen === 'cook');
   const bc = $('#btnChat'); if (bc){ bc.classList.toggle('hide', S.screen === 'quick' || S.screen === 'start' || !moduleOn('assistant')); bc.classList.toggle('solo', S.screen === 'settings'); bc.setAttribute('aria-label', t('t_chat')); }
   $('#screenTitle').textContent = headerLabel();
 
@@ -91,6 +93,7 @@ function renderScreen(name){
   else if (name === 'settings') renderSettings();
   else if (name === 'quick') renderQuick();
   else if (name === 'start') renderStart();
+  else if (name === 'cook') renderCook();
 }
 
 function renderAll(){
@@ -235,9 +238,13 @@ function bindEvents(){
     else if (act === 'rtag-off'){ const c = S.recipeFilter.tags; c.splice(c.indexOf(b.getAttribute('data-v')), 1); renderRecipeList(); }
     else if (act === 'open-recipe'){ S.recipeId = id; S.recipeServings = null; S.recipeAxis = null; go('recipe'); }
     else if (act === 'recipe-log'){ recipeLogSheet(id); }
-    else if (act === 'timer-start'){ await timerStart(S.recipeId, Number(b.getAttribute('data-step')), Number(b.getAttribute('data-sec')), b.getAttribute('data-label') || ''); renderRecipe(); }
-    else if (act === 'timer-cancel'){ await timerCancel(id); if (S.screen === 'recipe') renderRecipe(); }
-    else if (act === 'timer-dismiss'){ const tm = timersAll().find(x => x.id === id); if (tm && timerLeft(tm) === 0){ await timerCancel(id); if (S.screen === 'recipe') renderRecipe(); } }
+    else if (act === 'recipe-cook'){ cookOpen(id); }
+    else if (act === 'cook-next'){ cookGo(1); }
+    else if (act === 'cook-prev'){ cookGo(-1); }
+    else if (act === 'cook-read'){ cookRead(); }
+    else if (act === 'timer-start'){ await timerStart(S.recipeId, Number(b.getAttribute('data-step')), Number(b.getAttribute('data-sec')), b.getAttribute('data-label') || ''); if (S.screen === 'cook') renderCook(); else renderRecipe(); }
+    else if (act === 'timer-cancel'){ await timerCancel(id); if (S.screen === 'recipe') renderRecipe(); else if (S.screen === 'cook') renderCook(); }
+    else if (act === 'timer-dismiss'){ const tm = timersAll().find(x => x.id === id); if (tm && timerLeft(tm) === 0){ await timerCancel(id); if (S.screen === 'recipe') renderRecipe(); else if (S.screen === 'cook') renderCook(); } }
     else if (act === 'recipe-fav'){ const n = recipeNote(id) || {}; await saveRecipeNote(id, {favorite: !n.favorite}); renderRecipe(); }
     else if (act === 'recipe-missing'){ recipeMissing(id); }
     else if (act === 'recipe-ask'){ const r = RECIPES.byId[id]; openChatSheet(t('rc_ask_seed', {t: r ? r.title : ''})); }
