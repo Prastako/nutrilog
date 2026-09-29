@@ -9,7 +9,7 @@ function openSheet(titleHtml, bodyHtml, footHtml, opts){
   const root = $('#sheetRoot');
   root.innerHTML =
     '<div class="sheetbg" role="dialog" aria-modal="true">' +
-      '<div class="sheet'+(opts && opts.tall ? ' tall' : '')+'">' +
+      '<div class="sheet'+(opts && opts.tall ? ' tall' : '')+(opts && opts.full ? ' full' : '')+'">' +
         '<div class="sheethead"><h2>'+titleHtml+'</h2>' +
         '<button class="iconbtn" type="button" data-sheet-close="1" aria-label="'+esc(t('close'))+'">'+icon('close')+'</button></div>' +
         '<div class="sheetbody">' + bodyHtml + '</div>' +

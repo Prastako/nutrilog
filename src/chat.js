@@ -26,6 +26,19 @@ const CHAT_TOOLS = [
   }
 ];
 
+let CHAT_HOST = null;
+function chatQ(sel){ return (CHAT_HOST || document).querySelector(sel); }
+
+function chatScrollEnd(){
+  const log = chatQ('#chatLog');
+  if (CHAT_HOST && CHAT_HOST.id !== 's-chat'){
+    if (log) log.scrollTop = log.scrollHeight;
+    else window.scrollTo(0, document.body.scrollHeight);
+  } else {
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+}
+
 async function chatHistory(){
   const all = await recByType('chat_message');
   const thread = S.meta.chatThread || null;
@@ -58,8 +71,9 @@ function mdLite(src){
   return out;
 }
 
-async function renderChat(){
-  const host = $('#s-chat');
+async function renderChat(host){
+  host = host || (CHAT_HOST && CHAT_HOST.isConnected ? CHAT_HOST : $('#s-chat'));
+  CHAT_HOST = host;
   const pantry = await recByType('pantry_item');
   const haveN = pantry.filter(p => p.have).length, buyN = pantry.filter(p => !p.have && p.toBuy).length;
   let h = '<div class="chatbar"><button class="chip" type="button" data-act="pantry">'+esc(t('pt_chip', {n: haveN}))+'</button>' +
@@ -76,13 +90,13 @@ async function renderChat(){
     '<button class="btn" type="button" id="chatSend" aria-label="'+esc(t('ch_send'))+'">'+icon('send')+'</button></div>';
   host.innerHTML = h;
   fillThumbs(host);
-  const ta = $('#chatText');
+  const ta = chatQ('#chatText');
   if (S.chatSeed){ ta.value = S.chatSeed; S.chatSeed = null; }
   ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = Math.min(160, ta.scrollHeight) + 'px'; });
-  $('#chatSend').addEventListener('click', () => sendChat(ta.value));
-  $('#chatQuick').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (b) sendChat(t(b.getAttribute('data-q'))); });
-  const log = $('#chatLog');
-  setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 30);
+  chatQ('#chatSend').addEventListener('click', () => sendChat(ta.value));
+  chatQ('#chatQuick').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (b) sendChat(t(b.getAttribute('data-q'))); });
+  const log = chatQ('#chatLog');
+  setTimeout(chatScrollEnd, 30);
   return log;
 }
 
@@ -134,13 +148,13 @@ async function sendChat(text){
   const thread = S.meta.chatThread || null;
   const screenCtx = chatScreenContext();
   await recPut({type:'chat_message', thread, role:'user', text, ctx: screenCtx}, {silent:true});
-  const ta = $('#chatText'); if (ta){ ta.value = ''; ta.style.height = 'auto'; }
-  const log = $('#chatLog');
+  const ta = chatQ('#chatText'); if (ta){ ta.value = ''; ta.style.height = 'auto'; }
+  const log = chatQ('#chatLog');
   const emptyHint = log && log.querySelector('p.tiny'); if (emptyHint) emptyHint.remove();
   log.insertAdjacentHTML('beforeend', chatBubble({role:'user', text}));
   log.insertAdjacentHTML('beforeend', '<div class="bubble ai" id="liveBubble"><span class="typing"><i></i><i></i><i></i></span></div>');
-  window.scrollTo(0, document.body.scrollHeight);
-  const live = $('#liveBubble');
+  chatScrollEnd();
+  const live = chatQ('#liveBubble');
   let shown = '';
   const cards = [];
   try {
@@ -191,7 +205,7 @@ async function sendChat(text){
     live.outerHTML = '<div class="notice bad">'+esc(t('err_prefix'))+'<div class="verbatim">'+esc(String(err.message||err))+'</div></div>';
   }
   S.chatBusy = false;
-  window.scrollTo(0, document.body.scrollHeight);
+  chatScrollEnd();
 }
 
 async function runChatTool(tu, cards){
@@ -275,4 +289,12 @@ async function openPantry(shopping){
     for (const p of list){ p.have = true; p.toBuy = false; await recPut(p); }
     openPantry(true);
   });
+}
+
+async function openChatSheet(seed){
+  const sheet = openSheet(esc(t('t_chat')), '<div class="chatsheet"></div>', '', {full: true});
+  S.afterSheet = () => {};
+  S.chatSeed = seed || null;
+  renderChat(sheet.querySelector('.chatsheet'));
+  return sheet;
 }
