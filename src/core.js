@@ -59,11 +59,20 @@ function fmtAmt(n){
   return fmtNum(n, 2);
 }
 
+function numDate(d, withYear){
+  if (typeof d === 'string') d = dateFromKey(d);
+  let result = d.getDate() + '.' + (d.getMonth() + 1) + '.';
+  if (withYear) result += d.getFullYear();
+  return result;
+}
+
 function fmtDateTime(iso){
   if (!iso) return t('never');
-  try {
-    return new Intl.DateTimeFormat(locale(), {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}).format(new Date(iso));
-  } catch(e){ return iso; }
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  return numDate(d) + ' ' + hours + ':' + minutes;
 }
 
 function fmtLongDate(d){
@@ -72,7 +81,7 @@ function fmtLongDate(d){
 
 function fmtShortDate(key){
   const d = dateFromKey(key);
-  return new Intl.DateTimeFormat(locale(), {weekday:'short', day:'numeric', month:'numeric'}).format(d);
+  return new Intl.DateTimeFormat(locale(), {weekday:'short'}).format(d) + ' ' + numDate(d);
 }
 
 function ago(iso){
