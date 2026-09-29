@@ -568,7 +568,7 @@ async function recipeLogSheet(id){
   let b = '<p class="muted">'+esc(r.title)+'</p>' +
     '<div class="field"><span class="flabel">'+esc(t('lg_slot'))+'</span>'+slotChips(slot)+'</div>' +
     '<div class="field"><label for="rl-serv">'+esc(t('rc_servings_eaten'))+'</label><input id="rl-serv" type="number" inputmode="decimal" step="0.25" min="0.25" value="1"></div>' +
-    '<div class="field"><label for="rl-date">'+esc(t('lg_date'))+'</label><input id="rl-date" type="date" value="'+esc(S.logDate || localDateKey())+'"></div>' +
+    '<div class="field"><label for="rl-date">'+esc(t('lg_date'))+'</label><input id="rl-date" type="date" value="'+esc(S.logDate || localDateKey())+'"><span class="fhint" data-hint-for="rl-date">'+esc((S.logDate || localDateKey()) ? numDate(S.logDate || localDateKey(), true) : '')+'</span></div>' +
     '<p class="tiny" id="rl-prev"></p>';
   if (ps.kcal == null) b += '<div class="notice warn">'+esc(t('rc_no_nutrition'))+'</div>';
   const sheet = openSheet(esc(t('rc_log')), b, '<button class="btn" type="button" id="rl-save">'+esc(t('save'))+'</button>');
