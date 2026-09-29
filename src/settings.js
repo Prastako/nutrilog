@@ -418,6 +418,7 @@ function renderSettings(){
     '</div></div>' +
     (moduleOn('logging') ? '<label class="opt sq" style="margin-top:12px"><input type="checkbox" id="qmSwitch" '+(quickOn() ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('qm_title'))+'</span><span class="t2">'+esc(t('qm_note'))+'</span></span></label>' : '') + '</div>';
 
+  h += featuresCardHtml();
   h += '<div class="card"><h3>'+esc(t('set_profile_h'))+'</h3>' +
     '<div class="btnrow"><button class="btn quiet" type="button" data-act="go-profile">'+esc(t('set_profile_open'))+'</button></div></div>';
 
@@ -529,6 +530,7 @@ function renderSettings(){
     '</div>';
 
   $('#s-settings').innerHTML = h;
+  bindFeatures();
   bindSyncCard();
   renderBackupPanel();
   fillStorageInfo();
@@ -628,4 +630,30 @@ async function fillSnapshots(){
   host.innerHTML = all.map(s =>
     '<div class="kv"><span class="k num">'+esc(s.date)+'</span>' +
     '<span class="v"><button class="btn quiet" type="button" style="min-height:36px;padding:6px 14px" data-act="snap-restore" data-date="'+esc(s.date)+'">'+esc(t('b_snapshot_restore'))+'</button></span></div>').join('');
+}
+
+function featuresCardHtml() {
+  let html = '<div class="card"><h3>' + esc(t('mod_h')) + '</h3>';
+  for (const name of MODULES) {
+    html += '<label class="opt sq"><input type="checkbox" id="mod-' + name + '" data-mod="' + name + '"'
+        + (moduleOn(name) ? ' checked' : '') + '><span class="mark"></span>'
+        + '<span class="txt"><span class="t1">' + esc(t('mod_' + name)) + '</span>'
+        + '<span class="t2">' + esc(t('mod_' + name + '_d')) + '</span></span></label>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function bindFeatures() {
+  for (const name of MODULES) {
+    const el = $('#mod-' + name);
+    if (el) {
+      el.addEventListener('change', async e => {
+        const keys = setModule(name, e.target.checked);
+        await savePrefs();
+        for (const key of keys) { toast(t(key)); }
+        renderTabs(); refreshChrome(); renderSettings();
+      });
+    }
+  }
 }
