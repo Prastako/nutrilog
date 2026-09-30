@@ -516,7 +516,8 @@ body.quickmode, body.quickmode *, body.quickmode *::before, body.quickmode *::af
 #btnChat.solo{right:12px}
 .topbar .brand{max-width:calc(100% - 184px)}
 @media (max-width: 359.98px){ #btnChat{top:calc(env(safe-area-inset-top) + 8px);right:60px} #btnChat.solo{right:12px} }
-.sheetbg:has(> .sheet.full){align-items:stretch}
+/* brief nutrilog-260930-chat-sheet-pc: no dialog padding around the full sheet at any width, so it spans the window height */
+.sheetbg:has(> .sheet.full){align-items:stretch;padding:0}
 .sheet.full{max-width:560px;height:calc(100dvh - env(safe-area-inset-top));max-height:none;margin-top:env(safe-area-inset-top);border-radius:0;display:flex;flex-direction:column;overflow:hidden}
 .sheet.full .sheetbody{flex:1;min-height:0;display:flex;flex-direction:column}
 .chatsheet{flex:1;min-height:0;display:flex;flex-direction:column}
