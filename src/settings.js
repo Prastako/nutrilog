@@ -191,7 +191,8 @@ function renderProfile(){
        '<div class="btnrow" style="margin-top:8px">' +
        '<button class="btn" type="button" data-act="excl-add" data-type="allergy">'+esc(t('p_type_allergy'))+'</button>' +
        '<button class="btn quiet" type="button" data-act="excl-add" data-type="refuse">'+esc(t('p_type_refuse'))+'</button></div></div>';
-  h += '<p class="tiny" style="margin-bottom:7px">'+esc(t('p_allergy_common'))+'</p><div class="chips">';
+  /* brief nutrilog-260930-allergen-list: a short label above the chips, no explanation */
+  h += '<p class="flabel" style="margin-bottom:7px">'+esc(t('p_allergy_common'))+'</p><div class="chips">';
   ALLERGENS.forEach(a => {
     const on = F.exclusions.some(x => x.id === a.id);
     h += '<button class="chip" type="button" aria-pressed="'+(on?'true':'false')+'" data-act="excl-quick" data-id="'+a.id+'">'+esc(L(a))+'</button>';
