@@ -207,11 +207,14 @@ function bindEvents(){
     }
     else if (act.indexOf('pchip-') === 0){
       const field = act.slice(6);
-      const holder = ['cuisines','conditions','rules','prefs'].indexOf(field) >= 0 ? S.draft.food : S.draft.goals;
+      const holder = field === 'equipment' ? S.draft.kitchen : ['cuisines','conditions','rules','prefs'].indexOf(field) >= 0 ? S.draft.food : S.draft.goals;
       const arr = holder[field] || (holder[field] = []);
       const at = arr.indexOf(id);
       if (at >= 0) arr.splice(at, 1); else arr.push(id);
+      /* brief nutrilog-260930-equipment-chips: choosing None of these unchooses the tools, choosing a tool unchooses None */
+      if (field === 'equipment' && at < 0){ const keep = id === 'none' ? ['none'] : arr.filter(x => x !== 'none'); arr.length = 0; keep.forEach(x => arr.push(x)); }
       b.setAttribute('aria-pressed', at >= 0 ? 'false' : 'true');
+      if (field === 'equipment' && b.parentElement) b.parentElement.querySelectorAll('[data-act="pchip-equipment"]').forEach(c => c.setAttribute('aria-pressed', String(arr.indexOf(c.getAttribute('data-id')) >= 0)));
       if (field === 'conditions') renderProfile();
     }
 

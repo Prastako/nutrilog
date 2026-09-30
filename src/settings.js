@@ -13,7 +13,7 @@ function blankProfile(){
       dietStyle:[], aims:[], focusNutrients:[], notes:'', slots: deepCopy(DEFAULT_SLOTS), focus:[], hints:[] },
     food:{ exclusions:[], cuisines:[], cuisineOther:'', dislikes:'',
       pattern:'everything', patternOpts:{noEggs:false, noMilk:false}, conditions:[], rules:[], prefs:[] },
-    kitchen:{ timeWeekday:2, timeWeekend:3, equipment:[], mealPrep:{cookDaysPerWeek:3, batchServings:3} }
+    kitchen:{ timeWeekday:2, timeWeekend:3, equipment:[], equipmentOther:'', mealPrep:{cookDaysPerWeek:3, batchServings:3} }
   };
 }
 
@@ -241,9 +241,9 @@ function renderProfile(){
     num('kitchen.mealPrep.cookDaysPerWeek','mp-days',t('pk_days'),'inputmode="numeric" min="0" max="7"') +
     num('kitchen.mealPrep.batchServings','mp-serv',t('pk_batch'),'inputmode="numeric" min="1" max="12"') + '</div></div>';
 
-  h += '<div class="card"><h3>'+esc(t('p_equipment'))+'</h3><div class="opts two">';
-  EQUIPMENT.forEach(e => { h += optRow('kitchen.equipment', e, K.equipment.indexOf(e)>=0, t('eq_'+e), '', true); });
-  h += '</div></div>';
+  /* brief nutrilog-260930-equipment-chips: chips like the allergen chips, one free text field like under the cuisines */
+  h += '<div class="card"><h3>'+esc(t('p_equipment'))+'</h3>' + chipSet('pchip-equipment', EQUIPMENT, K.equipment || [], e => t('eq_'+e)) +
+    '<div class="field" style="margin-top:12px"><input type="text" maxlength="80" data-bind="kitchen.equipmentOther" value="'+esc(K.equipmentOther||'')+'" placeholder="'+esc(t('p_equipment_free_ph'))+'"></div></div>';
 
   /* brief nutrilog-260930-money-profile: no Food budget card; Kitchen equipment is followed by Save profile */
 
@@ -295,6 +295,7 @@ async function saveProfile(){
   rec.kitchen.timeWeekday = Number(rec.kitchen.timeWeekday); rec.kitchen.timeWeekend = Number(rec.kitchen.timeWeekend);
   rec.kitchen.mealPrep.cookDaysPerWeek = Number(rec.kitchen.mealPrep.cookDaysPerWeek) || 0;
   rec.kitchen.mealPrep.batchServings = Number(rec.kitchen.mealPrep.batchServings) || 1;
+  rec.kitchen.equipmentOther = String(rec.kitchen.equipmentOther || '').trim().slice(0, 80);
   const prevWeight = S.profile && S.profile.person ? S.profile.person.weightKg : null;
   const prevAge = S.profile && S.profile.person ? S.profile.person.age : null;
   if (rec.person.age !== prevAge || !rec.person.ageRecordedOn) rec.person.ageRecordedOn = localDateKey();

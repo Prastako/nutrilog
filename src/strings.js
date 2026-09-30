@@ -1026,3 +1026,6 @@ Object.assign(STR.en, { arch_h:'Recipes', arch_intro:'Shared recipes download on
 /* brief nutrilog-260930-allergen-list */
 Object.assign(STR.cs, { p_allergy_common:'Časté alergeny' });
 Object.assign(STR.en, { p_allergy_common:'Common allergens' });
+/* brief nutrilog-260930-equipment-chips */
+Object.assign(STR.cs, { p_equipment_free_ph:'Další vybavení, např. pomalý hrnec, wok' });
+Object.assign(STR.en, { p_equipment_free_ph:'Other equipment, e.g. slow cooker, wok' });
