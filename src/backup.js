@@ -262,10 +262,21 @@ function backupHoursStale(){
   return (Date.now() - new Date(S.meta.backup.lastVerifiedAt).getTime()) / 3600000;
 }
 
+/* brief nutrilog-260930-backup-line-data: data of the person's own = a live record of any kind or an own or saved recipe;
+   downloaded shared and starter recipes, settings and deletion markers do not count. Returns true when the answer changed. */
+async function ownDataRefresh(){
+  const before = S.ownData === true;
+  const recs = await dbAll('records');
+  const rcps = await dbAll('recipes');
+  S.ownData = recs.some(r => !r.deleted) || rcps.some(r => (r.origin === 'own' || r.origin === 'claude') && !r.deleted);
+  return S.ownData !== before;
+}
+
 function backupLine(){
   if (syncFresh()) return '';
-  if (!backupConfigured() && !S.profile) return '<p id="backupLine">' + esc(t('b_line_nobackup_new')) + '</p>';
-  if (!backupConfigured() && S.profile) return '<p id="backupLine">' + esc(t('b_line_nobackup_data')) + ' <button class="btn quiet" type="button" data-act="export">' + esc(t('bar_export')) + '</button></p>';
+  const own = !!(S.profile || S.ownData);
+  if (!backupConfigured() && !own) return '<p id="backupLine">' + esc(t('b_line_nobackup_new')) + '</p>';
+  if (!backupConfigured() && own) return '<p id="backupLine">' + esc(t('b_line_nobackup_data')) + ' <button class="btn quiet" type="button" data-act="export">' + esc(t('bar_export')) + '</button></p>';
   if (backupHoursStale() > 48 && isFinite(backupHoursStale())){
     const h = Math.floor(backupHoursStale());
     return '<p id="backupLine">' + esc(t('b_line_stale', {h: h})) + ' <button class="btn quiet" type="button" data-act="backup-now">' + esc(t('b_run_now')) + '</button><button class="btn quiet" type="button" data-act="export">' + esc(t('bar_export')) + '</button></p>';

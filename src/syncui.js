@@ -48,6 +48,7 @@ function syncCardInner() {
 }
 
 function syncCardHtml() {
+  if (typeof ownDataRefresh === 'function') ownDataRefresh().then(changed => { if (changed) renderSyncCard(); }).catch(() => {});
   return '<div class="card" id="syncCard">' + syncCardInner() + '</div>';
 }
 
