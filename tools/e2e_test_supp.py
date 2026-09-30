@@ -85,7 +85,7 @@ with sync_playwright() as p:
     page = ctx.new_page(); page.on('pageerror', lambda e: errors.append(str(e))); page.on('dialog', lambda d: d.accept())
     shot = lambda n: page.screenshot(path=os.path.join(SHOTS, n + '.png'))
     page.goto(BASE + '#log'); page.wait_for_timeout(1500)
-    page.evaluate("async () => { S.prefs.modules = {logging:true, goals:true, supplements:true, assistant:true}; await savePrefs(); location.hash = '#log'; }"); page.reload(); page.wait_for_timeout(1500)
+    page.evaluate("async () => { S.prefs.modules = {logging:true, goals:true, supplements:true, assistant:true}; await savePrefs(); history.replaceState(null, '', '#log'); }"); page.reload(); page.wait_for_timeout(1500)
     page.click('#s-log [data-act="supp-manage"]'); page.wait_for_timeout(400)
     page.click('[data-preset="fe"]'); page.wait_for_timeout(400)
     page.click('#srep [data-rep="alt"]'); page.wait_for_timeout(200)
