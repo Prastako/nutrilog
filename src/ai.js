@@ -20,8 +20,6 @@ const API = {
     const txt = await res.text();
     let body = null;
     try { body = txt ? JSON.parse(txt) : null; } catch(e){ body = {raw: txt}; }
-    if (body && body.usage) trackUsage(body.model, body.usage);
-    else { S.meta.usage.calls++; saveMeta(); }
     if (!res.ok){
       const msg = (body && body.error && body.error.message) || (body && body.raw) || txt || '';
       throw new Error(res.status + ' ' + res.statusText + (msg ? ': ' + String(msg).slice(0,400) : ''));
@@ -30,45 +28,8 @@ const API = {
   }
 };
 
-function priceFor(model){
-  const p = S.prefs.prices[model];
-  if (p) return {in: Number(p.in)||0, out: Number(p.out)||0};
-  const m = String(model||'');
-  if (m.indexOf('opus') >= 0) return {in:5, out:25};
-  if (m.indexOf('haiku') >= 0) return {in:1, out:5};
-  if (m.indexOf('fable') >= 0) return {in:10, out:50};
-  return {in:2, out:10};
-}
+/* brief nutrilog-260930-money-spend: no prices, no usage counting, no monthly budget */
 
-function monthKey(){ return localDateKey().slice(0,7); }
-
-function trackUsage(model, usage){
-  const u = S.meta.usage;
-  const inn = (usage.input_tokens || 0), out = (usage.output_tokens || 0);
-  const cw = usage.cache_creation_input_tokens || 0, cr = usage.cache_read_input_tokens || 0;
-  const pr = priceFor(model);
-  const cost = (inn/1e6)*pr.in + (cw/1e6)*pr.in*1.25 + (cr/1e6)*pr.in*0.1 + (out/1e6)*pr.out;
-  u.calls++;
-  u.inTok += inn + cw + cr;
-  u.outTok += out;
-  const mid = model || 'unknown';
-  if (!u.byModel[mid]) u.byModel[mid] = {in:0, out:0};
-  u.byModel[mid].in += inn + cw + cr;
-  u.byModel[mid].out += out;
-  if (!u.byMonth) u.byMonth = {};
-  const mk = monthKey();
-  if (!u.byMonth[mk]) u.byMonth[mk] = {calls:0, cost:0};
-  u.byMonth[mk].calls++;
-  u.byMonth[mk].cost += cost;
-  saveMeta();
-}
-
-function monthCost(){
-  const b = (S.meta.usage.byMonth || {})[monthKey()];
-  return b ? b.cost : 0;
-}
-
-let budgetOkThisSession = false;
 async function ensureAiReady(){
   if (!S.secrets.anthropic){
     const go2 = await confirmSheet(t('ai_nokey_h'), '<p class="muted">'+esc(t('ai_nokey_p'))+'</p>', t('open_settings'));
@@ -76,13 +37,6 @@ async function ensureAiReady(){
     return false;
   }
   if (!navigator.onLine){ toast(t('err_offline')); return false; }
-  const lim = Number(S.prefs.budget.monthlyUsd) || 0;
-  if (lim > 0 && monthCost() >= lim && !budgetOkThisSession){
-    const ok = await confirmSheet(t('ai_budget_h'),
-      '<p class="muted">'+esc(t('ai_budget_p', {spent: fmtNum(monthCost(),2), lim: fmtNum(lim,2)}))+'</p>', t('ai_budget_go'));
-    if (!ok) return false;
-    budgetOkThisSession = true;
-  }
   return true;
 }
 
@@ -95,7 +49,6 @@ async function claudeStream(body, onText){
     const txt = await res.text();
     let msg = txt;
     try { const j = JSON.parse(txt); msg = (j.error && j.error.message) || txt; } catch(e){}
-    S.meta.usage.calls++; saveMeta();
     throw new Error(res.status + ' ' + res.statusText + ': ' + String(msg).slice(0,400));
   }
   const reader = res.body.getReader();
@@ -144,7 +97,6 @@ async function claudeStream(body, onText){
     }
   }
   msg.content = msg.content.filter(Boolean);
-  trackUsage(msg.model, msg.usage);
   return msg;
 }
 

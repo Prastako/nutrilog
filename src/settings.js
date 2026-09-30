@@ -444,7 +444,7 @@ function renderSettings(){
     '<input type="file" id="archFile" accept="application/json,.json" class="hide">' +
     '<label class="opt sq" style="margin-top:12px"><input type="checkbox" id="a-starter" '+(P.archive.showStarter ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('arch_starter'))+'</span><span class="t2">'+esc(t('arch_starter_d'))+'</span></span></label></div>';
 
-  /* models and spend */
+  /* models (brief nutrilog-260930-money-spend: the Spend card is gone) */
   const aiFrom = h.length;
   h += '<!--cat:claude-->';
   h += '<div class="card"><h3>'+esc(t('set_models_h'))+'</h3>' +
@@ -453,32 +453,6 @@ function renderSettings(){
       '<input id="m-'+role+'" type="text" autocapitalize="off" spellcheck="false" data-set="prefs.models.'+role+'" value="'+esc(P.models[role])+'"></div>').join('') +
     '<p class="tiny">'+esc(t('m_note'))+'</p></div>';
 
-  const models = [P.models.chat, P.models.vision, P.models.analysis].filter((v,i,a) => a.indexOf(v) === i);
-  h += '<!--cat:spend-->';
-  h += '<div class="card"><h3>'+esc(t('set_price_h'))+'</h3>' +
-    '<div class="field"><label for="bud">'+esc(t('bud_label'))+'</label><input id="bud" type="number" inputmode="decimal" step="1" min="0" data-set="prefs.budget.monthlyUsd" value="'+esc(P.budget.monthlyUsd)+'"></div>' +
-    '<div class="kv"><span class="k">'+esc(t('bud_month'))+'</span><span class="v num">'+esc(fmtNum(monthCost(),2))+' USD</span></div>' +
-    '<p class="tiny" style="margin:8px 0 10px">'+esc(t('bud_note'))+'</p>';
-  models.forEach(m => {
-    const pr = priceFor(m);
-    h += '<p class="eyebrow" style="margin-top:6px">'+esc(m)+'</p><div class="inline">' +
-      '<div class="field"><label for="pi-'+m+'">'+esc(t('price_in'))+'</label><input id="pi-'+m+'" type="number" inputmode="decimal" step="0.01" data-set="prefs.prices.'+m+'.in" value="'+esc(pr.in)+'"></div>' +
-      '<div class="field"><label for="po-'+m+'">'+esc(t('price_out'))+'</label><input id="po-'+m+'" type="number" inputmode="decimal" step="0.01" data-set="prefs.prices.'+m+'.out" value="'+esc(pr.out)+'"></div>' +
-      '</div>';
-  });
-  h += '<p class="tiny">'+esc(t('price_note'))+'</p>';
-  const u = S.meta.usage;
-  let cost = 0;
-  for (const mid in (u.byModel || {})){
-    const pr = priceFor(mid);
-    cost += (u.byModel[mid].in/1e6) * pr.in + (u.byModel[mid].out/1e6) * pr.out;
-  }
-  h += '<div class="orn"><i></i></div><p class="eyebrow">'+esc(t('usage_h'))+'</p>' +
-    '<div class="kv"><span class="k">'+esc(t('usage_calls'))+'</span><span class="v num">'+esc(fmtNum(u.calls))+'</span></div>' +
-    '<div class="kv"><span class="k">'+esc(t('usage_tokens_in'))+'</span><span class="v num">'+esc(fmtNum(u.inTok))+'</span></div>' +
-    '<div class="kv"><span class="k">'+esc(t('usage_tokens_out'))+'</span><span class="v num">'+esc(fmtNum(u.outTok))+'</span></div>' +
-    '<div class="kv"><span class="k">'+esc(t('usage_cost'))+'</span><span class="v num">'+esc(fmtNum(cost,2))+' USD</span></div>' +
-    '<div class="btnrow" style="margin-top:8px"><button class="btn quiet" type="button" data-act="usage-reset">'+esc(t('usage_reset'))+'</button></div></div>';
 
   if (!moduleOn('assistant')) h = h.slice(0, aiFrom);
   h += '<!--cat:sync-->';
@@ -662,12 +636,13 @@ function bindFeatures() {
 
 const SETTINGS_GROUPS = [
   ['st_personal', ['look', 'profile', 'features', 'supps', 'recipes', 'sync']],
-  ['st_advanced', ['claude', 'spend', 'backup', 'diag', 'danger', 'about']]
+  ['st_advanced', ['claude', 'backup', 'diag', 'danger', 'about']]
 ];
 function settingsRowOn(cat){
   if (cat === 'profile') return moduleOn('goals');
   if (cat === 'supps') return moduleOn('supplements');
-  if (cat === 'claude' || cat === 'spend') return moduleOn('assistant');
+  if (cat === 'claude') return moduleOn('assistant');
+  if (!SETTINGS_GROUPS.some(g => g[1].indexOf(cat) >= 0)) return false;
   return true;
 }
 function settingsListHtml(){

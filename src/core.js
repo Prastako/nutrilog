@@ -397,12 +397,7 @@ const DEFAULT_PREFS = {
   look: 'ash',
   type: 'fraunces',
   models: { chat:'claude-sonnet-5', vision:'claude-sonnet-5', analysis:'claude-opus-5' },
-  prices: {
-    'claude-sonnet-5': { in: 2, out: 10 },
-    'claude-opus-5':   { in: 5, out: 25 },
-    'claude-haiku-4-5':{ in: 1, out: 5 }
-  },
-  budget: { monthlyUsd: 10 },
+  /* brief nutrilog-260930-money-spend: prices, budget and usage retired; stored values stay, never read */
   backup: { target:'github', repo:'', branch:'main' },
   archive: { path:'archive/recipes', showStarter:true },
   review: { includeSupplements:true },
@@ -425,7 +420,6 @@ const DEFAULT_META = {
     lastHash: null,
     lastSnapshotDate: null
   },
-  usage: { calls: 0, inTok: 0, outTok: 0, byModel: {}, byMonth: {} },
   archive: { lastSyncAt: null, lastSha: null, count: 0, lastError: null },
   sync: { cursor:0, lastPushAt:null, lastOkAt:null, state:'off', lastError:'', name:'' },
   catalog: { cursor:0, count:0, lastOkAt:null, lastError:'' }
@@ -480,9 +474,6 @@ function mergeDefaults(target, defaults){
 async function loadState(){
   S.prefs   = mergeDefaults(await kvGet('prefs', null), DEFAULT_PREFS);
   S.meta    = mergeDefaults(await kvGet('meta', null), DEFAULT_META);
-  /* Sonnet 5 stayed at 2 and 10 USD after August 2026; fix the old default. */
-  if (S.prefs.prices['claude-sonnet-5'] && Number(S.prefs.prices['claude-sonnet-5'].in) === 3 && Number(S.prefs.prices['claude-sonnet-5'].out) === 15)
-    S.prefs.prices['claude-sonnet-5'] = {in:2, out:10};
   /* v0.2.3: English became the app language. Switch an existing install
      over once; after that, the language chosen in Settings sticks. */
   if (!S.meta.englishDefaultAppliedAt){
