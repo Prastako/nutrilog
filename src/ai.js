@@ -193,6 +193,8 @@ async function buildContext(opts){
   /* brief nutrilog-260930-money-profile: no weekly food budget in the KITCHEN line */
   lines.push('KITCHEN: weekday cooking time up to ' + TIME_MAX_MIN[K.timeWeekday||2] + ' min, weekend up to ' + TIME_MAX_MIN[K.timeWeekend||3] +
     ' min; equipment: ' + ((K.equipment||[]).map(e => t('eq_'+e)).join(', ') || 'basic hob') +
+    /* brief nutrilog-260930-equipment-chips: the typed equipment follows the chosen tools */
+    (String(K.equipmentOther || '').trim() ? '; other: ' + String(K.equipmentOther).trim() : '') +
     '; meal prep: cooks about ' + ((K.mealPrep||{}).cookDaysPerWeek || 3) + ' days a week, batches of about ' + ((K.mealPrep||{}).batchServings || 3) + ' servings.');
   if (opts.today){
     const d = await dayTotals(opts.date || localDateKey());
