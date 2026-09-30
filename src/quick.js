@@ -1,10 +1,17 @@
 /* ---------- quick mode ---------- */
 
 function quickOn() {
+  return (S.prefs.quickMode === 'on' || S.quickLaunch === true) && moduleOn('logging');
+}
+
+/* brief nutrilog-260930-quick-shortcut: the saved switch alone, without a launch at #quick */
+function quickSaved() {
   return S.prefs.quickMode === 'on' && moduleOn('logging');
 }
 
 async function setQuickMode(on) {
+  if (!on && S.quickLaunch === true && S.prefs.quickMode !== 'on') { S.quickLaunch = false; go('today'); return; }
+  S.quickLaunch = false;
   S.prefs.quickMode = on ? 'on' : 'off';
   S.prefs.quickModeAsked = true;
   await savePrefs();
