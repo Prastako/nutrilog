@@ -436,7 +436,7 @@ function renderSettings(){
   h += '<div class="card"><h3>'+esc(t('arch_h'))+'</h3><p class="tiny" style="margin-bottom:10px">'+esc(t('arch_intro'))+'</p>' +
     '<div class="kv"><span class="k">'+esc(t('orig_catalog'))+'</span><span class="v num">'+(S.meta.catalog.count || counts.catalog || 0)+'</span></div>' +
     '<div class="kv"><span class="k">'+esc(t('arch_last'))+'</span><span class="v">'+esc(S.meta.catalog.lastOkAt ? fmtDateTime(S.meta.catalog.lastOkAt) : t('never'))+'</span></div>' +
-    '<div class="kv"><span class="k">'+esc(t('orig_archive'))+'</span><span class="v num">'+counts.archive+'</span></div>' +
+    /* brief nutrilog-260930-stale-texts: no Archive row */
     '<div class="kv"><span class="k">'+esc(t('orig_claude'))+' / '+esc(t('orig_own'))+'</span><span class="v num">'+counts.claude+' / '+counts.own+'</span></div>' +
     '<div class="kv"><span class="k">'+esc(t('orig_starter'))+'</span><span class="v num">'+counts.starter+'</span></div>' +
     /* brief nutrilog-260930-recipe-file-button: no loading of recipe files */
