@@ -726,8 +726,7 @@ const SPLITS = {
   lowcarb:  {p:30, f:45, c:25}
 };
 const DIRECTIONS = { lose:0.90, maintain:1.00, gain:1.07 };
-const RMR_REL_UNC = 0.10;
-const FLOOR_ABS = { male:1500, female:1200 };
+/* brief nutrilog-260930-dead-code: unused constants removed */
 const DEFAULT_SLOTS = { breakfast:25, lunch:35, snack:10, dinner:30 };
 const SLOTS = ['breakfast','lunch','snack','dinner'];
 const SLOT_PRESETS = [
@@ -969,10 +968,7 @@ const CUISINES = [
 const EQUIPMENT = ['hob','oven','micro','blender','airfryer','pressure','none'];
 const TIMES = [1,2,3,4];
 const TIME_MAX_MIN = {1:15, 2:30, 3:60, 4:600};
-/* brief nutrilog-260930-money-profile: BUDGETS retired with kitchen.budget */
 
-const DIET_STYLES = ['omnivore','flexitarian','pescatarian','vegetarian','vegan','mediterranean','lowcarb','highprotein','glutenfree','lactosefree'];
-const AIMS = ['muscle','fatloss','energy','digestion','fibre','lesssugar','lesssalt','veg','protein','heart','sleep','skin'];
 const FOCUS_CHOICES = ['fib','prot','vitd','fe','ca','mg','k','zn','b12','fol','vitc','o3ld','iod','se'];
 
 const PATTERNS = ['everything','littlemeat','pescatarian','vegetarian','vegan','carnivore'];
