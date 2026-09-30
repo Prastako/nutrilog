@@ -419,6 +419,20 @@ function addManualUI(body){
 
 /* ---------- Editing an entry ---------- */
 
+/* brief nutrilog-260930-delete-undo: Undo writes the removed entry back as a live record with a newer change time */
+async function undoDelete(rec){
+  if (!rec) return;
+  /* change times have whole seconds: the live record must be newer than the deletion marker, also for a quick Undo */
+  const del = await dbGet('records', rec.id);
+  while (del && del.updatedAt && nowIso() <= del.updatedAt) await new Promise(res => setTimeout(res, 150));
+  const r = JSON.parse(JSON.stringify(rec));
+  r.deleted = false;
+  await recPut(r);
+  if (S.screen === 'quick') await renderQuick();
+  else if (S.screen === 'log') await renderLog();
+  else renderScreen(S.screen);
+}
+
 async function editEntry(id){
   const e = await recGet(id);
   if (!e) return;
@@ -438,7 +452,12 @@ async function editEntry(id){
     '<button class="btn quiet" type="button" id="eAgain">'+esc(t('lg_again'))+'</button>' +
     '<button class="btn" type="button" id="eSave">'+esc(t('save'))+'</button>');
   bindSlotChips(sheet, v => slot = v);
-  $('#eDel').addEventListener('click', async () => { await recDelete(e.id); closeSheet(); toast(t('lg_deleted')); });
+  /* brief nutrilog-260930-delete-undo: "Deleted." with Undo for 6 seconds */
+  $('#eDel').addEventListener('click', async () => {
+    const before = await dbGet('records', e.id);
+    await recDelete(e.id); closeSheet();
+    toast(t('lg_deleted'), 6000, {label: t('undo'), run: () => undoDelete(before)});
+  });
   $('#eAgain').addEventListener('click', async () => {
     const c = deepCopy(e); delete c.id; delete c.createdAt; c.date = localDateKey(); c.time = localTime(); c.slot = guessSlot();
     await recPut(c); closeSheet(); toast(t('lg_saved'));

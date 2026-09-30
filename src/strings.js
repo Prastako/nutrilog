@@ -1038,3 +1038,6 @@ Object.assign(STR.en, { boot_nostore:'NutriLog cannot save anything in this brow
 /* brief nutrilog-260930-macro-names */
 Object.assign(STR.cs, { mac_p:'Bílkoviny', mac_f:'Tuky', mac_c:'Sacharidy' });
 Object.assign(STR.en, { mac_p:'Protein', mac_f:'Fat', mac_c:'Carbs' });
+/* brief nutrilog-260930-delete-undo */
+Object.assign(STR.cs, { undo:'Vrátit zpět' });
+Object.assign(STR.en, { undo:'Undo' });
