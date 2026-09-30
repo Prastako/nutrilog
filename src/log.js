@@ -142,14 +142,14 @@ function openAddSheet(slot, date){
   ADD.date = date || S.logDate || localDateKey();
   ADD.food = null;
   const modes = ['search','scan','photo','describe','recipe','manual'].filter(m => moduleOn('assistant') || (m !== 'photo' && m !== 'describe'));
-  const b = (quickOn() ? '' : '<div class="seg small" id="addModes">' + modes.map(m =>
+  /* brief nutrilog-260930-log-modes: a grid of words, three columns with six modes, two with four */
+  const b = (quickOn() ? '' : '<div class="seg small modegrid' + (modes.length === 4 ? ' two' : '') + '" id="addModes">' + modes.map(m =>
       '<button type="button" data-mode="'+m+'" class="'+(m==='search'?'on':'')+'">'+esc(t('am_'+m))+'</button>').join('') + '</div>') +
     '<div id="addBody"></div>';
   const sheet = openSheet(esc(t('add_title', {slot: t('slot_'+ADD.slot).toLowerCase()})), b, null, {tall:true});
   if (!quickOn()) $('#addModes').addEventListener('click', e => {
     const bt = e.target.closest('[data-mode]');
     if (!bt) return;
-    if (bt.getAttribute('data-mode') === 'photo'){ closeSheet(); openPhotoSheet({slot: ADD.slot, date: ADD.date}); return; }
     $$('#addModes button').forEach(x => x.classList.toggle('on', x === bt));
     runSheetCleanups();
     addMode(bt.getAttribute('data-mode'));
@@ -158,9 +158,12 @@ function openAddSheet(slot, date){
   return sheet;
 }
 
-function addMode(mode){
+function addMode(mode, opts){
   ADD.mode = mode;
   const body = $('#addBody');
+  /* brief nutrilog-260930-log-modes: any change of mode drops a picture and an evaluation still running */
+  PHOTO.gen = (PHOTO.gen || 0) + 1;
+  if (mode === 'photo'){ opts = opts || {}; openPhotoSheet({slot: ADD.slot, date: ADD.date, hint: opts.hint, barcode: opts.barcode, into: body}); return; }
   if (mode === 'search') addSearchUI(body);
   else if (mode === 'scan') addScanUI(body);
   else if (mode === 'describe') addDescribeUI(body);
@@ -292,7 +295,11 @@ async function addScanUI(body){
       if (f && f.per100.kcal != null){ amountStep(f); return; }
       $('#scanRes').innerHTML = '<div class="notice warn">'+esc(t('sc_notfound', {c: code}))+'</div>' +
         '<div class="btnrow"><button class="btn" type="button" id="scanPhoto">'+esc(t('sc_photo_label'))+'</button></div>';
-      $('#scanPhoto').addEventListener('click', () => { closeSheet(); openPhotoSheet({slot: ADD.slot, date: ADD.date, hint:'nutrition_label', barcode: code}); });
+      $('#scanPhoto').addEventListener('click', () => {
+        $$('#addModes button').forEach(x => x.classList.toggle('on', x.getAttribute('data-mode') === 'photo'));
+        runSheetCleanups();
+        addMode('photo', {hint:'nutrition_label', barcode: code});
+      });
     } catch(err){
       $('#scanRes').innerHTML = '<div class="notice bad">'+esc(String(err.message||err))+'</div>';
     }

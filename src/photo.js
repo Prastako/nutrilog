@@ -22,7 +22,9 @@ function openPhotoSheet(opts){
     '<div class="field"><label for="phNote">'+esc(t('ph_note'))+'</label><input id="phNote" type="text" placeholder="'+esc(t('ph_note_ph'))+'"></div>' +
     '<div class="btnrow"><button class="btn" type="button" id="phGo" disabled>'+esc(t('ph_go'))+'</button></div>' +
     '<div id="phOut"></div>';
-  const sheet = openSheet(esc(t('ph_title')), b, null, {tall:true});
+  /* brief nutrilog-260930-log-modes: with opts.into the form is drawn inside the add-food sheet */
+  let sheet = null;
+  if (opts.into) opts.into.innerHTML = b; else sheet = openSheet(esc(t('ph_title')), b, null, {tall:true});
   $('#phHints').addEventListener('click', e => {
     const bt = e.target.closest('[data-hint]'); if (!bt) return;
     PHOTO.hint = bt.getAttribute('data-hint');
@@ -46,11 +48,13 @@ function openPhotoSheet(opts){
 async function runPhotoEval(){
   if (!PHOTO.dataUrl) return;
   if (!(await ensureAiReady())) return;
+  const gen = PHOTO.gen;
   const btn = $('#phGo');
   btn.disabled = true; btn.textContent = t('ai_working');
   $('#phOut').innerHTML = '<div class="notice">'+esc(t('ph_working'))+'</div>';
   try {
     const r = await aiEvaluatePhoto(PHOTO.dataUrl, PHOTO.hint, ($('#phNote')||{}).value || '');
+    if (gen !== PHOTO.gen) return;
     PHOTO.result = r;
     /* the local exclusion check runs too, independent of the model */
     const local = exclusionHits([r.name, r.description, (r.ingredientsSeen||[]).join(' ')].join(' '));
@@ -61,6 +65,7 @@ async function runPhotoEval(){
     await dbPut('media', {id: 'photo:' + rec.id, dataUrl: thumb, at: nowIso()});
     renderPhotoResult(r, warn);
   } catch(err){
+    if (gen !== PHOTO.gen) return;
     $('#phOut').innerHTML = '<div class="notice bad">'+esc(t('err_prefix'))+'<div class="verbatim">'+esc(String(err.message||err))+'</div></div>';
   }
   btn.disabled = false; btn.textContent = t('ph_again');
