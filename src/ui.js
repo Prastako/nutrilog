@@ -163,3 +163,50 @@ function rangeBar(value, low, high, kind){
   return '<div class="rbar"><div class="rzone" style="left:'+pct(low||0)+'%;width:'+Math.max(1, pct(high||low||0) - pct(low||0))+'%"></div>' +
     '<div class="rfill '+cls+'" style="width:'+from+'%" data-w="'+target+'"></div><span class="rend" style="left:'+from+'%" data-w="'+target+'"></span></div>';
 }
+
+/* brief nutrilog-260930-select-comet-only: after a choice only the option just chosen draws its comet. Options chosen
+   before get cm-keep (no redraw, also when the screen is drawn again); an option that was chosen and is not any more
+   gets cm-out (its thread runs back). The check runs right after the DOM changes (MutationObserver) and after the tap. */
+const COMET_SEL = '.chip[aria-pressed], .seg button, label.opt, .looktile';
+const COMET = { at: 0, before: null };
+function cometOn(el){
+  if (el.matches('label.opt')){ const i = el.querySelector('input'); return !!(i && i.checked); }
+  if (el.matches('.seg button')) return el.classList.contains('on');
+  return el.getAttribute('aria-pressed') === 'true';
+}
+function cometKey(el){
+  if (el.matches('label.opt')){ const i = el.querySelector('input'); return 'o|' + (i ? i.name + '|' + i.value : el.textContent); }
+  const at = ['data-act', 'data-id', 'data-v', 'data-mode', 'data-k', 'id'].map(a => el.getAttribute(a) || '');
+  return 'b|' + at.join('|') + '|' + (at.join('') ? '' : String(el.textContent || '').trim());
+}
+function cometPick(target){
+  const before = new Set();
+  document.querySelectorAll(COMET_SEL).forEach(el => { if (cometOn(el)) before.add(cometKey(el)); });
+  /* a click straight on a checkbox or radio arrives after the browser switched it: count its old state */
+  if (target && target.matches && target.matches('input[type=checkbox], input[type=radio]')){
+    const lab = target.closest('label.opt');
+    if (lab){ const k = cometKey(lab); if (target.type === 'radio' || target.checked) before.delete(k); else before.add(k); }
+  }
+  COMET.before = before; COMET.at = Date.now();
+  setTimeout(cometSettle, 0); setTimeout(cometSettle, 150); setTimeout(cometSettle, 600);
+}
+function cometSettle(){
+  if (!COMET.before || Date.now() - COMET.at > 1500) return;
+  document.querySelectorAll(COMET_SEL).forEach(el => {
+    const k = cometKey(el), was = COMET.before.has(k), on = cometOn(el);
+    if (on && was) el.classList.add('cm-keep');
+    else if (on){ el.classList.remove('cm-keep'); el.classList.remove('cm-out'); }
+    else if (was) el.classList.add('cm-out');
+  });
+}
+if (typeof document !== 'undefined' && document.addEventListener){
+  document.addEventListener('click', e => {
+    const t = e.target;
+    if (!t || !t.closest || !t.closest(COMET_SEL)) return;
+    /* the click a label passes on to its input is part of the same tap */
+    if (t.tagName === 'INPUT' && Date.now() - COMET.at < 80) return;
+    cometPick(t);
+  }, true);
+  if (typeof MutationObserver === 'function' && document.body)
+    new MutationObserver(() => cometSettle()).observe(document.body, {childList: true, subtree: true, attributes: true, attributeFilter: ['aria-pressed']});
+}
