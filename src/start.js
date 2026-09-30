@@ -45,6 +45,7 @@ function startChoose(on) {
   }
   START.page += 1;
   if (START.page < MODULES.length) {
+    try { history.pushState({screen:'start', page:START.page}, '', '#start'); } catch(e){}
     renderStart();
   } else {
     finishStart();
@@ -53,9 +54,20 @@ function startChoose(on) {
 
 function startBack() {
   if (START.page > 0) {
+    if (history.state && history.state.screen === 'start' && history.state.page === START.page) { history.back(); return; }
     START.page -= 1;
     renderStart();
   }
+}
+
+/* brief nutrilog-260930-first-start-address: Back, Forward or a changed address while the sequence shows.
+   An entry of the sequence moves to its page; any other entry is replaced by the current page. */
+function startPop(st) {
+  if (START.mods === null) startReset();
+  var p = (st && st.screen === 'start') ? (typeof st.page === 'number' ? st.page : 0) : -1;
+  if (p >= 0 && p < MODULES.length) START.page = p;
+  else { try { history.replaceState({screen:'start', page:START.page}, '', '#start'); } catch(e){} }
+  renderStart();
 }
 
 async function finishStart() {

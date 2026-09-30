@@ -375,7 +375,9 @@ function bindEvents(){
     if ((location.hash || '').indexOf('#join=') === 0) return;
     if (S.swallowPop){ S.swallowPop = false; refreshScreenSoon(); return; }
     if (S.sheetOpen){ closeSheet(true); return; }
-    const scr = (e.state && e.state.screen) || 'recipes';
+    if (S.screen === 'start'){ startPop(e.state); return; }
+    let scr = (e.state && e.state.screen) || 'recipes';
+    if (scr === 'start') scr = 'recipes';
     S.settingsCat = (e.state && e.state.cat) || null;
     go(scr, false);
   });
