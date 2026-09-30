@@ -181,7 +181,7 @@ function bindEvents(){
     else if (act === 'update-check'){ checkUpdate(); }
     else if (act === 'install'){ if (S.installPrompt){ S.installPrompt.prompt(); S.installPrompt = null; renderSettings(); } }
     else if (act === 'arch-sync'){ await syncArchive({force:true}); renderSettings(); }
-    else if (act === 'arch-import'){ $('#archFile').click(); }
+    /* brief nutrilog-260930-recipe-file-button: no arch-import action */
 
     /* profile */
     else if (act === 'excl-add'){
@@ -344,15 +344,7 @@ function bindEvents(){
       el.value = '';
       return;
     }
-    if (el.id === 'archFile' && el.files && el.files[0]){
-      try {
-        const out = await importRecipeIndex(JSON.parse(await el.files[0].text()), 'file');
-        toast(t('arch_synced', {n: out.count}));
-      } catch(err){ toast(t('err_prefix') + ': ' + String(err.message||err), 6000); }
-      el.value = '';
-      renderSettings();
-      return;
-    }
+    /* brief nutrilog-260930-recipe-file-button: no #archFile handler */
     const path = el.getAttribute('data-set');
     if (!path) return;
     const val = el.value.trim();

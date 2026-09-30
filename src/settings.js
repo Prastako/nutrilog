@@ -439,9 +439,7 @@ function renderSettings(){
     '<div class="kv"><span class="k">'+esc(t('orig_archive'))+'</span><span class="v num">'+counts.archive+'</span></div>' +
     '<div class="kv"><span class="k">'+esc(t('orig_claude'))+' / '+esc(t('orig_own'))+'</span><span class="v num">'+counts.claude+' / '+counts.own+'</span></div>' +
     '<div class="kv"><span class="k">'+esc(t('orig_starter'))+'</span><span class="v num">'+counts.starter+'</span></div>' +
-    '<div class="btnrow">' +
-    '<button class="btn quiet" type="button" data-act="arch-import">'+icon('up')+esc(t('arch_load'))+'</button></div>' +
-    '<input type="file" id="archFile" accept="application/json,.json" class="hide">' +
+    /* brief nutrilog-260930-recipe-file-button: no loading of recipe files */
     '<label class="opt sq" style="margin-top:12px"><input type="checkbox" id="a-starter" '+(P.archive.showStarter ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('arch_starter'))+'</span><span class="t2">'+esc(t('arch_starter_d'))+'</span></span></label></div>';
 
   /* models (brief nutrilog-260930-money-spend: the Spend card is gone) */
