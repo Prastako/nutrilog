@@ -325,7 +325,8 @@ function bindEvents(){
       else if (el.checked) S.draft.kitchen.equipment = eq.filter(x => x !== 'none');
       renderProfile();
     }
-    else if (el.name === 'person.activityDetail.on') { setPath(S.draft, el.name, el.checked); renderProfile(); }
+    /* brief nutrilog-260930-week-detail-finetune: the switch sits in Fine-tune, which stays open */
+    else if (el.name === 'person.activityDetail.on') { setPath(S.draft, el.name, el.checked); S.ftOpen = true; renderProfile(); }
     else if (el.name === 'person.activityLevel' || el.name === 'person.activityDetail.base' || el.name === 'kitchen.timeWeekday' || el.name === 'kitchen.timeWeekend') setPath(S.draft, el.name, Number(v));
     else if (el.name === 'goals.macroSplit.preset'){ setPath(S.draft, el.name, v); renderProfile(); }
     else if (el.name === 'food.pattern'){ setPath(S.draft, el.name, v); renderProfile(); }

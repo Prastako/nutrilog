@@ -1029,3 +1029,6 @@ Object.assign(STR.en, { p_allergy_common:'Common allergens' });
 /* brief nutrilog-260930-equipment-chips */
 Object.assign(STR.cs, { p_equipment_free_ph:'Další vybavení, např. pomalý hrnec, wok' });
 Object.assign(STR.en, { p_equipment_free_ph:'Other equipment, e.g. slow cooker, wok' });
+/* brief nutrilog-260930-week-detail-finetune */
+Object.assign(STR.cs, { ad_in_finetune:'Týden máte popsaný podrobně v části Doladit; jednoduché úrovně se nepoužívají.', ad_note:'Jednoduché úrovně v části Aktivita zahrnují trénink; tady se běžný den a trénink počítají zvlášť, takže vyberte úroveň běžného dne bez tréninku.' });
+Object.assign(STR.en, { ad_in_finetune:'Your week is described in detail under Fine-tune; the simple levels are not used.', ad_note:'The simple levels in Activity include training; here daily life and training are counted separately, so pick the daily life level without training.' });

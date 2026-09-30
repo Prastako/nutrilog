@@ -106,32 +106,35 @@ function renderProfile(){
     ACTIVITY.forEach(a => { h += optRow('person.activityLevel', String(a.id), Number(P.activityLevel)===a.id, t(a.k+'_t'), t(a.k+'_d')); });
     h += '</div>';
   }
-  h += '<div class="opts" style="margin-top:10px"><label class="opt sq"><input type="checkbox" role="switch" name="person.activityDetail.on" value="1"' + (on ? ' checked' : '') + '><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('ad_toggle'))+'</span></span></label></div>';
+  /* brief nutrilog-260930-week-detail-finetune: the switch and the detailed week are built here and shown in Fine-tune */
+  let ad = '';
+  ad += '<div class="opts" style="margin-top:10px"><label class="opt sq"><input type="checkbox" role="switch" name="person.activityDetail.on" value="1"' + (on ? ' checked' : '') + '><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('ad_toggle'))+'</span></span></label></div>';
   if (on){
-    h += '<p class="tiny" style="margin-top:10px">'+esc(t('ad_note'))+'</p>';
+    ad += '<p class="tiny" style="margin-top:10px">'+esc(t('ad_note'))+'</p>';
     var b = Number(AD.base);
     if (b < 1 || b > 4) b = 1;
-    h += '<p class="flabel" style="margin-top:12px">'+esc(t('ad_base'))+'</p><div class="opts">';
-    for (var n = 1; n <= 4; n++) { h += optRow('person.activityDetail.base', String(n), b === n, t('ad_b'+n)); }
-    h += '</div>';
-    h += '<div class="inline" style="margin-top:12px">' +
+    ad += '<p class="flabel" style="margin-top:12px">'+esc(t('ad_base'))+'</p><div class="opts">';
+    for (var n = 1; n <= 4; n++) { ad += optRow('person.activityDetail.base', String(n), b === n, t('ad_b'+n)); }
+    ad += '</div>';
+    ad += '<div class="inline" style="margin-top:12px">' +
       num('person.activityDetail.sessions','ad-sessions',t('ad_sessions'),'inputmode="numeric" step="1" min="0" max="14"') +
       num('person.activityDetail.minutes','ad-minutes',t('ad_minutes'),'inputmode="numeric" step="5" min="10" max="240"') + '</div>';
     var ty = AD.type;
     if (AD_TYPES.indexOf(ty) === -1) ty = 'strength';
-    h += '<div class="field"><label for="ad-type">'+esc(t('ad_type'))+'</label><select id="ad-type" data-bind="person.activityDetail.type">';
+    ad += '<div class="field"><label for="ad-type">'+esc(t('ad_type'))+'</label><select id="ad-type" data-bind="person.activityDetail.type">';
     for (var ti = 0; ti < AD_TYPES.length; ti++) {
       var k = AD_TYPES[ti];
-      h += '<option value="'+k+'"'+(k === ty ? ' selected' : '')+'>'+esc(t('at_'+k))+'</option>';
+      ad += '<option value="'+k+'"'+(k === ty ? ' selected' : '')+'>'+esc(t('at_'+k))+'</option>';
     }
-    h += '</select></div>';
+    ad += '</select></div>';
     var at = AD.attendance;
     if (at !== 'always' && at !== 'usually' && at !== 'sometimes') at = 'usually';
-    h += '<p class="flabel" style="margin-top:12px">'+esc(t('ad_att'))+'</p><div class="opts">';
-    ['always','usually','sometimes'].forEach(function(v) { h += optRow('person.activityDetail.attendance', v, v === at, t('aa_'+v)); });
-    h += '</div>';
-    h += '<p class="tiny" id="adResultBox" style="margin-top:10px">'+esc(adResultText(d))+'</p>';
+    ad += '<p class="flabel" style="margin-top:12px">'+esc(t('ad_att'))+'</p><div class="opts">';
+    ['always','usually','sometimes'].forEach(function(v) { ad += optRow('person.activityDetail.attendance', v, v === at, t('aa_'+v)); });
+    ad += '</div>';
+    ad += '<p class="tiny" id="adResultBox" style="margin-top:10px">'+esc(adResultText(d))+'</p>';
   }
+  if (on) h += '<p class="tiny" style="margin-top:10px">'+esc(t('ad_in_finetune'))+'</p>';
   h += '</div>';
 
   h += '<div class="card"><h3>'+esc(t('p_macro'))+'</h3><div class="opts">' +
@@ -226,6 +229,8 @@ function renderProfile(){
     '<div class="field" style="margin-top:14px"><label for="g-notes">'+esc(t('pg_notes'))+'</label><textarea id="g-notes" data-bind="goals.notes" placeholder="'+esc(t('pg_notes_ph'))+'">'+esc(G.notes||'')+'</textarea></div>' +
     /* brief nutrilog-260930-bodyfat-finetune: Body fat at the end of Fine-tune, only while Goals is on */
     (moduleOn('goals') ? num('person.bodyFatPct','f-bf',t('p_bf'),'inputmode="decimal" step="0.5" min="3" max="60"') + '<p class="tiny" style="margin-top:6px">'+esc(t('p_bf_note'))+'</p>' : '') +
+    /* brief nutrilog-260930-week-detail-finetune: after Body fat */
+    (moduleOn('goals') ? ad : '') +
     '</details>';
 
   h += '<div class="card"><h3>'+esc(t('p_cuisines'))+'</h3>' + chipSet('pchip-cuisines', CUISINES.map(c => c.id), F.cuisines, id => L(CUISINES.find(c => c.id === id))) +
@@ -280,7 +285,7 @@ async function saveProfile(){
   const miss = profileMissing(d);
   if (miss.length){
     /* brief nutrilog-260930-bodyfat-finetune: a refused field inside Fine-tune opens it */
-    const inFt = [t('p_bf')];
+    const inFt = [t('p_bf'), t('ad_sessions'), t('ad_minutes')];
     if (miss.some(m => inFt.some(f => String(m).indexOf(f) === 0))){ S.ftOpen = true; const ft = $('#ftBox'); if (ft) ft.open = true; }
     toast(t('p_missing', {list: miss.join(', ')}), 5000); return;
   }
