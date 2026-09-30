@@ -445,8 +445,26 @@ async function requestPersist(){
 
 /* ---------- Boot ---------- */
 
+/* brief nutrilog-260930-storage-blocked: storage that cannot be opened at start gets one plain screen, nothing is written */
+function bootNoStore(){
+  const cs = String(navigator.language || '').toLowerCase().indexOf('cs') === 0;
+  const T = cs ? STR.cs : STR.en;
+  try {
+    S.prefs = mergeDefaults(null, DEFAULT_PREFS);
+    S.theme = S.prefs.theme; S.look = lookOf(S.prefs.look).id; S.type = typeOf(S.prefs.type).id;
+    applyTheme();
+  } catch(e){}
+  document.documentElement.setAttribute('lang', cs ? 'cs' : 'en');
+  const host = document.getElementById('app') || document.body;
+  host.innerHTML = '<main id="noStore" style="max-width:560px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 48px) 20px 32px">' +
+    '<h1 class="brand" style="margin-bottom:14px">NutriLog</h1><p>' + esc(T.boot_nostore) + '</p>' +
+    '<div class="btnrow" style="margin-top:18px"><button class="btn" type="button" id="bootReload">' + esc(T.boot_reload) + '</button></div></main>';
+  const b = document.getElementById('bootReload');
+  if (b) b.addEventListener('click', () => location.reload());
+}
+
 async function boot(){
-  await loadState();
+  try { await loadState(); } catch(e){ bootNoStore(); return; }
   applyTheme();
   initOrnaments();
   document.documentElement.setAttribute('lang', S.lang);
