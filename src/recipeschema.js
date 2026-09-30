@@ -88,7 +88,9 @@ function applyOverrides(ingredients, steps, overrides) {
       ings[idx] = c;
     }
 
-    if (ov.steps) {
+    /* brief nutrilog-260930-swap-absent: replace, remove or amount on an absent slot is skipped whole, steps included */
+    var absent = idx < 0 && (ov.op === 'replace' || ov.op === 'remove' || ov.op === 'amount');
+    if (ov.steps && !absent) {
       for (var si in ov.steps) {
         if (steps[si]) steps[si].text = ov.steps[si];
       }

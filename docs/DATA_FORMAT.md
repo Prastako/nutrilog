@@ -196,6 +196,7 @@ stored file is never rewritten by the app.
 - Override: {`slot`, `op` replace | remove | add | amount, `item`, `qty`,
   `unit`, `grams`, `foodRef`, `allergens[]`, `prep`, `note`, `steps`:
   {"<step index>": "<full text>"}}.
+  An override of kind replace, remove or amount whose slot is absent is skipped whole, including its steps.
 
 Resolution order: written ingredients, `variants[axis]`, flags (gluten-free,
 lactose-free, then `no:<key>` alphabetically), servings scaling (linear by
