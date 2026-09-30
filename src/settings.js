@@ -418,7 +418,7 @@ function renderSettings(){
       '<button type="button" class="'+(S.lang==='cs'?'on':'')+'" data-act="lang" data-v="cs" aria-pressed="'+(S.lang==='cs')+'">Čeština</button>' +
       '<button type="button" class="'+(S.lang==='en'?'on':'')+'" data-act="lang" data-v="en" aria-pressed="'+(S.lang==='en')+'">English</button>' +
     '</div></div>' +
-    (moduleOn('logging') ? '<label class="opt sq" style="margin-top:12px"><input type="checkbox" id="qmSwitch" '+(quickOn() ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('qm_title'))+'</span><span class="t2">'+esc(t('qm_note'))+'</span></span></label>' : '') + '</div>';
+    (moduleOn('logging') ? '<label class="opt sq" style="margin-top:12px"><input type="checkbox" id="qmSwitch" '+(quickSaved() ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('qm_title'))+'</span><span class="t2">'+esc(t('qm_note'))+'</span></span></label>' : '') + '</div>';
 
   h += '<!--cat:features-->';
   h += featuresCardHtml();

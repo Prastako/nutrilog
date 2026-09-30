@@ -460,9 +460,10 @@ async function boot(){
   await loadRecipes();
 
   const hash = (location.hash || '').replace('#','');
-  if (hash === 'quick' && !quickOn() && moduleOn('logging')){ S.prefs.quickMode = 'on'; S.prefs.quickModeAsked = true; await savePrefs(); }
   const known = TABS.map(x => x.id).concat(['today','profile','settings','quick']);
   const fresh = await needsStart();
+  /* brief nutrilog-260930-quick-shortcut: #quick opens Quick mode for this launch only; nothing is saved */
+  if (hash === 'quick' && !fresh && !quickOn() && moduleOn('logging')) S.quickLaunch = true;
   go(fresh ? 'start' : known.indexOf(hash) >= 0 ? hash : 'recipes', false);
   try { history.replaceState({screen:S.screen}, '', '#'+S.screen); } catch(e){}
   syncRun('app open');
