@@ -222,7 +222,7 @@ async function renderAddSuggestions(el, lacking){
     }).filter(o => o.v).sort((a,b) => b.v - a.v).slice(0, 2);
     h += '<p style="margin-top:10px"><b>'+esc(nutLabel(r.k))+'</b> <span class="tiny">'+esc(t('rv_add_per100'))+'</span></p>' +
       '<p class="tiny">' + foods.map(f => esc(foodName(f.food).split(',').slice(0,2).join(',')) + ' <span class="num">(' + esc(fmtAmt(f.per100)) + ' ' + esc(nutUnit(r.k)) + ')</span>').join(' · ') + '</p>';
-    if (recs.length) h += '<div class="rlist" style="margin-top:6px">' + recs.map(o => recipeCard(o.x, esc(nutLabel(r.k)) + ' ' + esc(fmtAmt(o.v)) + ' ' + esc(nutUnit(r.k)) + ' / ' + esc(t('rc_serv_short')))).join('') + '</div>';
+    if (recs.length) h += '<div class="rlist" style="margin-top:6px">' + recs.map(o => recipeCard(o.x, esc(nutLabel(r.k)) + ' ' + esc(fmtAmt(o.v)) + ' ' + esc(nutUnit(r.k)) + ' ' + esc(t('rv_add_perserv')))).join('') + '</div>';
   }
   h += '<p class="tiny" style="margin-top:10px">'+esc(t('rv_add_note'))+'</p></div>';
   el.innerHTML = h;

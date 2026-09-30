@@ -1018,3 +1018,5 @@ Object.assign(STR.cs, { cat_loading:'Stahuji sdílené recepty…', cat_failed:'
 Object.assign(STR.en, { cat_loading:'Downloading the shared recipes…', cat_failed:'The shared recipes could not be downloaded; will try again next time.', orig_catalog:'Shared recipes' });
 Object.assign(STR.cs, { au_name_label:'Vaše jméno, jak ho uvidí ostatní', au_name_err:'Jméno musí mít 1 až 40 znaků.', au_offline:'Jste offline; jméno se neuložilo.', au_by:'Poslal(a) {n}', au_heading:'Poslali' });
 Object.assign(STR.en, { au_name_label:'Your name, as others will see it', au_name_err:'The name must be 1 to 40 characters.', au_offline:'You are offline; the name was not saved.', au_by:'Sent by {n}', au_heading:'Sent by' });
+Object.assign(STR.cs, { rv_add_perserv:'na porci' });
+Object.assign(STR.en, { rv_add_perserv:'per serving' });
