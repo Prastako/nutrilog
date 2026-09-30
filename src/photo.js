@@ -93,7 +93,7 @@ function renderPhotoResult(r, warn){
   if ((r.suggestions||[]).length) h += '<div class="card flat"><h3>'+esc(t('ph_tweaks'))+'</h3><ul class="tips">'+r.suggestions.map(x => '<li>'+esc(x)+'</li>').join('')+'</ul></div>';
   h += '<div class="card"><h3>'+esc(t('ph_portion'))+'</h3>' +
     '<div class="inline"><div class="field"><label for="phG">'+esc(t('am_grams'))+'</label><input id="phG" type="number" inputmode="decimal" value="'+esc(pg ? Math.round(pg) : 100)+'"></div>' +
-    '<div class="field"><label for="phD">'+esc(t('lg_date'))+'</label><input id="phD" type="date" value="'+esc(PHOTO.date)+'"><span class="fhint" data-hint-for="phD">'+esc((PHOTO.date) ? numDate(PHOTO.date, true) : '')+'</span></div></div>' +
+    '<div class="field"><label for="phD">'+esc(t('lg_date'))+'</label>'+dateField('phD', PHOTO.date)+'</div></div>' +
     '<div class="field"><span class="flabel">'+esc(t('lg_slot'))+'</span>'+slotChips(PHOTO.slot)+'</div>' +
     '<div id="phN"></div>' +
     '<div class="btnrow" style="margin-top:10px"><button class="btn" type="button" id="phLog">'+esc(t('ph_log'))+'</button>' +

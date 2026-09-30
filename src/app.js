@@ -127,7 +127,9 @@ function bindEvents(){
   $('#btnSettings').addEventListener('click', () => go('settings'));
   $('#btnChat').addEventListener('click', () => openChatSheet(''));
   const dateHintUpd = (e) => { const el = e.target; if (!el || !el.matches || !el.id || !el.matches('input[type="date"]')) return;
-    const h = document.querySelector('[data-hint-for="' + el.id + '"]'); if (h) h.textContent = el.value ? numDate(el.value, true) : ''; };
+    const h = document.querySelector('[data-hint-for="' + el.id + '"]'); if (h) h.textContent = el.value ? numDate(el.value, true) : '';
+    /* brief nutrilog-260930-date-once */
+    const dv = document.querySelector('[data-dv-for="' + el.id + '"]'); if (dv) dv.textContent = dateFieldText(el.value); };
   document.addEventListener('input', dateHintUpd); document.addEventListener('change', dateHintUpd);
   document.addEventListener('pointerup', (e) => {
     const b = e.target && e.target.closest ? e.target.closest('.btn') : null;

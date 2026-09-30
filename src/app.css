@@ -578,3 +578,9 @@ body:not(.quickmode) .chip[aria-pressed="false"].cm-out, body:not(.quickmode) .s
 @media (prefers-reduced-motion: reduce){
   body:not(.quickmode) .cm-out::after, body:not(.quickmode) .cm-out::before, body:not(.quickmode) .cm-out .t1::after, body:not(.quickmode) .cm-out .t1::before, body:not(.quickmode) .cm-out .lk-name::after, body:not(.quickmode) .cm-out .lk-name::before{animation:none !important}
 }
+/* brief nutrilog-260930-date-once: one date text over the browser's date input (whose own text is hidden) */
+.datefield{position:relative;display:block}
+.datefield input[type=date]{color:transparent}
+.datefield input[type=date]::-webkit-datetime-edit{color:transparent}
+.datefield input[type=date]:focus-visible{outline:2px solid var(--accent-ink);outline-offset:2px}
+.datefield .dfv{position:absolute;inset:0;display:flex;align-items:center;padding:0 14px;font-size:16px;color:var(--ink);pointer-events:none;white-space:nowrap;overflow:hidden}
