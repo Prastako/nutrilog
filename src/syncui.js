@@ -52,9 +52,25 @@ function syncCardHtml() {
   return '<div class="card" id="syncCard">' + syncCardInner() + '</div>';
 }
 
+/* brief nutrilog-260930-sync-card-typing: a redraw keeps typed text, keyboard focus, the cursor and an open Advanced */
 function renderSyncCard() {
   const el = $('#syncCard');
-  if (el) el.innerHTML = syncCardInner();
+  if (!el) return;
+  const act = document.activeElement;
+  const typing = !!(act && act.id && act.tagName === 'INPUT' && el.contains(act));
+  const adv = el.querySelector('details');
+  const advOpen = !!(adv && adv.open);
+  const keep = {};
+  if (typing || advOpen) el.querySelectorAll('input[id]').forEach(i => { keep[i.id] = i.value; });
+  let s0 = null, s1 = null;
+  if (typing){ try { s0 = act.selectionStart; s1 = act.selectionEnd; } catch(e){} }
+  el.innerHTML = syncCardInner();
+  Object.keys(keep).forEach(id => { const i = el.querySelector('#' + id); if (i) i.value = keep[id]; });
+  if (advOpen){ const d = el.querySelector('details'); if (d) d.open = true; }
+  if (typing){
+    const i = el.querySelector('#' + act.id);
+    if (i){ i.focus(); try { if (s0 != null) i.setSelectionRange(s0, s1); } catch(e){} }
+  }
 }
 
 function bindSyncCard() {
