@@ -177,7 +177,7 @@ function bindEvents(){
     }
     else if (act === 'erase'){ eraseEverything(); }
     else if (act === 'diag-copy'){ await copyDiagnostics(); }
-    else if (act === 'usage-reset'){ S.meta.usage = {calls:0,inTok:0,outTok:0,byModel:{},byMonth:S.meta.usage.byMonth||{}}; await saveMeta(); renderSettings(); }
+    /* brief nutrilog-260930-money-spend: no usage counter to reset */
     else if (act === 'update-check'){ checkUpdate(); }
     else if (act === 'install'){ if (S.installPrompt){ S.installPrompt.prompt(); S.installPrompt = null; renderSettings(); } }
     else if (act === 'arch-sync'){ await syncArchive({force:true}); renderSettings(); }
