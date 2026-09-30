@@ -96,9 +96,11 @@ function bindSlotChips(root, cb){
   });
 }
 
+/* brief nutrilog-260930-macro-names: words, a unit on every item, a line breaks only at the dots */
 function macroLine(n){
   if (!n) return '';
-  return t('mac_p') + ' ' + fmtNum(n.prot) + ' · ' + t('mac_f') + ' ' + fmtNum(n.fat) + ' · ' + t('mac_c') + ' ' + fmtNum(n.carb) + ' g';
+  const it = (k, v) => t(k) + '\u00a0' + fmtNum(v) + '\u00a0g';
+  return it('mac_p', n.prot) + ' · ' + it('mac_f', n.fat) + ' · ' + it('mac_c', n.carb);
 }
 
 /* A compact table of all known nutrients, grouped. */

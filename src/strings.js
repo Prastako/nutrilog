@@ -1035,3 +1035,6 @@ Object.assign(STR.en, { ad_in_finetune:'Your week is described in detail under F
 /* brief nutrilog-260930-storage-blocked */
 Object.assign(STR.cs, { boot_nostore:'NutriLog v tomto prohlížeči nemůže nic uložit. Úložiště je zablokované, což se stává v anonymním okně nebo při vypnutém ukládání dat webu. Otevřete aplikaci v běžném okně nebo této stránce ukládání dat povolte a načtěte ji znovu.', boot_reload:'Načíst znovu' });
 Object.assign(STR.en, { boot_nostore:'NutriLog cannot save anything in this browser. Storage is blocked, which happens in private windows or when site data is turned off. Open the app in a normal window or allow site data for this page, then reload.', boot_reload:'Reload' });
+/* brief nutrilog-260930-macro-names */
+Object.assign(STR.cs, { mac_p:'Bílkoviny', mac_f:'Tuky', mac_c:'Sacharidy' });
+Object.assign(STR.en, { mac_p:'Protein', mac_f:'Fat', mac_c:'Carbs' });
