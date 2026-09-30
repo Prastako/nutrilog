@@ -7,7 +7,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ECEAE6" id="metaThemeColor">
 <script>
-const VERSION = '0.3.0';
+const VERSION = '0.3.1';
 const SCHEMA = 2;
 </script>
 <meta name="mobile-web-app-capable" content="yes">
@@ -792,7 +792,7 @@ body:not(.quickmode) .seg { background: none !important; border: 0 !important; b
 body:not(.quickmode) .chip[aria-pressed], body:not(.quickmode) .seg button { background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; color: var(--ink2) !important; min-width: 44px !important; min-height: 40px !important; padding: 0 10px !important; }
 body:not(.quickmode) .chip[aria-pressed="true"], body:not(.quickmode) .seg button.on { color: var(--accent-ink) !important; background: none !important; text-decoration: underline 2px var(--accent) !important; text-underline-offset: 6px !important; text-shadow: 0 0 8px var(--glow-soft) !important; }
 body:not(.quickmode) .chip:not([aria-pressed]) { background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; color: var(--accent-ink) !important; font-size: 14px !important; margin-right: 16px !important; min-height: 40px !important; }
-body:not(.quickmode) .btn:focus-visible, body:not(.quickmode) .chip:focus-visible, body:not(.quickmode) .seg button:focus-visible, body:not(.quickmode) .iconbtn:focus-visible, body:not(.quickmode) .opt:focus-within { outline: 2px solid var(--accent-ink) !important; outline-offset: 2px !important; }
+body:not(.quickmode) .btn:focus-visible, body:not(.quickmode) .chip:focus-visible, body:not(.quickmode) .seg button:focus-visible, body:not(.quickmode) .iconbtn:focus-visible, body:not(.quickmode) .opt:has(input:focus-visible) { outline: 2px solid var(--accent-ink) !important; outline-offset: 2px !important; }
 body:not(.quickmode) .opt { background: none !important; box-shadow: none !important; border: 0 !important; border-radius: 0 !important; border-bottom: 1px solid var(--line-row) !important; }
 body:not(.quickmode) .opt:has(input:checked) { background: none !important; box-shadow: none !important; }
 body:not(.quickmode) .opt:has(input:checked) .t1 { color: var(--accent-ink) !important; }
@@ -900,7 +900,8 @@ body.quickmode, body.quickmode *, body.quickmode *::before, body.quickmode *::af
 #btnChat.solo{right:12px}
 .topbar .brand{max-width:calc(100% - 184px)}
 @media (max-width: 359.98px){ #btnChat{top:calc(env(safe-area-inset-top) + 8px);right:60px} #btnChat.solo{right:12px} }
-.sheetbg:has(> .sheet.full){align-items:stretch}
+/* brief nutrilog-260930-chat-sheet-pc: no dialog padding around the full sheet at any width, so it spans the window height */
+.sheetbg:has(> .sheet.full){align-items:stretch;padding:0}
 .sheet.full{max-width:560px;height:calc(100dvh - env(safe-area-inset-top));max-height:none;margin-top:env(safe-area-inset-top);border-radius:0;display:flex;flex-direction:column;overflow:hidden}
 .sheet.full .sheetbody{flex:1;min-height:0;display:flex;flex-direction:column}
 .chatsheet{flex:1;min-height:0;display:flex;flex-direction:column}
@@ -948,6 +949,36 @@ body.notabs #timerPill{bottom:calc(env(safe-area-inset-bottom) + 12px)}
 @keyframes ck-prev{from{opacity:0;transform:translateX(-12px)}}
 @keyframes ck-fade{from{opacity:0}}
 @media (prefers-reduced-motion: reduce){ .cook-in-next, .cook-in-prev{animation:ck-fade var(--t-base) linear} }
+/* brief nutrilog-260930-select-comet-only: only the option just chosen draws its comet (cm-keep stops the redraw of the
+   options chosen before); an unchosen option runs its thread back into the lit spark, then dims (cm-out) */
+@keyframes m-thread-out{from{opacity:1}to{opacity:1;right:var(--m-thread-from)}}
+@keyframes m-spark-hold{from,to{opacity:1;background:var(--accent)}}
+@keyframes m-spark-hold-lk{from,to{opacity:1;background:var(--lk-accent)}}
+body:not(.quickmode) .chip[aria-pressed="true"].cm-keep::after, body:not(.quickmode) .seg button.on.cm-keep::after, body:not(.quickmode) .opt.cm-keep:has(input:checked) .t1::after, body:not(.quickmode) .looktile[aria-pressed="true"].cm-keep .lk-name::after{animation:none}
+body:not(.quickmode) .chip[aria-pressed="false"].cm-out::after, body:not(.quickmode) .seg button.cm-out:not(.on)::after, body:not(.quickmode) .opt.cm-out:not(:has(input:checked)) .t1::after, body:not(.quickmode) .looktile[aria-pressed="false"].cm-out .lk-name::after{animation:m-thread-out var(--t-slow) var(--e-arrive)}
+body:not(.quickmode) .chip[aria-pressed="false"].cm-out::before, body:not(.quickmode) .seg button.cm-out:not(.on)::before, body:not(.quickmode) .opt.cm-out:not(:has(input:checked)) .t1::before{animation:m-spark-hold var(--t-slow) linear}
+body:not(.quickmode) .looktile[aria-pressed="false"].cm-out .lk-name::before{animation:m-spark-hold-lk var(--t-slow) linear}
+body:not(.quickmode) .chip[aria-pressed="false"].cm-out, body:not(.quickmode) .seg button.cm-out:not(.on), body:not(.quickmode) .opt.cm-out:not(:has(input:checked)) .t1, body:not(.quickmode) .looktile[aria-pressed="false"].cm-out .lk-name{transition:color var(--t-fast) var(--e-arrive) var(--t-slow), text-shadow var(--t-fast) var(--e-arrive) var(--t-slow)}
+@media (prefers-reduced-motion: reduce){
+  body:not(.quickmode) .cm-out::after, body:not(.quickmode) .cm-out::before, body:not(.quickmode) .cm-out .t1::after, body:not(.quickmode) .cm-out .t1::before, body:not(.quickmode) .cm-out .lk-name::after, body:not(.quickmode) .cm-out .lk-name::before{animation:none !important}
+}
+/* brief nutrilog-260930-date-once: one date text over the browser's date input (whose own text is hidden) */
+.datefield{position:relative;display:block}
+.datefield input[type=date]{color:transparent}
+.datefield input[type=date]::-webkit-datetime-edit{color:transparent}
+.datefield input[type=date]:focus-visible{outline:2px solid var(--accent-ink);outline-offset:2px}
+.datefield .dfv{position:absolute;inset:0;display:flex;align-items:center;padding:0 14px;font-size:16px;color:var(--ink);pointer-events:none;white-space:nowrap;overflow:hidden}
+/* brief nutrilog-260930-log-modes: the add-food modes as a grid of words, no sideways scrolling */
+#addModes.modegrid{display:grid !important;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:8px !important;row-gap:2px;overflow:visible !important}
+#addModes.modegrid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+#addModes.modegrid button{justify-self:start;max-width:100%;min-height:40px !important}
+/* brief nutrilog-260930-delete-undo: toast placement (the tab bar case is set by toastPlace) and its Undo button */
+#toast{bottom:calc(12px + env(safe-area-inset-bottom))}
+@media (min-width: 900px){ #toast{bottom:16px} }
+#toast.top{top:calc(12px + env(safe-area-inset-top));bottom:auto !important;max-width:calc(100vw - 120px)}
+#toast.act{display:flex;align-items:center;gap:12px;text-align:left}
+#toast .toastact{min-height:44px;margin:-11px -9px -11px 0;padding:0 9px;background:none;border:0;color:inherit;font:inherit;font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+#toast .toastact:focus-visible{outline:2px solid currentColor;outline-offset:-4px}
 
 </style>
 </head>
@@ -1032,7 +1063,7 @@ body.notabs #timerPill{bottom:calc(env(safe-area-inset-bottom) + 12px)}
 
 <script>
 /* ============================================================
-   NutriLog 0.3.0. Built from src/ by tools/build.py.
+   NutriLog 0.3.1. Built from src/ by tools/build.py.
    Edit the files in src/, then run the build; do not edit this
    generated block by hand.
    ============================================================ */
@@ -2057,6 +2088,29 @@ Object.assign(STR.cs, { cat_loading:'Stahuji sdílené recepty…', cat_failed:'
 Object.assign(STR.en, { cat_loading:'Downloading the shared recipes…', cat_failed:'The shared recipes could not be downloaded; will try again next time.', orig_catalog:'Shared recipes' });
 Object.assign(STR.cs, { au_name_label:'Vaše jméno, jak ho uvidí ostatní', au_name_err:'Jméno musí mít 1 až 40 znaků.', au_offline:'Jste offline; jméno se neuložilo.', au_by:'Poslal(a) {n}', au_heading:'Poslali' });
 Object.assign(STR.en, { au_name_label:'Your name, as others will see it', au_name_err:'The name must be 1 to 40 characters.', au_offline:'You are offline; the name was not saved.', au_by:'Sent by {n}', au_heading:'Sent by' });
+Object.assign(STR.cs, { rv_add_perserv:'na porci' });
+Object.assign(STR.en, { rv_add_perserv:'per serving' });
+/* brief nutrilog-260930-stale-texts */
+Object.assign(STR.cs, { arch_h:'Recepty', arch_intro:'Sdílené recepty se stahují samy, když je aplikace online. Recepty, které napíšete nebo si uložíte z návrhů, zůstávají v tomto zařízení a po připojení k profilu i v něm.', arch_starter_d:'Dvanáct jednoduchých receptů, které jsou součástí aplikace. Po stažení sdílených receptů se vypnou.', dg_note_tab:'Aplikace běží jako stránka v prohlížeči. Funguje celá, ale smazání dat prohlížeče ji vymaže. Připojte se odkazem k profilu nebo občas exportujte, ať existuje kopie i jinde.', danger_p:'Smaže profil, deník, doplňky, vlastní recepty, denní kopie i klíče v tomto zařízení. Je-li zařízení připojené k profilu, kopie na serveru zůstane.', about_clear_p:'Když v prohlížeči smažete data pro tuto stránku, zmizí všechno, co není synchronizované s profilem nebo exportované: profil, deník, doplňky i klíče.', ai_nokey_p:'Tahle funkce potřebuje klíč k API Anthropic. Vložte ho v Nastavení, v části Klíč Claude a modely.', rl_empty:'Zatím tu nejsou žádné recepty. Sdílené recepty se stáhnou, až bude aplikace online.', sg_norecipes:'Zatím tu nejsou recepty. Nové nápady fungují i bez nich.', rv_add_note:'Potraviny z databáze bez vašich vyloučených, recepty z vašeho seznamu receptů. Hodnoty v závorce jsou na 100 g.', qm_note:'Jen zápis jídla a doplňků na jedné obrazovce. Nastavení tohoto zařízení.' });
+Object.assign(STR.en, { arch_h:'Recipes', arch_intro:'Shared recipes download on their own when the app is online. Recipes you write or save from suggestions stay on this device and, once it is joined to a profile, in that profile too.', arch_starter_d:'Twelve simple recipes that come with the app. They switch off once the shared recipes are downloaded.', dg_note_tab:'The app is running as a page in the browser. It all works, but clearing browser data will erase it. Join a profile with a link or export from time to time, so a copy exists elsewhere.', danger_p:'Erases the profile, the diary, supplements, your own recipes, the daily copies and the keys on this device. If the device is joined to a profile, the copy on the server stays.', about_clear_p:'If you clear browser data for this site, everything that is not synced to a profile or exported is gone: profile, diary, supplements and keys.', ai_nokey_p:'This needs an Anthropic API key. Paste it in Settings, under Claude key and models.', set_look:'Look and language', rl_empty:'No recipes yet. The shared recipes download when the app is online.', sg_norecipes:'No recipes yet. New ideas work without them.', rv_add_note:'Foods from the database without your exclusions, recipes from your recipe list. Values in brackets are per 100 g.' });
+/* brief nutrilog-260930-allergen-list */
+Object.assign(STR.cs, { p_allergy_common:'Časté alergeny' });
+Object.assign(STR.en, { p_allergy_common:'Common allergens' });
+/* brief nutrilog-260930-equipment-chips */
+Object.assign(STR.cs, { p_equipment_free_ph:'Další vybavení, např. pomalý hrnec, wok' });
+Object.assign(STR.en, { p_equipment_free_ph:'Other equipment, e.g. slow cooker, wok' });
+/* brief nutrilog-260930-week-detail-finetune */
+Object.assign(STR.cs, { ad_in_finetune:'Týden máte popsaný podrobně v části Doladit; jednoduché úrovně se nepoužívají.', ad_note:'Jednoduché úrovně v části Aktivita zahrnují trénink; tady se běžný den a trénink počítají zvlášť, takže vyberte úroveň běžného dne bez tréninku.' });
+Object.assign(STR.en, { ad_in_finetune:'Your week is described in detail under Fine-tune; the simple levels are not used.', ad_note:'The simple levels in Activity include training; here daily life and training are counted separately, so pick the daily life level without training.' });
+/* brief nutrilog-260930-storage-blocked */
+Object.assign(STR.cs, { boot_nostore:'NutriLog v tomto prohlížeči nemůže nic uložit. Úložiště je zablokované, což se stává v anonymním okně nebo při vypnutém ukládání dat webu. Otevřete aplikaci v běžném okně nebo této stránce ukládání dat povolte a načtěte ji znovu.', boot_reload:'Načíst znovu' });
+Object.assign(STR.en, { boot_nostore:'NutriLog cannot save anything in this browser. Storage is blocked, which happens in private windows or when site data is turned off. Open the app in a normal window or allow site data for this page, then reload.', boot_reload:'Reload' });
+/* brief nutrilog-260930-macro-names */
+Object.assign(STR.cs, { mac_p:'Bílkoviny', mac_f:'Tuky', mac_c:'Sacharidy' });
+Object.assign(STR.en, { mac_p:'Protein', mac_f:'Fat', mac_c:'Carbs' });
+/* brief nutrilog-260930-delete-undo */
+Object.assign(STR.cs, { undo:'Vrátit zpět' });
+Object.assign(STR.en, { undo:'Undo' });
 
 /* ---- core.js ---- */
 /* ============================================================
@@ -2263,9 +2317,29 @@ function toastFadeMs(){
   const t = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--t-fast'));
   return isFinite(t) ? t : 160;
 }
-function toast(msg, ms){
+/* brief nutrilog-260930-delete-undo: where the toast sits. Under 900 px 12 px above the tab bar (CSS: 12 px above the
+   bottom safe area when there is none), from 900 px 16 px above the bottom (CSS), at the top while a sheet is open. */
+function toastPlace(el){
+  el.classList.toggle('top', !!S.sheetOpen);
+  el.style.bottom = '';
+  if (S.sheetOpen || window.innerWidth >= 900) return;
+  const tb = $('#tabbar');
+  if (!tb || !tb.getBoundingClientRect || tb.classList.contains('hide') || document.body.classList.contains('quickmode')) return;
+  const r = tb.getBoundingClientRect();
+  if (r && r.height > 0) el.style.bottom = Math.round(window.innerHeight - r.top + 12) + 'px';
+}
+/* action (optional): {label, run}, a text button in the toast, e.g. Undo */
+function toast(msg, ms, action){
   const el = $('#toast');
   el.textContent = msg;
+  el.classList.toggle('act', !!action);
+  if (action){
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'toastact'; b.textContent = action.label;
+    b.addEventListener('click', () => { clearTimeout(toast._tm); el.classList.remove('in', 'out'); el.classList.add('hide'); action.run(); });
+    el.appendChild(b);
+  }
+  toastPlace(el);
   el.classList.remove('hide', 'out');
   el.classList.remove('in');
   void el.offsetWidth;
@@ -2458,12 +2532,7 @@ const DEFAULT_PREFS = {
   look: 'ash',
   type: 'fraunces',
   models: { chat:'claude-sonnet-5', vision:'claude-sonnet-5', analysis:'claude-opus-5' },
-  prices: {
-    'claude-sonnet-5': { in: 2, out: 10 },
-    'claude-opus-5':   { in: 5, out: 25 },
-    'claude-haiku-4-5':{ in: 1, out: 5 }
-  },
-  budget: { monthlyUsd: 10 },
+  /* brief nutrilog-260930-money-spend: prices, budget and usage retired; stored values stay, never read */
   backup: { target:'github', repo:'', branch:'main' },
   archive: { path:'archive/recipes', showStarter:true },
   review: { includeSupplements:true },
@@ -2486,7 +2555,6 @@ const DEFAULT_META = {
     lastHash: null,
     lastSnapshotDate: null
   },
-  usage: { calls: 0, inTok: 0, outTok: 0, byModel: {}, byMonth: {} },
   archive: { lastSyncAt: null, lastSha: null, count: 0, lastError: null },
   sync: { cursor:0, lastPushAt:null, lastOkAt:null, state:'off', lastError:'', name:'' },
   catalog: { cursor:0, count:0, lastOkAt:null, lastError:'' }
@@ -2541,9 +2609,6 @@ function mergeDefaults(target, defaults){
 async function loadState(){
   S.prefs   = mergeDefaults(await kvGet('prefs', null), DEFAULT_PREFS);
   S.meta    = mergeDefaults(await kvGet('meta', null), DEFAULT_META);
-  /* Sonnet 5 stayed at 2 and 10 USD after August 2026; fix the old default. */
-  if (S.prefs.prices['claude-sonnet-5'] && Number(S.prefs.prices['claude-sonnet-5'].in) === 3 && Number(S.prefs.prices['claude-sonnet-5'].out) === 15)
-    S.prefs.prices['claude-sonnet-5'] = {in:2, out:10};
   /* v0.2.3: English became the app language. Switch an existing install
      over once; after that, the language chosen in Settings sticks. */
   if (!S.meta.englishDefaultAppliedAt){
@@ -2621,7 +2686,7 @@ function profileFromV1(p){
     },
     kitchen: {
       timeWeekday: Number(p.timeWeekday) || 2, timeWeekend: Number(p.timeWeekend) || 3,
-      equipment: p.equipment || [], budget: p.budget || 'bud3',
+      equipment: p.equipment || [],
       mealPrep: { cookDaysPerWeek: 3, batchServings: 3 }
     }
   };
@@ -2796,8 +2861,7 @@ const SPLITS = {
   lowcarb:  {p:30, f:45, c:25}
 };
 const DIRECTIONS = { lose:0.90, maintain:1.00, gain:1.07 };
-const RMR_REL_UNC = 0.10;
-const FLOOR_ABS = { male:1500, female:1200 };
+/* brief nutrilog-260930-dead-code: unused constants removed */
 const DEFAULT_SLOTS = { breakfast:25, lunch:35, snack:10, dinner:30 };
 const SLOTS = ['breakfast','lunch','snack','dinner'];
 const SLOT_PRESETS = [
@@ -3039,10 +3103,7 @@ const CUISINES = [
 const EQUIPMENT = ['hob','oven','micro','blender','airfryer','pressure','none'];
 const TIMES = [1,2,3,4];
 const TIME_MAX_MIN = {1:15, 2:30, 3:60, 4:600};
-const BUDGETS = ['bud1','bud2','bud3','bud4','bud5','bud6'];
 
-const DIET_STYLES = ['omnivore','flexitarian','pescatarian','vegetarian','vegan','mediterranean','lowcarb','highprotein','glutenfree','lactosefree'];
-const AIMS = ['muscle','fatloss','energy','digestion','fibre','lesssugar','lesssalt','veg','protein','heart','sleep','skin'];
 const FOCUS_CHOICES = ['fib','prot','vitd','fe','ca','mg','k','zn','b12','fol','vitc','o3ld','iod','se'];
 
 const PATTERNS = ['everything','littlemeat','pescatarian','vegetarian','vegan','carnivore'];
@@ -3587,7 +3648,9 @@ function applyOverrides(ingredients, steps, overrides) {
       ings[idx] = c;
     }
 
-    if (ov.steps) {
+    /* brief nutrilog-260930-swap-absent: replace, remove or amount on an absent slot is skipped whole, steps included */
+    var absent = idx < 0 && (ov.op === 'replace' || ov.op === 'remove' || ov.op === 'amount');
+    if (ov.steps && !absent) {
       for (var si in ov.steps) {
         if (steps[si]) steps[si].text = ov.steps[si];
       }
@@ -4187,8 +4250,6 @@ const API = {
     const txt = await res.text();
     let body = null;
     try { body = txt ? JSON.parse(txt) : null; } catch(e){ body = {raw: txt}; }
-    if (body && body.usage) trackUsage(body.model, body.usage);
-    else { S.meta.usage.calls++; saveMeta(); }
     if (!res.ok){
       const msg = (body && body.error && body.error.message) || (body && body.raw) || txt || '';
       throw new Error(res.status + ' ' + res.statusText + (msg ? ': ' + String(msg).slice(0,400) : ''));
@@ -4197,45 +4258,8 @@ const API = {
   }
 };
 
-function priceFor(model){
-  const p = S.prefs.prices[model];
-  if (p) return {in: Number(p.in)||0, out: Number(p.out)||0};
-  const m = String(model||'');
-  if (m.indexOf('opus') >= 0) return {in:5, out:25};
-  if (m.indexOf('haiku') >= 0) return {in:1, out:5};
-  if (m.indexOf('fable') >= 0) return {in:10, out:50};
-  return {in:2, out:10};
-}
+/* brief nutrilog-260930-money-spend: no prices, no usage counting, no monthly budget */
 
-function monthKey(){ return localDateKey().slice(0,7); }
-
-function trackUsage(model, usage){
-  const u = S.meta.usage;
-  const inn = (usage.input_tokens || 0), out = (usage.output_tokens || 0);
-  const cw = usage.cache_creation_input_tokens || 0, cr = usage.cache_read_input_tokens || 0;
-  const pr = priceFor(model);
-  const cost = (inn/1e6)*pr.in + (cw/1e6)*pr.in*1.25 + (cr/1e6)*pr.in*0.1 + (out/1e6)*pr.out;
-  u.calls++;
-  u.inTok += inn + cw + cr;
-  u.outTok += out;
-  const mid = model || 'unknown';
-  if (!u.byModel[mid]) u.byModel[mid] = {in:0, out:0};
-  u.byModel[mid].in += inn + cw + cr;
-  u.byModel[mid].out += out;
-  if (!u.byMonth) u.byMonth = {};
-  const mk = monthKey();
-  if (!u.byMonth[mk]) u.byMonth[mk] = {calls:0, cost:0};
-  u.byMonth[mk].calls++;
-  u.byMonth[mk].cost += cost;
-  saveMeta();
-}
-
-function monthCost(){
-  const b = (S.meta.usage.byMonth || {})[monthKey()];
-  return b ? b.cost : 0;
-}
-
-let budgetOkThisSession = false;
 async function ensureAiReady(){
   if (!S.secrets.anthropic){
     const go2 = await confirmSheet(t('ai_nokey_h'), '<p class="muted">'+esc(t('ai_nokey_p'))+'</p>', t('open_settings'));
@@ -4243,13 +4267,6 @@ async function ensureAiReady(){
     return false;
   }
   if (!navigator.onLine){ toast(t('err_offline')); return false; }
-  const lim = Number(S.prefs.budget.monthlyUsd) || 0;
-  if (lim > 0 && monthCost() >= lim && !budgetOkThisSession){
-    const ok = await confirmSheet(t('ai_budget_h'),
-      '<p class="muted">'+esc(t('ai_budget_p', {spent: fmtNum(monthCost(),2), lim: fmtNum(lim,2)}))+'</p>', t('ai_budget_go'));
-    if (!ok) return false;
-    budgetOkThisSession = true;
-  }
   return true;
 }
 
@@ -4262,7 +4279,6 @@ async function claudeStream(body, onText){
     const txt = await res.text();
     let msg = txt;
     try { const j = JSON.parse(txt); msg = (j.error && j.error.message) || txt; } catch(e){}
-    S.meta.usage.calls++; saveMeta();
     throw new Error(res.status + ' ' + res.statusText + ': ' + String(msg).slice(0,400));
   }
   const reader = res.body.getReader();
@@ -4311,7 +4327,6 @@ async function claudeStream(body, onText){
     }
   }
   msg.content = msg.content.filter(Boolean);
-  trackUsage(msg.model, msg.usage);
   return msg;
 }
 
@@ -4405,8 +4420,11 @@ async function buildContext(opts){
   const cz = (F.cuisines||[]).map(id => { const c = CUISINES.find(x => x.id === id); return c ? c.en : id; });
   if (F.cuisineOther) cz.push(F.cuisineOther);
   if (cz.length) lines.push('LIKES CUISINES: ' + cz.join(', '));
+  /* brief nutrilog-260930-money-profile: no weekly food budget in the KITCHEN line */
   lines.push('KITCHEN: weekday cooking time up to ' + TIME_MAX_MIN[K.timeWeekday||2] + ' min, weekend up to ' + TIME_MAX_MIN[K.timeWeekend||3] +
-    ' min; equipment: ' + ((K.equipment||[]).map(e => t('eq_'+e)).join(', ') || 'basic hob') + '; weekly food budget: ' + t(K.budget || 'bud3') +
+    ' min; equipment: ' + ((K.equipment||[]).map(e => t('eq_'+e)).join(', ') || 'basic hob') +
+    /* brief nutrilog-260930-equipment-chips: the typed equipment follows the chosen tools */
+    (String(K.equipmentOther || '').trim() ? '; other: ' + String(K.equipmentOther).trim() : '') +
     '; meal prep: cooks about ' + ((K.mealPrep||{}).cookDaysPerWeek || 3) + ' days a week, batches of about ' + ((K.mealPrep||{}).batchServings || 3) + ' servings.');
   if (opts.today){
     const d = await dayTotals(opts.date || localDateKey());
@@ -4664,9 +4682,11 @@ function bindSlotChips(root, cb){
   });
 }
 
+/* brief nutrilog-260930-macro-names: words, a unit on every item, a line breaks only at the dots */
 function macroLine(n){
   if (!n) return '';
-  return t('mac_p') + ' ' + fmtNum(n.prot) + ' · ' + t('mac_f') + ' ' + fmtNum(n.fat) + ' · ' + t('mac_c') + ' ' + fmtNum(n.carb) + ' g';
+  const it = (k, v) => t(k) + '\u00a0' + fmtNum(v) + '\u00a0g';
+  return it('mac_p', n.prot) + ' · ' + it('mac_f', n.fat) + ' · ' + it('mac_c', n.carb);
 }
 
 /* A compact table of all known nutrients, grouped. */
@@ -4730,6 +4750,60 @@ function rangeBar(value, low, high, kind){
   METER_LAST[key] = target;
   return '<div class="rbar"><div class="rzone" style="left:'+pct(low||0)+'%;width:'+Math.max(1, pct(high||low||0) - pct(low||0))+'%"></div>' +
     '<div class="rfill '+cls+'" style="width:'+from+'%" data-w="'+target+'"></div><span class="rend" style="left:'+from+'%" data-w="'+target+'"></span></div>';
+}
+
+/* brief nutrilog-260930-select-comet-only: after a choice only the option just chosen draws its comet. Options chosen
+   before get cm-keep (no redraw, also when the screen is drawn again); an option that was chosen and is not any more
+   gets cm-out (its thread runs back). The check runs right after the DOM changes (MutationObserver) and after the tap. */
+const COMET_SEL = '.chip[aria-pressed], .seg button, label.opt, .looktile';
+const COMET = { at: 0, before: null };
+function cometOn(el){
+  if (el.matches('label.opt')){ const i = el.querySelector('input'); return !!(i && i.checked); }
+  if (el.matches('.seg button')) return el.classList.contains('on');
+  return el.getAttribute('aria-pressed') === 'true';
+}
+function cometKey(el){
+  if (el.matches('label.opt')){ const i = el.querySelector('input'); return 'o|' + (i ? i.name + '|' + i.value : el.textContent); }
+  const at = ['data-act', 'data-id', 'data-v', 'data-mode', 'data-k', 'id'].map(a => el.getAttribute(a) || '');
+  return 'b|' + at.join('|') + '|' + (at.join('') ? '' : String(el.textContent || '').trim());
+}
+function cometPick(target){
+  const before = new Set();
+  document.querySelectorAll(COMET_SEL).forEach(el => { if (cometOn(el)) before.add(cometKey(el)); });
+  /* a click straight on a checkbox or radio arrives after the browser switched it: count its old state */
+  if (target && target.matches && target.matches('input[type=checkbox], input[type=radio]')){
+    const lab = target.closest('label.opt');
+    if (lab){ const k = cometKey(lab); if (target.type === 'radio' || target.checked) before.delete(k); else before.add(k); }
+  }
+  COMET.before = before; COMET.at = Date.now();
+  setTimeout(cometSettle, 0); setTimeout(cometSettle, 150); setTimeout(cometSettle, 600);
+}
+function cometSettle(){
+  if (!COMET.before || Date.now() - COMET.at > 1500) return;
+  document.querySelectorAll(COMET_SEL).forEach(el => {
+    const k = cometKey(el), was = COMET.before.has(k), on = cometOn(el);
+    if (on && was) el.classList.add('cm-keep');
+    else if (on){ el.classList.remove('cm-keep'); el.classList.remove('cm-out'); }
+    else if (was) el.classList.add('cm-out');
+  });
+}
+if (typeof document !== 'undefined' && document.addEventListener){
+  document.addEventListener('click', e => {
+    const t = e.target;
+    if (!t || !t.closest || !t.closest(COMET_SEL)) return;
+    /* the click a label passes on to its input is part of the same tap */
+    if (t.tagName === 'INPUT' && Date.now() - COMET.at < 80) return;
+    cometPick(t);
+  }, true);
+  if (typeof MutationObserver === 'function' && document.body)
+    new MutationObserver(() => cometSettle()).observe(document.body, {childList: true, subtree: true, attributes: true, attributeFilter: ['aria-pressed']});
+}
+
+/* brief nutrilog-260930-date-once: a date field shows one date in the app's form ("Today" or 4.10.2026). The browser's
+   date input stays under the text with its own date text hidden, so a tap still opens the picker. */
+function dateFieldText(v){ return !v ? '' : v === localDateKey() ? t('today') : numDate(v, true); }
+function dateField(id, v){
+  return '<span class="datefield"><input id="'+id+'" type="date" value="'+esc(v || '')+'"><span class="dfv num" data-dv-for="'+id+'" aria-hidden="true">'+esc(dateFieldText(v))+'</span></span>';
 }
 
 /* ---- ornaments.js ---- */
@@ -5143,7 +5217,7 @@ function recipeCard(r, extra){
   return '<button class="rcard" type="button" data-act="open-recipe" data-id="'+esc(r.id)+'">' +
     '<span class="rthumb" data-thumb="'+esc(r.id)+'"><span>'+initial+'</span></span>' +
     '<span class="rbody"><span class="rtitle">'+esc(r.title)+(note && note.favorite ? ' <span class="star">★</span>' : '')+'</span>' +
-    '<span class="rmeta num">'+[tm ? tm+' min' : null, k != null ? fmtNum(k)+' kcal' : null, prot != null ? t('mac_p')+' '+fmtNum(prot)+' g' : null, recipeAuthor(r) || null].filter(Boolean).map((x, i, all) => '<span class="mi">'+esc(x)+(i < all.length - 1 ? '&nbsp;·' : '')+'</span>').join(' ')+'</span>' +
+    '<span class="rmeta num">'+[tm ? tm+' min' : null, k != null ? fmtNum(k)+' kcal' : null, prot != null ? t('mac_p')+'\u00a0'+fmtNum(prot)+'\u00a0g' : null, recipeAuthor(r) || null].filter(Boolean).map((x, i, all) => '<span class="mi">'+esc(x)+(i < all.length - 1 ? '&nbsp;·' : '')+'</span>').join(' ')+'</span>' +
     (extra ? '<span class="rextra">'+extra+'</span>' : '') +
     '<span class="rtags">' + (v.axisNone ? '<span class="pill err">'+esc(t('rc_axis_none'))+'</span>' : ex.length ? '<span class="pill err">'+esc(t('rc_excluded'))+'</span>' : '') +
       tags.map(x => '<span class="pill">'+esc(tagLabel(x))+'</span>').join('') +
@@ -5298,7 +5372,7 @@ function renderRecipe(){
   h += '<div class="kvgrid">' +
     '<div><span class="k">'+esc(t('rc_time'))+'</span><span class="v num">'+(tm ? esc(tm)+' min' : '–')+'</span>' +
       (r.time && (r.time.prepMin || r.time.cookMin) ? '<span class="tiny">'+esc(t('rc_prep_cook',{p:r.time.prepMin||0,c:r.time.cookMin||0}))+'</span>' : '')+'</div>' +
-    '<div><span class="k">'+esc(t('rc_kcal_serv'))+'</span><span class="v num">'+esc(fmtNum(ps.kcal))+'</span><span class="tiny">'+esc(t('mac_p'))+' '+esc(fmtNum(ps.prot))+' · '+esc(t('mac_f'))+' '+esc(fmtNum(ps.fat))+' · '+esc(t('mac_c'))+' '+esc(fmtNum(ps.carb))+' g</span></div>' +
+    '<div><span class="k">'+esc(t('rc_kcal_serv'))+'</span><span class="v num">'+esc(fmtNum(ps.kcal))+'</span><span class="tiny">'+esc(macroLine(ps))+'</span></div>' +
     '<div><span class="k">'+esc(t('rc_difficulty'))+'</span><span class="v">'+esc(r.difficulty ? t('diff_'+r.difficulty) : '–')+'</span></div>' +
     '</div>';
   h += '<div class="btnrow" style="margin:12px 0">' +
@@ -5400,11 +5474,11 @@ async function recipeLogSheet(id){
   let b = '<p class="muted">'+esc(r.title)+'</p>' +
     '<div class="field"><span class="flabel">'+esc(t('lg_slot'))+'</span>'+slotChips(slot)+'</div>' +
     '<div class="field"><label for="rl-serv">'+esc(t('rc_servings_eaten'))+'</label><input id="rl-serv" type="number" inputmode="decimal" step="0.25" min="0.25" value="1"></div>' +
-    '<div class="field"><label for="rl-date">'+esc(t('lg_date'))+'</label><input id="rl-date" type="date" value="'+esc(S.logDate || localDateKey())+'"><span class="fhint" data-hint-for="rl-date">'+esc((S.logDate || localDateKey()) ? numDate(S.logDate || localDateKey(), true) : '')+'</span></div>' +
+    '<div class="field"><label for="rl-date">'+esc(t('lg_date'))+'</label>'+dateField('rl-date', S.logDate || localDateKey())+'</div>' +
     '<p class="tiny" id="rl-prev"></p>';
   if (ps.kcal == null) b += '<div class="notice warn">'+esc(t('rc_no_nutrition'))+'</div>';
   const sheet = openSheet(esc(t('rc_log')), b, '<button class="btn" type="button" id="rl-save">'+esc(t('save'))+'</button>');
-  const upd = () => { const n = Number($('#rl-serv').value) || 0; $('#rl-prev').textContent = fmtNum((ps.kcal||0)*n) + ' kcal · ' + t('mac_p') + ' ' + fmtNum((ps.prot||0)*n) + ' g'; };
+  const upd = () => { const n = Number($('#rl-serv').value) || 0; $('#rl-prev').textContent = fmtNum((ps.kcal||0)*n) + ' kcal · ' + t('mac_p') + '\u00a0' + fmtNum((ps.prot||0)*n) + '\u00a0g' /* brief nutrilog-260930-macro-names */; };
   upd();
   $('#rl-serv').addEventListener('input', upd);
   bindSlotChips(sheet, v => slot = v);
@@ -5779,14 +5853,14 @@ function openAddSheet(slot, date){
   ADD.date = date || S.logDate || localDateKey();
   ADD.food = null;
   const modes = ['search','scan','photo','describe','recipe','manual'].filter(m => moduleOn('assistant') || (m !== 'photo' && m !== 'describe'));
-  const b = (quickOn() ? '' : '<div class="seg small" id="addModes">' + modes.map(m =>
+  /* brief nutrilog-260930-log-modes: a grid of words, three columns with six modes, two with four */
+  const b = (quickOn() ? '' : '<div class="seg small modegrid' + (modes.length === 4 ? ' two' : '') + '" id="addModes">' + modes.map(m =>
       '<button type="button" data-mode="'+m+'" class="'+(m==='search'?'on':'')+'">'+esc(t('am_'+m))+'</button>').join('') + '</div>') +
     '<div id="addBody"></div>';
   const sheet = openSheet(esc(t('add_title', {slot: t('slot_'+ADD.slot).toLowerCase()})), b, null, {tall:true});
   if (!quickOn()) $('#addModes').addEventListener('click', e => {
     const bt = e.target.closest('[data-mode]');
     if (!bt) return;
-    if (bt.getAttribute('data-mode') === 'photo'){ closeSheet(); openPhotoSheet({slot: ADD.slot, date: ADD.date}); return; }
     $$('#addModes button').forEach(x => x.classList.toggle('on', x === bt));
     runSheetCleanups();
     addMode(bt.getAttribute('data-mode'));
@@ -5795,9 +5869,12 @@ function openAddSheet(slot, date){
   return sheet;
 }
 
-function addMode(mode){
+function addMode(mode, opts){
   ADD.mode = mode;
   const body = $('#addBody');
+  /* brief nutrilog-260930-log-modes: any change of mode drops a picture and an evaluation still running */
+  PHOTO.gen = (PHOTO.gen || 0) + 1;
+  if (mode === 'photo'){ opts = opts || {}; openPhotoSheet({slot: ADD.slot, date: ADD.date, hint: opts.hint, barcode: opts.barcode, into: body}); return; }
   if (mode === 'search') addSearchUI(body);
   else if (mode === 'scan') addScanUI(body);
   else if (mode === 'describe') addDescribeUI(body);
@@ -5881,7 +5958,7 @@ function amountStep(food, grams){
     ['100 g'].concat(portions.map(p => p.label)).map((lab, i) =>
       '<button class="chip" type="button" data-g="'+(i === 0 ? 100 : portions[i-1].g)+'" aria-pressed="'+(Math.round(i === 0 ? 100 : portions[i-1].g) === Math.round(g))+'">'+esc(lab)+(i ? ' · '+fmtNum(portions[i-1].g)+' g' : '')+'</button>').join('') + '</div>';
   h += '<div class="inline"><div class="field"><label for="amG">'+esc(t('am_grams'))+'</label><input id="amG" type="number" inputmode="decimal" step="1" min="1" value="'+esc(Math.round(g))+'"></div>' +
-    '<div class="field"><label for="amDate">'+esc(t('lg_date'))+'</label><input id="amDate" type="date" value="'+esc(ADD.date)+'"><span class="fhint" data-hint-for="amDate">'+esc((ADD.date) ? numDate(ADD.date, true) : '')+'</span></div></div>';
+    '<div class="field"><label for="amDate">'+esc(t('lg_date'))+'</label>'+dateField('amDate', ADD.date)+'</div></div>';
   h += '<div class="field"><span class="flabel">'+esc(t('lg_slot'))+'</span>'+slotChips(ADD.slot)+'</div>';
   h += '<div class="card flat" id="amPrev"></div>';
   h += '<div class="btnrow" style="margin:12px 0"><button class="btn" type="button" id="amSave">'+esc(t('save'))+'</button>' +
@@ -5929,7 +6006,11 @@ async function addScanUI(body){
       if (f && f.per100.kcal != null){ amountStep(f); return; }
       $('#scanRes').innerHTML = '<div class="notice warn">'+esc(t('sc_notfound', {c: code}))+'</div>' +
         '<div class="btnrow"><button class="btn" type="button" id="scanPhoto">'+esc(t('sc_photo_label'))+'</button></div>';
-      $('#scanPhoto').addEventListener('click', () => { closeSheet(); openPhotoSheet({slot: ADD.slot, date: ADD.date, hint:'nutrition_label', barcode: code}); });
+      $('#scanPhoto').addEventListener('click', () => {
+        $$('#addModes button').forEach(x => x.classList.toggle('on', x.getAttribute('data-mode') === 'photo'));
+        runSheetCleanups();
+        addMode('photo', {hint:'nutrition_label', barcode: code});
+      });
     } catch(err){
       $('#scanRes').innerHTML = '<div class="notice bad">'+esc(String(err.message||err))+'</div>';
     }
@@ -6010,7 +6091,7 @@ function addRecipeUI(body){
     const q = $('#rq2').value.trim();
     const list = visibleRecipes().filter(r => !q || recipeTextMatch(r, q)).slice(0, 30);
     $('#rres').innerHTML = list.map(r => '<button class="frow" type="button" data-rid="'+esc(r.id)+'"><span class="fn">'+esc(r.title)+'</span>' +
-      '<span class="fm tiny">'+esc(fmtNum(recipeKcal(r)))+' kcal / '+esc(t('rc_serv_short'))+'</span></button>').join('') || '<p class="tiny">'+esc(t('rl_empty'))+'</p>';
+      '<span class="fm tiny">'+esc(fmtNum(recipeKcal(r)))+' '+esc(t('rc_kcal_serv'))+'</span></button>').join('') || '<p class="tiny">'+esc(t('rl_empty'))+'</p>';
   };
   $('#rq2').addEventListener('input', run);
   $('#rres').addEventListener('click', e => { const b = e.target.closest('[data-rid]'); if (b){ closeSheet(); S.logDate = ADD.date; recipeLogSheet(b.getAttribute('data-rid')); } });
@@ -6049,6 +6130,20 @@ function addManualUI(body){
 
 /* ---------- Editing an entry ---------- */
 
+/* brief nutrilog-260930-delete-undo: Undo writes the removed entry back as a live record with a newer change time */
+async function undoDelete(rec){
+  if (!rec) return;
+  /* change times have whole seconds: the live record must be newer than the deletion marker, also for a quick Undo */
+  const del = await dbGet('records', rec.id);
+  while (del && del.updatedAt && nowIso() <= del.updatedAt) await new Promise(res => setTimeout(res, 150));
+  const r = JSON.parse(JSON.stringify(rec));
+  r.deleted = false;
+  await recPut(r);
+  if (S.screen === 'quick') await renderQuick();
+  else if (S.screen === 'log') await renderLog();
+  else renderScreen(S.screen);
+}
+
 async function editEntry(id){
   const e = await recGet(id);
   if (!e) return;
@@ -6059,7 +6154,7 @@ async function editEntry(id){
   let b = '<p class="muted">'+esc(entryName(e))+'</p>';
   if (hasGrams) b += '<div class="field"><label for="eg">'+esc(t('am_grams'))+'</label><input id="eg" type="number" inputmode="decimal" value="'+esc(e.amount.grams)+'"></div>';
   else if (isRecipe) b += '<div class="field"><label for="es">'+esc(t('rc_servings_eaten'))+'</label><input id="es" type="number" inputmode="decimal" step="0.25" value="'+esc(e.amount.qty)+'"></div>';
-  b += '<div class="field"><label for="ed">'+esc(t('lg_date'))+'</label><input id="ed" type="date" value="'+esc(e.date)+'"><span class="fhint" data-hint-for="ed">'+esc((e.date) ? numDate(e.date, true) : '')+'</span></div>';
+  b += '<div class="field"><label for="ed">'+esc(t('lg_date'))+'</label>'+dateField('ed', e.date)+'</div>';
   b += '<div class="field"><span class="flabel">'+esc(t('lg_slot'))+'</span>'+slotChips(slot)+'</div>';
   b += '<details><summary class="linkbtn">'+esc(t('lg_all_nutrients'))+'</summary>'+nutrientTable(e.nutrients)+'</details>';
   if (e.basis === 'estimate') b += '<p class="tiny" style="margin-top:8px">'+esc(t('lg_est_note'))+'</p>';
@@ -6068,7 +6163,12 @@ async function editEntry(id){
     '<button class="btn quiet" type="button" id="eAgain">'+esc(t('lg_again'))+'</button>' +
     '<button class="btn" type="button" id="eSave">'+esc(t('save'))+'</button>');
   bindSlotChips(sheet, v => slot = v);
-  $('#eDel').addEventListener('click', async () => { await recDelete(e.id); closeSheet(); toast(t('lg_deleted')); });
+  /* brief nutrilog-260930-delete-undo: "Deleted." with Undo for 6 seconds */
+  $('#eDel').addEventListener('click', async () => {
+    const before = await dbGet('records', e.id);
+    await recDelete(e.id); closeSheet();
+    toast(t('lg_deleted'), 6000, {label: t('undo'), run: () => undoDelete(before)});
+  });
   $('#eAgain').addEventListener('click', async () => {
     const c = deepCopy(e); delete c.id; delete c.createdAt; c.date = localDateKey(); c.time = localTime(); c.slot = guessSlot();
     await recPut(c); closeSheet(); toast(t('lg_saved'));
@@ -6235,7 +6335,7 @@ function suppForm(s){
       [1,2,3,4,5,6,0].map(d => '<button class="chip" type="button" data-day="'+d+'" aria-pressed="'+((s.schedule.days||[]).indexOf(d)>=0)+'">'+dayNames[d]+'</button>').join('') + '</div></div>' +
     '</div>' +
     '<div id="sstartrow"'+(isAltSaved ? '' : ' style="display:none"')+'>' +
-    '<div class="field"><label for="sstart">'+esc(t('sp_rep_start'))+'</label><input id="sstart" type="date" value="'+esc(s.schedule.start || localDateKey())+'"><span class="fhint" data-hint-for="sstart">'+esc((s.schedule.start || localDateKey()) ? numDate(s.schedule.start || localDateKey(), true) : '')+'</span></div>' +
+    '<div class="field"><label for="sstart">'+esc(t('sp_rep_start'))+'</label>'+dateField('sstart', s.schedule.start || localDateKey())+'</div>' +
     '</div>' +
     '<div class="field"><span class="flabel">'+esc(t('sp_time'))+'</span><div class="chips" id="stime">' +
       ['morning','noon','evening','any'].map(x => '<button class="chip" type="button" data-time="'+x+'" aria-pressed="'+((s.schedule.time||'any')===x)+'">'+esc(t('sp_time_'+x))+'</button>').join('') + '</div></div>' +
@@ -6298,10 +6398,17 @@ function suppAfterEdit(){ if (S.screen === 'settings' && S.settingsCat === 'supp
 /* ---------- quick mode ---------- */
 
 function quickOn() {
+  return (S.prefs.quickMode === 'on' || S.quickLaunch === true) && moduleOn('logging');
+}
+
+/* brief nutrilog-260930-quick-shortcut: the saved switch alone, without a launch at #quick */
+function quickSaved() {
   return S.prefs.quickMode === 'on' && moduleOn('logging');
 }
 
 async function setQuickMode(on) {
+  if (!on && S.quickLaunch === true && S.prefs.quickMode !== 'on') { S.quickLaunch = false; go('today'); return; }
+  S.quickLaunch = false;
   S.prefs.quickMode = on ? 'on' : 'off';
   S.prefs.quickModeAsked = true;
   await savePrefs();
@@ -6387,8 +6494,11 @@ function bindQuick() {
   host.addEventListener('click', async function (e) {
     var b = e.target.closest('[data-qdel]');
     if (b) {
-      await recDelete(b.getAttribute('data-qdel'));
-      toast(t('lg_deleted'));
+      /* brief nutrilog-260930-delete-undo */
+      var qid = b.getAttribute('data-qdel');
+      var before = await dbGet('records', qid);
+      await recDelete(qid);
+      toast(t('lg_deleted'), 6000, {label: t('undo'), run: function () { return undoDelete(before); }});
       await renderQuick();
       return;
     }
@@ -6428,7 +6538,9 @@ function openPhotoSheet(opts){
     '<div class="field"><label for="phNote">'+esc(t('ph_note'))+'</label><input id="phNote" type="text" placeholder="'+esc(t('ph_note_ph'))+'"></div>' +
     '<div class="btnrow"><button class="btn" type="button" id="phGo" disabled>'+esc(t('ph_go'))+'</button></div>' +
     '<div id="phOut"></div>';
-  const sheet = openSheet(esc(t('ph_title')), b, null, {tall:true});
+  /* brief nutrilog-260930-log-modes: with opts.into the form is drawn inside the add-food sheet */
+  let sheet = null;
+  if (opts.into) opts.into.innerHTML = b; else sheet = openSheet(esc(t('ph_title')), b, null, {tall:true});
   $('#phHints').addEventListener('click', e => {
     const bt = e.target.closest('[data-hint]'); if (!bt) return;
     PHOTO.hint = bt.getAttribute('data-hint');
@@ -6452,11 +6564,13 @@ function openPhotoSheet(opts){
 async function runPhotoEval(){
   if (!PHOTO.dataUrl) return;
   if (!(await ensureAiReady())) return;
+  const gen = PHOTO.gen;
   const btn = $('#phGo');
   btn.disabled = true; btn.textContent = t('ai_working');
   $('#phOut').innerHTML = '<div class="notice">'+esc(t('ph_working'))+'</div>';
   try {
     const r = await aiEvaluatePhoto(PHOTO.dataUrl, PHOTO.hint, ($('#phNote')||{}).value || '');
+    if (gen !== PHOTO.gen) return;
     PHOTO.result = r;
     /* the local exclusion check runs too, independent of the model */
     const local = exclusionHits([r.name, r.description, (r.ingredientsSeen||[]).join(' ')].join(' '));
@@ -6467,6 +6581,7 @@ async function runPhotoEval(){
     await dbPut('media', {id: 'photo:' + rec.id, dataUrl: thumb, at: nowIso()});
     renderPhotoResult(r, warn);
   } catch(err){
+    if (gen !== PHOTO.gen) return;
     $('#phOut').innerHTML = '<div class="notice bad">'+esc(t('err_prefix'))+'<div class="verbatim">'+esc(String(err.message||err))+'</div></div>';
   }
   btn.disabled = false; btn.textContent = t('ph_again');
@@ -6499,7 +6614,7 @@ function renderPhotoResult(r, warn){
   if ((r.suggestions||[]).length) h += '<div class="card flat"><h3>'+esc(t('ph_tweaks'))+'</h3><ul class="tips">'+r.suggestions.map(x => '<li>'+esc(x)+'</li>').join('')+'</ul></div>';
   h += '<div class="card"><h3>'+esc(t('ph_portion'))+'</h3>' +
     '<div class="inline"><div class="field"><label for="phG">'+esc(t('am_grams'))+'</label><input id="phG" type="number" inputmode="decimal" value="'+esc(pg ? Math.round(pg) : 100)+'"></div>' +
-    '<div class="field"><label for="phD">'+esc(t('lg_date'))+'</label><input id="phD" type="date" value="'+esc(PHOTO.date)+'"><span class="fhint" data-hint-for="phD">'+esc((PHOTO.date) ? numDate(PHOTO.date, true) : '')+'</span></div></div>' +
+    '<div class="field"><label for="phD">'+esc(t('lg_date'))+'</label>'+dateField('phD', PHOTO.date)+'</div></div>' +
     '<div class="field"><span class="flabel">'+esc(t('lg_slot'))+'</span>'+slotChips(PHOTO.slot)+'</div>' +
     '<div id="phN"></div>' +
     '<div class="btnrow" style="margin-top:10px"><button class="btn" type="button" id="phLog">'+esc(t('ph_log'))+'</button>' +
@@ -7062,7 +7177,7 @@ async function renderAddSuggestions(el, lacking){
     }).filter(o => o.v).sort((a,b) => b.v - a.v).slice(0, 2);
     h += '<p style="margin-top:10px"><b>'+esc(nutLabel(r.k))+'</b> <span class="tiny">'+esc(t('rv_add_per100'))+'</span></p>' +
       '<p class="tiny">' + foods.map(f => esc(foodName(f.food).split(',').slice(0,2).join(',')) + ' <span class="num">(' + esc(fmtAmt(f.per100)) + ' ' + esc(nutUnit(r.k)) + ')</span>').join(' · ') + '</p>';
-    if (recs.length) h += '<div class="rlist" style="margin-top:6px">' + recs.map(o => recipeCard(o.x, esc(nutLabel(r.k)) + ' ' + esc(fmtAmt(o.v)) + ' ' + esc(nutUnit(r.k)) + ' / ' + esc(t('rc_serv_short')))).join('') + '</div>';
+    if (recs.length) h += '<div class="rlist" style="margin-top:6px">' + recs.map(o => recipeCard(o.x, esc(nutLabel(r.k)) + ' ' + esc(fmtAmt(o.v)) + ' ' + esc(nutUnit(r.k)) + ' ' + esc(t('rv_add_perserv')))).join('') + '</div>';
   }
   h += '<p class="tiny" style="margin-top:10px">'+esc(t('rv_add_note'))+'</p></div>';
   el.innerHTML = h;
@@ -7364,10 +7479,21 @@ function backupHoursStale(){
   return (Date.now() - new Date(S.meta.backup.lastVerifiedAt).getTime()) / 3600000;
 }
 
+/* brief nutrilog-260930-backup-line-data: data of the person's own = a live record of any kind or an own or saved recipe;
+   downloaded shared and starter recipes, settings and deletion markers do not count. Returns true when the answer changed. */
+async function ownDataRefresh(){
+  const before = S.ownData === true;
+  const recs = await dbAll('records');
+  const rcps = await dbAll('recipes');
+  S.ownData = recs.some(r => !r.deleted) || rcps.some(r => (r.origin === 'own' || r.origin === 'claude') && !r.deleted);
+  return S.ownData !== before;
+}
+
 function backupLine(){
   if (syncFresh()) return '';
-  if (!backupConfigured() && !S.profile) return '<p id="backupLine">' + esc(t('b_line_nobackup_new')) + '</p>';
-  if (!backupConfigured() && S.profile) return '<p id="backupLine">' + esc(t('b_line_nobackup_data')) + ' <button class="btn quiet" type="button" data-act="export">' + esc(t('bar_export')) + '</button></p>';
+  const own = !!(S.profile || S.ownData);
+  if (!backupConfigured() && !own) return '<p id="backupLine">' + esc(t('b_line_nobackup_new')) + '</p>';
+  if (!backupConfigured() && own) return '<p id="backupLine">' + esc(t('b_line_nobackup_data')) + ' <button class="btn quiet" type="button" data-act="export">' + esc(t('bar_export')) + '</button></p>';
   if (backupHoursStale() > 48 && isFinite(backupHoursStale())){
     const h = Math.floor(backupHoursStale());
     return '<p id="backupLine">' + esc(t('b_line_stale', {h: h})) + ' <button class="btn quiet" type="button" data-act="backup-now">' + esc(t('b_run_now')) + '</button><button class="btn quiet" type="button" data-act="export">' + esc(t('bar_export')) + '</button></p>';
@@ -8054,12 +8180,29 @@ function syncCardInner() {
 }
 
 function syncCardHtml() {
+  if (typeof ownDataRefresh === 'function') ownDataRefresh().then(changed => { if (changed) renderSyncCard(); }).catch(() => {});
   return '<div class="card" id="syncCard">' + syncCardInner() + '</div>';
 }
 
+/* brief nutrilog-260930-sync-card-typing: a redraw keeps typed text, keyboard focus, the cursor and an open Advanced */
 function renderSyncCard() {
   const el = $('#syncCard');
-  if (el) el.innerHTML = syncCardInner();
+  if (!el) return;
+  const act = document.activeElement;
+  const typing = !!(act && act.id && act.tagName === 'INPUT' && el.contains(act));
+  const adv = el.querySelector('details');
+  const advOpen = !!(adv && adv.open);
+  const keep = {};
+  if (typing || advOpen) el.querySelectorAll('input[id]').forEach(i => { keep[i.id] = i.value; });
+  let s0 = null, s1 = null;
+  if (typing){ try { s0 = act.selectionStart; s1 = act.selectionEnd; } catch(e){} }
+  el.innerHTML = syncCardInner();
+  Object.keys(keep).forEach(id => { const i = el.querySelector('#' + id); if (i) i.value = keep[id]; });
+  if (advOpen){ const d = el.querySelector('details'); if (d) d.open = true; }
+  if (typing){
+    const i = el.querySelector('#' + act.id);
+    if (i){ i.focus(); try { if (s0 != null) i.setSelectionRange(s0, s1); } catch(e){} }
+  }
 }
 
 function bindSyncCard() {
@@ -8277,7 +8420,7 @@ function blankProfile(){
       dietStyle:[], aims:[], focusNutrients:[], notes:'', slots: deepCopy(DEFAULT_SLOTS), focus:[], hints:[] },
     food:{ exclusions:[], cuisines:[], cuisineOther:'', dislikes:'',
       pattern:'everything', patternOpts:{noEggs:false, noMilk:false}, conditions:[], rules:[], prefs:[] },
-    kitchen:{ timeWeekday:2, timeWeekend:3, equipment:[], budget:'bud3', mealPrep:{cookDaysPerWeek:3, batchServings:3} }
+    kitchen:{ timeWeekday:2, timeWeekend:3, equipment:[], equipmentOther:'', mealPrep:{cookDaysPerWeek:3, batchServings:3} }
   };
 }
 
@@ -8356,8 +8499,6 @@ function renderProfile(){
   h += '<div class="inline">' + num('person.age','f-age',t('p_age'),'inputmode="numeric" min="10" max="100"',t('p_years')) +
        num('person.heightCm','f-height',t('p_height'),'inputmode="numeric" min="100" max="250"',t('p_hint_height')) +
        num('person.weightKg','f-weight',t('p_weight_short'),'inputmode="decimal" step="0.1" min="30" max="300"',t('p_kg')) + '</div>';
-  h += num('person.bodyFatPct','f-bf',t('p_bf'),'inputmode="decimal" step="0.5" min="3" max="60"');
-  h += '<p class="tiny" style="margin-top:6px">'+esc(t('p_bf_note'))+'</p>';
   h += '<p class="tiny" style="margin-top:10px">'+esc(t('p_energy_note'))+'</p>';
   h += '</div>';
 
@@ -8372,32 +8513,35 @@ function renderProfile(){
     ACTIVITY.forEach(a => { h += optRow('person.activityLevel', String(a.id), Number(P.activityLevel)===a.id, t(a.k+'_t'), t(a.k+'_d')); });
     h += '</div>';
   }
-  h += '<div class="opts" style="margin-top:10px"><label class="opt sq"><input type="checkbox" role="switch" name="person.activityDetail.on" value="1"' + (on ? ' checked' : '') + '><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('ad_toggle'))+'</span></span></label></div>';
+  /* brief nutrilog-260930-week-detail-finetune: the switch and the detailed week are built here and shown in Fine-tune */
+  let ad = '';
+  ad += '<div class="opts" style="margin-top:10px"><label class="opt sq"><input type="checkbox" role="switch" name="person.activityDetail.on" value="1"' + (on ? ' checked' : '') + '><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('ad_toggle'))+'</span></span></label></div>';
   if (on){
-    h += '<p class="tiny" style="margin-top:10px">'+esc(t('ad_note'))+'</p>';
+    ad += '<p class="tiny" style="margin-top:10px">'+esc(t('ad_note'))+'</p>';
     var b = Number(AD.base);
     if (b < 1 || b > 4) b = 1;
-    h += '<p class="flabel" style="margin-top:12px">'+esc(t('ad_base'))+'</p><div class="opts">';
-    for (var n = 1; n <= 4; n++) { h += optRow('person.activityDetail.base', String(n), b === n, t('ad_b'+n)); }
-    h += '</div>';
-    h += '<div class="inline" style="margin-top:12px">' +
+    ad += '<p class="flabel" style="margin-top:12px">'+esc(t('ad_base'))+'</p><div class="opts">';
+    for (var n = 1; n <= 4; n++) { ad += optRow('person.activityDetail.base', String(n), b === n, t('ad_b'+n)); }
+    ad += '</div>';
+    ad += '<div class="inline" style="margin-top:12px">' +
       num('person.activityDetail.sessions','ad-sessions',t('ad_sessions'),'inputmode="numeric" step="1" min="0" max="14"') +
       num('person.activityDetail.minutes','ad-minutes',t('ad_minutes'),'inputmode="numeric" step="5" min="10" max="240"') + '</div>';
     var ty = AD.type;
     if (AD_TYPES.indexOf(ty) === -1) ty = 'strength';
-    h += '<div class="field"><label for="ad-type">'+esc(t('ad_type'))+'</label><select id="ad-type" data-bind="person.activityDetail.type">';
+    ad += '<div class="field"><label for="ad-type">'+esc(t('ad_type'))+'</label><select id="ad-type" data-bind="person.activityDetail.type">';
     for (var ti = 0; ti < AD_TYPES.length; ti++) {
       var k = AD_TYPES[ti];
-      h += '<option value="'+k+'"'+(k === ty ? ' selected' : '')+'>'+esc(t('at_'+k))+'</option>';
+      ad += '<option value="'+k+'"'+(k === ty ? ' selected' : '')+'>'+esc(t('at_'+k))+'</option>';
     }
-    h += '</select></div>';
+    ad += '</select></div>';
     var at = AD.attendance;
     if (at !== 'always' && at !== 'usually' && at !== 'sometimes') at = 'usually';
-    h += '<p class="flabel" style="margin-top:12px">'+esc(t('ad_att'))+'</p><div class="opts">';
-    ['always','usually','sometimes'].forEach(function(v) { h += optRow('person.activityDetail.attendance', v, v === at, t('aa_'+v)); });
-    h += '</div>';
-    h += '<p class="tiny" id="adResultBox" style="margin-top:10px">'+esc(adResultText(d))+'</p>';
+    ad += '<p class="flabel" style="margin-top:12px">'+esc(t('ad_att'))+'</p><div class="opts">';
+    ['always','usually','sometimes'].forEach(function(v) { ad += optRow('person.activityDetail.attendance', v, v === at, t('aa_'+v)); });
+    ad += '</div>';
+    ad += '<p class="tiny" id="adResultBox" style="margin-top:10px">'+esc(adResultText(d))+'</p>';
   }
+  if (on) h += '<p class="tiny" style="margin-top:10px">'+esc(t('ad_in_finetune'))+'</p>';
   h += '</div>';
 
   h += '<div class="card"><h3>'+esc(t('p_macro'))+'</h3><div class="opts">' +
@@ -8455,7 +8599,8 @@ function renderProfile(){
        '<div class="btnrow" style="margin-top:8px">' +
        '<button class="btn" type="button" data-act="excl-add" data-type="allergy">'+esc(t('p_type_allergy'))+'</button>' +
        '<button class="btn quiet" type="button" data-act="excl-add" data-type="refuse">'+esc(t('p_type_refuse'))+'</button></div></div>';
-  h += '<p class="tiny" style="margin-bottom:7px">'+esc(t('p_allergy_common'))+'</p><div class="chips">';
+  /* brief nutrilog-260930-allergen-list: a short label above the chips, no explanation */
+  h += '<p class="flabel" style="margin-bottom:7px">'+esc(t('p_allergy_common'))+'</p><div class="chips">';
   ALLERGENS.forEach(a => {
     const on = F.exclusions.some(x => x.id === a.id);
     h += '<button class="chip" type="button" aria-pressed="'+(on?'true':'false')+'" data-act="excl-quick" data-id="'+a.id+'">'+esc(L(a))+'</button>';
@@ -8489,6 +8634,10 @@ function renderProfile(){
     '<p class="flabel" style="margin-top:14px">' + esc(t('pg_focus')) + '</p>' +
     chipSet('pchip-focusNutrients', FOCUS_CHOICES, G.focusNutrients, nutLabel) +
     '<div class="field" style="margin-top:14px"><label for="g-notes">'+esc(t('pg_notes'))+'</label><textarea id="g-notes" data-bind="goals.notes" placeholder="'+esc(t('pg_notes_ph'))+'">'+esc(G.notes||'')+'</textarea></div>' +
+    /* brief nutrilog-260930-bodyfat-finetune: Body fat at the end of Fine-tune, only while Goals is on */
+    (moduleOn('goals') ? num('person.bodyFatPct','f-bf',t('p_bf'),'inputmode="decimal" step="0.5" min="3" max="60"') + '<p class="tiny" style="margin-top:6px">'+esc(t('p_bf_note'))+'</p>' : '') +
+    /* brief nutrilog-260930-week-detail-finetune: after Body fat */
+    (moduleOn('goals') ? ad : '') +
     '</details>';
 
   h += '<div class="card"><h3>'+esc(t('p_cuisines'))+'</h3>' + chipSet('pchip-cuisines', CUISINES.map(c => c.id), F.cuisines, id => L(CUISINES.find(c => c.id === id))) +
@@ -8504,13 +8653,11 @@ function renderProfile(){
     num('kitchen.mealPrep.cookDaysPerWeek','mp-days',t('pk_days'),'inputmode="numeric" min="0" max="7"') +
     num('kitchen.mealPrep.batchServings','mp-serv',t('pk_batch'),'inputmode="numeric" min="1" max="12"') + '</div></div>';
 
-  h += '<div class="card"><h3>'+esc(t('p_equipment'))+'</h3><div class="opts two">';
-  EQUIPMENT.forEach(e => { h += optRow('kitchen.equipment', e, K.equipment.indexOf(e)>=0, t('eq_'+e), '', true); });
-  h += '</div></div>';
+  /* brief nutrilog-260930-equipment-chips: chips like the allergen chips, one free text field like under the cuisines */
+  h += '<div class="card"><h3>'+esc(t('p_equipment'))+'</h3>' + chipSet('pchip-equipment', EQUIPMENT, K.equipment || [], e => t('eq_'+e)) +
+    '<div class="field" style="margin-top:12px"><input type="text" maxlength="80" data-bind="kitchen.equipmentOther" value="'+esc(K.equipmentOther||'')+'" placeholder="'+esc(t('p_equipment_free_ph'))+'"></div></div>';
 
-  h += '<div class="card"><h3>'+esc(t('p_budget'))+'</h3><p class="tiny" style="margin-bottom:9px">'+esc(t('p_budget_note'))+'</p><div class="opts two">';
-  BUDGETS.forEach(b => { h += optRow('kitchen.budget', b, K.budget===b, t(b)); });
-  h += '</div></div>';
+  /* brief nutrilog-260930-money-profile: no Food budget card; Kitchen equipment is followed by Save profile */
 
   h += '<div class="btnrow" style="margin:18px 0 8px"><button class="btn wide" type="button" data-act="profile-save">'+esc(t('p_save'))+'</button></div>';
   $('#s-profile').innerHTML = h;
@@ -8543,7 +8690,12 @@ function profileMissing(d){
 async function saveProfile(){
   const d = S.draft;
   const miss = profileMissing(d);
-  if (miss.length){ toast(t('p_missing', {list: miss.join(', ')}), 5000); return; }
+  if (miss.length){
+    /* brief nutrilog-260930-bodyfat-finetune: a refused field inside Fine-tune opens it */
+    const inFt = [t('p_bf'), t('ad_sessions'), t('ad_minutes')];
+    if (miss.some(m => inFt.some(f => String(m).indexOf(f) === 0))){ S.ftOpen = true; const ft = $('#ftBox'); if (ft) ft.open = true; }
+    toast(t('p_missing', {list: miss.join(', ')}), 5000); return;
+  }
   const rec = deepCopy(d);
   ['age','heightCm','weightKg','bodyFatPct','activityLevel'].forEach(k => { rec.person[k] = rec.person[k] === '' || rec.person[k] == null ? null : Number(rec.person[k]); });
   if (rec.person.periods !== 'yes' && rec.person.periods !== 'no' && rec.person.periods !== 'skip') { rec.person.periods = 'skip'; }
@@ -8560,6 +8712,7 @@ async function saveProfile(){
   rec.kitchen.timeWeekday = Number(rec.kitchen.timeWeekday); rec.kitchen.timeWeekend = Number(rec.kitchen.timeWeekend);
   rec.kitchen.mealPrep.cookDaysPerWeek = Number(rec.kitchen.mealPrep.cookDaysPerWeek) || 0;
   rec.kitchen.mealPrep.batchServings = Number(rec.kitchen.mealPrep.batchServings) || 1;
+  rec.kitchen.equipmentOther = String(rec.kitchen.equipmentOther || '').trim().slice(0, 80);
   const prevWeight = S.profile && S.profile.person ? S.profile.person.weightKg : null;
   const prevAge = S.profile && S.profile.person ? S.profile.person.age : null;
   if (rec.person.age !== prevAge || !rec.person.ageRecordedOn) rec.person.ageRecordedOn = localDateKey();
@@ -8682,7 +8835,7 @@ function renderSettings(){
       '<button type="button" class="'+(S.lang==='cs'?'on':'')+'" data-act="lang" data-v="cs" aria-pressed="'+(S.lang==='cs')+'">Čeština</button>' +
       '<button type="button" class="'+(S.lang==='en'?'on':'')+'" data-act="lang" data-v="en" aria-pressed="'+(S.lang==='en')+'">English</button>' +
     '</div></div>' +
-    (moduleOn('logging') ? '<label class="opt sq" style="margin-top:12px"><input type="checkbox" id="qmSwitch" '+(quickOn() ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('qm_title'))+'</span><span class="t2">'+esc(t('qm_note'))+'</span></span></label>' : '') + '</div>';
+    (moduleOn('logging') ? '<label class="opt sq" style="margin-top:12px"><input type="checkbox" id="qmSwitch" '+(quickSaved() ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('qm_title'))+'</span><span class="t2">'+esc(t('qm_note'))+'</span></span></label>' : '') + '</div>';
 
   h += '<!--cat:features-->';
   h += featuresCardHtml();
@@ -8702,15 +8855,13 @@ function renderSettings(){
   h += '<div class="card"><h3>'+esc(t('arch_h'))+'</h3><p class="tiny" style="margin-bottom:10px">'+esc(t('arch_intro'))+'</p>' +
     '<div class="kv"><span class="k">'+esc(t('orig_catalog'))+'</span><span class="v num">'+(S.meta.catalog.count || counts.catalog || 0)+'</span></div>' +
     '<div class="kv"><span class="k">'+esc(t('arch_last'))+'</span><span class="v">'+esc(S.meta.catalog.lastOkAt ? fmtDateTime(S.meta.catalog.lastOkAt) : t('never'))+'</span></div>' +
-    '<div class="kv"><span class="k">'+esc(t('orig_archive'))+'</span><span class="v num">'+counts.archive+'</span></div>' +
+    /* brief nutrilog-260930-stale-texts: no Archive row */
     '<div class="kv"><span class="k">'+esc(t('orig_claude'))+' / '+esc(t('orig_own'))+'</span><span class="v num">'+counts.claude+' / '+counts.own+'</span></div>' +
     '<div class="kv"><span class="k">'+esc(t('orig_starter'))+'</span><span class="v num">'+counts.starter+'</span></div>' +
-    '<div class="btnrow">' +
-    '<button class="btn quiet" type="button" data-act="arch-import">'+icon('up')+esc(t('arch_load'))+'</button></div>' +
-    '<input type="file" id="archFile" accept="application/json,.json" class="hide">' +
+    /* brief nutrilog-260930-recipe-file-button: no loading of recipe files */
     '<label class="opt sq" style="margin-top:12px"><input type="checkbox" id="a-starter" '+(P.archive.showStarter ? 'checked' : '')+'><span class="mark"></span><span class="txt"><span class="t1">'+esc(t('arch_starter'))+'</span><span class="t2">'+esc(t('arch_starter_d'))+'</span></span></label></div>';
 
-  /* models and spend */
+  /* models (brief nutrilog-260930-money-spend: the Spend card is gone) */
   const aiFrom = h.length;
   h += '<!--cat:claude-->';
   h += '<div class="card"><h3>'+esc(t('set_models_h'))+'</h3>' +
@@ -8719,32 +8870,6 @@ function renderSettings(){
       '<input id="m-'+role+'" type="text" autocapitalize="off" spellcheck="false" data-set="prefs.models.'+role+'" value="'+esc(P.models[role])+'"></div>').join('') +
     '<p class="tiny">'+esc(t('m_note'))+'</p></div>';
 
-  const models = [P.models.chat, P.models.vision, P.models.analysis].filter((v,i,a) => a.indexOf(v) === i);
-  h += '<!--cat:spend-->';
-  h += '<div class="card"><h3>'+esc(t('set_price_h'))+'</h3>' +
-    '<div class="field"><label for="bud">'+esc(t('bud_label'))+'</label><input id="bud" type="number" inputmode="decimal" step="1" min="0" data-set="prefs.budget.monthlyUsd" value="'+esc(P.budget.monthlyUsd)+'"></div>' +
-    '<div class="kv"><span class="k">'+esc(t('bud_month'))+'</span><span class="v num">'+esc(fmtNum(monthCost(),2))+' USD</span></div>' +
-    '<p class="tiny" style="margin:8px 0 10px">'+esc(t('bud_note'))+'</p>';
-  models.forEach(m => {
-    const pr = priceFor(m);
-    h += '<p class="eyebrow" style="margin-top:6px">'+esc(m)+'</p><div class="inline">' +
-      '<div class="field"><label for="pi-'+m+'">'+esc(t('price_in'))+'</label><input id="pi-'+m+'" type="number" inputmode="decimal" step="0.01" data-set="prefs.prices.'+m+'.in" value="'+esc(pr.in)+'"></div>' +
-      '<div class="field"><label for="po-'+m+'">'+esc(t('price_out'))+'</label><input id="po-'+m+'" type="number" inputmode="decimal" step="0.01" data-set="prefs.prices.'+m+'.out" value="'+esc(pr.out)+'"></div>' +
-      '</div>';
-  });
-  h += '<p class="tiny">'+esc(t('price_note'))+'</p>';
-  const u = S.meta.usage;
-  let cost = 0;
-  for (const mid in (u.byModel || {})){
-    const pr = priceFor(mid);
-    cost += (u.byModel[mid].in/1e6) * pr.in + (u.byModel[mid].out/1e6) * pr.out;
-  }
-  h += '<div class="orn"><i></i></div><p class="eyebrow">'+esc(t('usage_h'))+'</p>' +
-    '<div class="kv"><span class="k">'+esc(t('usage_calls'))+'</span><span class="v num">'+esc(fmtNum(u.calls))+'</span></div>' +
-    '<div class="kv"><span class="k">'+esc(t('usage_tokens_in'))+'</span><span class="v num">'+esc(fmtNum(u.inTok))+'</span></div>' +
-    '<div class="kv"><span class="k">'+esc(t('usage_tokens_out'))+'</span><span class="v num">'+esc(fmtNum(u.outTok))+'</span></div>' +
-    '<div class="kv"><span class="k">'+esc(t('usage_cost'))+'</span><span class="v num">'+esc(fmtNum(cost,2))+' USD</span></div>' +
-    '<div class="btnrow" style="margin-top:8px"><button class="btn quiet" type="button" data-act="usage-reset">'+esc(t('usage_reset'))+'</button></div></div>';
 
   if (!moduleOn('assistant')) h = h.slice(0, aiFrom);
   h += '<!--cat:sync-->';
@@ -8928,12 +9053,13 @@ function bindFeatures() {
 
 const SETTINGS_GROUPS = [
   ['st_personal', ['look', 'profile', 'features', 'supps', 'recipes', 'sync']],
-  ['st_advanced', ['claude', 'spend', 'backup', 'diag', 'danger', 'about']]
+  ['st_advanced', ['claude', 'backup', 'diag', 'danger', 'about']]
 ];
 function settingsRowOn(cat){
   if (cat === 'profile') return moduleOn('goals');
   if (cat === 'supps') return moduleOn('supplements');
-  if (cat === 'claude' || cat === 'spend') return moduleOn('assistant');
+  if (cat === 'claude') return moduleOn('assistant');
+  if (!SETTINGS_GROUPS.some(g => g[1].indexOf(cat) >= 0)) return false;
   return true;
 }
 function settingsListHtml(){
@@ -9006,6 +9132,7 @@ function startChoose(on) {
   }
   START.page += 1;
   if (START.page < MODULES.length) {
+    try { history.pushState({screen:'start', page:START.page}, '', '#start'); } catch(e){}
     renderStart();
   } else {
     finishStart();
@@ -9014,9 +9141,20 @@ function startChoose(on) {
 
 function startBack() {
   if (START.page > 0) {
+    if (history.state && history.state.screen === 'start' && history.state.page === START.page) { history.back(); return; }
     START.page -= 1;
     renderStart();
   }
+}
+
+/* brief nutrilog-260930-first-start-address: Back, Forward or a changed address while the sequence shows.
+   An entry of the sequence moves to its page; any other entry is replaced by the current page. */
+function startPop(st) {
+  if (START.mods === null) startReset();
+  var p = (st && st.screen === 'start') ? (typeof st.page === 'number' ? st.page : 0) : -1;
+  if (p >= 0 && p < MODULES.length) START.page = p;
+  else { try { history.replaceState({screen:'start', page:START.page}, '', '#start'); } catch(e){} }
+  renderStart();
 }
 
 async function finishStart() {
@@ -9551,7 +9689,9 @@ function bindEvents(){
   $('#btnSettings').addEventListener('click', () => go('settings'));
   $('#btnChat').addEventListener('click', () => openChatSheet(''));
   const dateHintUpd = (e) => { const el = e.target; if (!el || !el.matches || !el.id || !el.matches('input[type="date"]')) return;
-    const h = document.querySelector('[data-hint-for="' + el.id + '"]'); if (h) h.textContent = el.value ? numDate(el.value, true) : ''; };
+    const h = document.querySelector('[data-hint-for="' + el.id + '"]'); if (h) h.textContent = el.value ? numDate(el.value, true) : '';
+    /* brief nutrilog-260930-date-once */
+    const dv = document.querySelector('[data-dv-for="' + el.id + '"]'); if (dv) dv.textContent = dateFieldText(el.value); };
   document.addEventListener('input', dateHintUpd); document.addEventListener('change', dateHintUpd);
   document.addEventListener('pointerup', (e) => {
     const b = e.target && e.target.closest ? e.target.closest('.btn') : null;
@@ -9601,11 +9741,11 @@ function bindEvents(){
     }
     else if (act === 'erase'){ eraseEverything(); }
     else if (act === 'diag-copy'){ await copyDiagnostics(); }
-    else if (act === 'usage-reset'){ S.meta.usage = {calls:0,inTok:0,outTok:0,byModel:{},byMonth:S.meta.usage.byMonth||{}}; await saveMeta(); renderSettings(); }
+    /* brief nutrilog-260930-money-spend: no usage counter to reset */
     else if (act === 'update-check'){ checkUpdate(); }
     else if (act === 'install'){ if (S.installPrompt){ S.installPrompt.prompt(); S.installPrompt = null; renderSettings(); } }
     else if (act === 'arch-sync'){ await syncArchive({force:true}); renderSettings(); }
-    else if (act === 'arch-import'){ $('#archFile').click(); }
+    /* brief nutrilog-260930-recipe-file-button: no arch-import action */
 
     /* profile */
     else if (act === 'excl-add'){
@@ -9631,11 +9771,14 @@ function bindEvents(){
     }
     else if (act.indexOf('pchip-') === 0){
       const field = act.slice(6);
-      const holder = ['cuisines','conditions','rules','prefs'].indexOf(field) >= 0 ? S.draft.food : S.draft.goals;
+      const holder = field === 'equipment' ? S.draft.kitchen : ['cuisines','conditions','rules','prefs'].indexOf(field) >= 0 ? S.draft.food : S.draft.goals;
       const arr = holder[field] || (holder[field] = []);
       const at = arr.indexOf(id);
       if (at >= 0) arr.splice(at, 1); else arr.push(id);
+      /* brief nutrilog-260930-equipment-chips: choosing None of these unchooses the tools, choosing a tool unchooses None */
+      if (field === 'equipment' && at < 0){ const keep = id === 'none' ? ['none'] : arr.filter(x => x !== 'none'); arr.length = 0; keep.forEach(x => arr.push(x)); }
       b.setAttribute('aria-pressed', at >= 0 ? 'false' : 'true');
+      if (field === 'equipment' && b.parentElement) b.parentElement.querySelectorAll('[data-act="pchip-equipment"]').forEach(c => c.setAttribute('aria-pressed', String(arr.indexOf(c.getAttribute('data-id')) >= 0)));
       if (field === 'conditions') renderProfile();
     }
 
@@ -9746,7 +9889,8 @@ function bindEvents(){
       else if (el.checked) S.draft.kitchen.equipment = eq.filter(x => x !== 'none');
       renderProfile();
     }
-    else if (el.name === 'person.activityDetail.on') { setPath(S.draft, el.name, el.checked); renderProfile(); }
+    /* brief nutrilog-260930-week-detail-finetune: the switch sits in Fine-tune, which stays open */
+    else if (el.name === 'person.activityDetail.on') { setPath(S.draft, el.name, el.checked); S.ftOpen = true; renderProfile(); }
     else if (el.name === 'person.activityLevel' || el.name === 'person.activityDetail.base' || el.name === 'kitchen.timeWeekday' || el.name === 'kitchen.timeWeekend') setPath(S.draft, el.name, Number(v));
     else if (el.name === 'goals.macroSplit.preset'){ setPath(S.draft, el.name, v); renderProfile(); }
     else if (el.name === 'food.pattern'){ setPath(S.draft, el.name, v); renderProfile(); }
@@ -9768,15 +9912,7 @@ function bindEvents(){
       el.value = '';
       return;
     }
-    if (el.id === 'archFile' && el.files && el.files[0]){
-      try {
-        const out = await importRecipeIndex(JSON.parse(await el.files[0].text()), 'file');
-        toast(t('arch_synced', {n: out.count}));
-      } catch(err){ toast(t('err_prefix') + ': ' + String(err.message||err), 6000); }
-      el.value = '';
-      renderSettings();
-      return;
-    }
+    /* brief nutrilog-260930-recipe-file-button: no #archFile handler */
     const path = el.getAttribute('data-set');
     if (!path) return;
     const val = el.value.trim();
@@ -9799,7 +9935,9 @@ function bindEvents(){
     if ((location.hash || '').indexOf('#join=') === 0) return;
     if (S.swallowPop){ S.swallowPop = false; refreshScreenSoon(); return; }
     if (S.sheetOpen){ closeSheet(true); return; }
-    const scr = (e.state && e.state.screen) || 'recipes';
+    if (S.screen === 'start'){ startPop(e.state); return; }
+    let scr = (e.state && e.state.screen) || 'recipes';
+    if (scr === 'start') scr = 'recipes';
     S.settingsCat = (e.state && e.state.cat) || null;
     go(scr, false);
   });
@@ -9871,8 +10009,26 @@ async function requestPersist(){
 
 /* ---------- Boot ---------- */
 
+/* brief nutrilog-260930-storage-blocked: storage that cannot be opened at start gets one plain screen, nothing is written */
+function bootNoStore(){
+  const cs = String(navigator.language || '').toLowerCase().indexOf('cs') === 0;
+  const T = cs ? STR.cs : STR.en;
+  try {
+    S.prefs = mergeDefaults(null, DEFAULT_PREFS);
+    S.theme = S.prefs.theme; S.look = lookOf(S.prefs.look).id; S.type = typeOf(S.prefs.type).id;
+    applyTheme();
+  } catch(e){}
+  document.documentElement.setAttribute('lang', cs ? 'cs' : 'en');
+  const host = document.getElementById('app') || document.body;
+  host.innerHTML = '<main id="noStore" style="max-width:560px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 48px) 20px 32px">' +
+    '<h1 class="brand" style="margin-bottom:14px">NutriLog</h1><p>' + esc(T.boot_nostore) + '</p>' +
+    '<div class="btnrow" style="margin-top:18px"><button class="btn" type="button" id="bootReload">' + esc(T.boot_reload) + '</button></div></main>';
+  const b = document.getElementById('bootReload');
+  if (b) b.addEventListener('click', () => location.reload());
+}
+
 async function boot(){
-  await loadState();
+  try { await loadState(); } catch(e){ bootNoStore(); return; }
   applyTheme();
   initOrnaments();
   document.documentElement.setAttribute('lang', S.lang);
@@ -9882,9 +10038,10 @@ async function boot(){
   await loadRecipes();
 
   const hash = (location.hash || '').replace('#','');
-  if (hash === 'quick' && !quickOn() && moduleOn('logging')){ S.prefs.quickMode = 'on'; S.prefs.quickModeAsked = true; await savePrefs(); }
   const known = TABS.map(x => x.id).concat(['today','profile','settings','quick']);
   const fresh = await needsStart();
+  /* brief nutrilog-260930-quick-shortcut: #quick opens Quick mode for this launch only; nothing is saved */
+  if (hash === 'quick' && !fresh && !quickOn() && moduleOn('logging')) S.quickLaunch = true;
   go(fresh ? 'start' : known.indexOf(hash) >= 0 ? hash : 'recipes', false);
   try { history.replaceState({screen:S.screen}, '', '#'+S.screen); } catch(e){}
   syncRun('app open');
