@@ -373,7 +373,7 @@ function addRecipeUI(body){
     const q = $('#rq2').value.trim();
     const list = visibleRecipes().filter(r => !q || recipeTextMatch(r, q)).slice(0, 30);
     $('#rres').innerHTML = list.map(r => '<button class="frow" type="button" data-rid="'+esc(r.id)+'"><span class="fn">'+esc(r.title)+'</span>' +
-      '<span class="fm tiny">'+esc(fmtNum(recipeKcal(r)))+' kcal / '+esc(t('rc_serv_short'))+'</span></button>').join('') || '<p class="tiny">'+esc(t('rl_empty'))+'</p>';
+      '<span class="fm tiny">'+esc(fmtNum(recipeKcal(r)))+' '+esc(t('rc_kcal_serv'))+'</span></button>').join('') || '<p class="tiny">'+esc(t('rl_empty'))+'</p>';
   };
   $('#rq2').addEventListener('input', run);
   $('#rres').addEventListener('click', e => { const b = e.target.closest('[data-rid]'); if (b){ closeSheet(); S.logDate = ADD.date; recipeLogSheet(b.getAttribute('data-rid')); } });
