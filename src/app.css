@@ -408,7 +408,7 @@ body:not(.quickmode) .seg { background: none !important; border: 0 !important; b
 body:not(.quickmode) .chip[aria-pressed], body:not(.quickmode) .seg button { background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; color: var(--ink2) !important; min-width: 44px !important; min-height: 40px !important; padding: 0 10px !important; }
 body:not(.quickmode) .chip[aria-pressed="true"], body:not(.quickmode) .seg button.on { color: var(--accent-ink) !important; background: none !important; text-decoration: underline 2px var(--accent) !important; text-underline-offset: 6px !important; text-shadow: 0 0 8px var(--glow-soft) !important; }
 body:not(.quickmode) .chip:not([aria-pressed]) { background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; color: var(--accent-ink) !important; font-size: 14px !important; margin-right: 16px !important; min-height: 40px !important; }
-body:not(.quickmode) .btn:focus-visible, body:not(.quickmode) .chip:focus-visible, body:not(.quickmode) .seg button:focus-visible, body:not(.quickmode) .iconbtn:focus-visible, body:not(.quickmode) .opt:focus-within { outline: 2px solid var(--accent-ink) !important; outline-offset: 2px !important; }
+body:not(.quickmode) .btn:focus-visible, body:not(.quickmode) .chip:focus-visible, body:not(.quickmode) .seg button:focus-visible, body:not(.quickmode) .iconbtn:focus-visible, body:not(.quickmode) .opt:has(input:focus-visible) { outline: 2px solid var(--accent-ink) !important; outline-offset: 2px !important; }
 body:not(.quickmode) .opt { background: none !important; box-shadow: none !important; border: 0 !important; border-radius: 0 !important; border-bottom: 1px solid var(--line-row) !important; }
 body:not(.quickmode) .opt:has(input:checked) { background: none !important; box-shadow: none !important; }
 body:not(.quickmode) .opt:has(input:checked) .t1 { color: var(--accent-ink) !important; }
@@ -565,3 +565,16 @@ body.notabs #timerPill{bottom:calc(env(safe-area-inset-bottom) + 12px)}
 @keyframes ck-prev{from{opacity:0;transform:translateX(-12px)}}
 @keyframes ck-fade{from{opacity:0}}
 @media (prefers-reduced-motion: reduce){ .cook-in-next, .cook-in-prev{animation:ck-fade var(--t-base) linear} }
+/* brief nutrilog-260930-select-comet-only: only the option just chosen draws its comet (cm-keep stops the redraw of the
+   options chosen before); an unchosen option runs its thread back into the lit spark, then dims (cm-out) */
+@keyframes m-thread-out{from{opacity:1}to{opacity:1;right:var(--m-thread-from)}}
+@keyframes m-spark-hold{from,to{opacity:1;background:var(--accent)}}
+@keyframes m-spark-hold-lk{from,to{opacity:1;background:var(--lk-accent)}}
+body:not(.quickmode) .chip[aria-pressed="true"].cm-keep::after, body:not(.quickmode) .seg button.on.cm-keep::after, body:not(.quickmode) .opt.cm-keep:has(input:checked) .t1::after, body:not(.quickmode) .looktile[aria-pressed="true"].cm-keep .lk-name::after{animation:none}
+body:not(.quickmode) .chip[aria-pressed="false"].cm-out::after, body:not(.quickmode) .seg button.cm-out:not(.on)::after, body:not(.quickmode) .opt.cm-out:not(:has(input:checked)) .t1::after, body:not(.quickmode) .looktile[aria-pressed="false"].cm-out .lk-name::after{animation:m-thread-out var(--t-slow) var(--e-arrive)}
+body:not(.quickmode) .chip[aria-pressed="false"].cm-out::before, body:not(.quickmode) .seg button.cm-out:not(.on)::before, body:not(.quickmode) .opt.cm-out:not(:has(input:checked)) .t1::before{animation:m-spark-hold var(--t-slow) linear}
+body:not(.quickmode) .looktile[aria-pressed="false"].cm-out .lk-name::before{animation:m-spark-hold-lk var(--t-slow) linear}
+body:not(.quickmode) .chip[aria-pressed="false"].cm-out, body:not(.quickmode) .seg button.cm-out:not(.on), body:not(.quickmode) .opt.cm-out:not(:has(input:checked)) .t1, body:not(.quickmode) .looktile[aria-pressed="false"].cm-out .lk-name{transition:color var(--t-fast) var(--e-arrive) var(--t-slow), text-shadow var(--t-fast) var(--e-arrive) var(--t-slow)}
+@media (prefers-reduced-motion: reduce){
+  body:not(.quickmode) .cm-out::after, body:not(.quickmode) .cm-out::before, body:not(.quickmode) .cm-out .t1::after, body:not(.quickmode) .cm-out .t1::before, body:not(.quickmode) .cm-out .lk-name::after, body:not(.quickmode) .cm-out .lk-name::before{animation:none !important}
+}
