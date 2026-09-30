@@ -137,7 +137,7 @@ with sync_playwright() as p:
 
     # first run: default language, no profile
     page.goto(BASE + '#today'); page.wait_for_timeout(1500)
-    page.evaluate("async () => { S.prefs.modules = {logging:true, goals:true, supplements:true, assistant:true}; await savePrefs(); location.hash = '#today'; }"); page.reload(); page.wait_for_timeout(1500)
+    page.evaluate("async () => { S.prefs.modules = {logging:true, goals:true, supplements:true, assistant:true}; await savePrefs(); history.replaceState(null, '', '#today'); }"); page.reload(); page.wait_for_timeout(1500)
     print('default language:', page.evaluate('S.lang'), '| html lang:', page.evaluate('document.documentElement.lang'))
     step(page, 'e00_first_run')
     page.click('#tabbar [data-go="log"]'); step(page, 'e01_log_empty', 600)
