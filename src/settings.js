@@ -13,7 +13,7 @@ function blankProfile(){
       dietStyle:[], aims:[], focusNutrients:[], notes:'', slots: deepCopy(DEFAULT_SLOTS), focus:[], hints:[] },
     food:{ exclusions:[], cuisines:[], cuisineOther:'', dislikes:'',
       pattern:'everything', patternOpts:{noEggs:false, noMilk:false}, conditions:[], rules:[], prefs:[] },
-    kitchen:{ timeWeekday:2, timeWeekend:3, equipment:[], budget:'bud3', mealPrep:{cookDaysPerWeek:3, batchServings:3} }
+    kitchen:{ timeWeekday:2, timeWeekend:3, equipment:[], mealPrep:{cookDaysPerWeek:3, batchServings:3} }
   };
 }
 
@@ -244,9 +244,7 @@ function renderProfile(){
   EQUIPMENT.forEach(e => { h += optRow('kitchen.equipment', e, K.equipment.indexOf(e)>=0, t('eq_'+e), '', true); });
   h += '</div></div>';
 
-  h += '<div class="card"><h3>'+esc(t('p_budget'))+'</h3><p class="tiny" style="margin-bottom:9px">'+esc(t('p_budget_note'))+'</p><div class="opts two">';
-  BUDGETS.forEach(b => { h += optRow('kitchen.budget', b, K.budget===b, t(b)); });
-  h += '</div></div>';
+  /* brief nutrilog-260930-money-profile: no Food budget card; Kitchen equipment is followed by Save profile */
 
   h += '<div class="btnrow" style="margin:18px 0 8px"><button class="btn wide" type="button" data-act="profile-save">'+esc(t('p_save'))+'</button></div>';
   $('#s-profile').innerHTML = h;

@@ -238,8 +238,9 @@ async function buildContext(opts){
   const cz = (F.cuisines||[]).map(id => { const c = CUISINES.find(x => x.id === id); return c ? c.en : id; });
   if (F.cuisineOther) cz.push(F.cuisineOther);
   if (cz.length) lines.push('LIKES CUISINES: ' + cz.join(', '));
+  /* brief nutrilog-260930-money-profile: no weekly food budget in the KITCHEN line */
   lines.push('KITCHEN: weekday cooking time up to ' + TIME_MAX_MIN[K.timeWeekday||2] + ' min, weekend up to ' + TIME_MAX_MIN[K.timeWeekend||3] +
-    ' min; equipment: ' + ((K.equipment||[]).map(e => t('eq_'+e)).join(', ') || 'basic hob') + '; weekly food budget: ' + t(K.budget || 'bud3') +
+    ' min; equipment: ' + ((K.equipment||[]).map(e => t('eq_'+e)).join(', ') || 'basic hob') +
     '; meal prep: cooks about ' + ((K.mealPrep||{}).cookDaysPerWeek || 3) + ' days a week, batches of about ' + ((K.mealPrep||{}).batchServings || 3) + ' servings.');
   if (opts.today){
     const d = await dayTotals(opts.date || localDateKey());

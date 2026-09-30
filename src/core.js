@@ -560,7 +560,7 @@ function profileFromV1(p){
     },
     kitchen: {
       timeWeekday: Number(p.timeWeekday) || 2, timeWeekend: Number(p.timeWeekend) || 3,
-      equipment: p.equipment || [], budget: p.budget || 'bud3',
+      equipment: p.equipment || [],
       mealPrep: { cookDaysPerWeek: 3, batchServings: 3 }
     }
   };
@@ -978,7 +978,7 @@ const CUISINES = [
 const EQUIPMENT = ['hob','oven','micro','blender','airfryer','pressure','none'];
 const TIMES = [1,2,3,4];
 const TIME_MAX_MIN = {1:15, 2:30, 3:60, 4:600};
-const BUDGETS = ['bud1','bud2','bud3','bud4','bud5','bud6'];
+/* brief nutrilog-260930-money-profile: BUDGETS retired with kitchen.budget */
 
 const DIET_STYLES = ['omnivore','flexitarian','pescatarian','vegetarian','vegan','mediterranean','lowcarb','highprotein','glutenfree','lactosefree'];
 const AIMS = ['muscle','fatloss','energy','digestion','fibre','lesssugar','lesssalt','veg','protein','heart','sleep','skin'];
