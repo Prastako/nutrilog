@@ -92,8 +92,6 @@ function renderProfile(){
   h += '<div class="inline">' + num('person.age','f-age',t('p_age'),'inputmode="numeric" min="10" max="100"',t('p_years')) +
        num('person.heightCm','f-height',t('p_height'),'inputmode="numeric" min="100" max="250"',t('p_hint_height')) +
        num('person.weightKg','f-weight',t('p_weight_short'),'inputmode="decimal" step="0.1" min="30" max="300"',t('p_kg')) + '</div>';
-  h += num('person.bodyFatPct','f-bf',t('p_bf'),'inputmode="decimal" step="0.5" min="3" max="60"');
-  h += '<p class="tiny" style="margin-top:6px">'+esc(t('p_bf_note'))+'</p>';
   h += '<p class="tiny" style="margin-top:10px">'+esc(t('p_energy_note'))+'</p>';
   h += '</div>';
 
@@ -226,6 +224,8 @@ function renderProfile(){
     '<p class="flabel" style="margin-top:14px">' + esc(t('pg_focus')) + '</p>' +
     chipSet('pchip-focusNutrients', FOCUS_CHOICES, G.focusNutrients, nutLabel) +
     '<div class="field" style="margin-top:14px"><label for="g-notes">'+esc(t('pg_notes'))+'</label><textarea id="g-notes" data-bind="goals.notes" placeholder="'+esc(t('pg_notes_ph'))+'">'+esc(G.notes||'')+'</textarea></div>' +
+    /* brief nutrilog-260930-bodyfat-finetune: Body fat at the end of Fine-tune, only while Goals is on */
+    (moduleOn('goals') ? num('person.bodyFatPct','f-bf',t('p_bf'),'inputmode="decimal" step="0.5" min="3" max="60"') + '<p class="tiny" style="margin-top:6px">'+esc(t('p_bf_note'))+'</p>' : '') +
     '</details>';
 
   h += '<div class="card"><h3>'+esc(t('p_cuisines'))+'</h3>' + chipSet('pchip-cuisines', CUISINES.map(c => c.id), F.cuisines, id => L(CUISINES.find(c => c.id === id))) +
@@ -278,7 +278,12 @@ function profileMissing(d){
 async function saveProfile(){
   const d = S.draft;
   const miss = profileMissing(d);
-  if (miss.length){ toast(t('p_missing', {list: miss.join(', ')}), 5000); return; }
+  if (miss.length){
+    /* brief nutrilog-260930-bodyfat-finetune: a refused field inside Fine-tune opens it */
+    const inFt = [t('p_bf')];
+    if (miss.some(m => inFt.some(f => String(m).indexOf(f) === 0))){ S.ftOpen = true; const ft = $('#ftBox'); if (ft) ft.open = true; }
+    toast(t('p_missing', {list: miss.join(', ')}), 5000); return;
+  }
   const rec = deepCopy(d);
   ['age','heightCm','weightKg','bodyFatPct','activityLevel'].forEach(k => { rec.person[k] = rec.person[k] === '' || rec.person[k] == null ? null : Number(rec.person[k]); });
   if (rec.person.periods !== 'yes' && rec.person.periods !== 'no' && rec.person.periods !== 'skip') { rec.person.periods = 'skip'; }
