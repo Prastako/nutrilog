@@ -97,8 +97,11 @@ function bindQuick() {
   host.addEventListener('click', async function (e) {
     var b = e.target.closest('[data-qdel]');
     if (b) {
-      await recDelete(b.getAttribute('data-qdel'));
-      toast(t('lg_deleted'));
+      /* brief nutrilog-260930-delete-undo */
+      var qid = b.getAttribute('data-qdel');
+      var before = await dbGet('records', qid);
+      await recDelete(qid);
+      toast(t('lg_deleted'), 6000, {label: t('undo'), run: function () { return undoDelete(before); }});
       await renderQuick();
       return;
     }

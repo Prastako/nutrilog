@@ -202,9 +202,29 @@ function toastFadeMs(){
   const t = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--t-fast'));
   return isFinite(t) ? t : 160;
 }
-function toast(msg, ms){
+/* brief nutrilog-260930-delete-undo: where the toast sits. Under 900 px 12 px above the tab bar (CSS: 12 px above the
+   bottom safe area when there is none), from 900 px 16 px above the bottom (CSS), at the top while a sheet is open. */
+function toastPlace(el){
+  el.classList.toggle('top', !!S.sheetOpen);
+  el.style.bottom = '';
+  if (S.sheetOpen || window.innerWidth >= 900) return;
+  const tb = $('#tabbar');
+  if (!tb || !tb.getBoundingClientRect || tb.classList.contains('hide') || document.body.classList.contains('quickmode')) return;
+  const r = tb.getBoundingClientRect();
+  if (r && r.height > 0) el.style.bottom = Math.round(window.innerHeight - r.top + 12) + 'px';
+}
+/* action (optional): {label, run}, a text button in the toast, e.g. Undo */
+function toast(msg, ms, action){
   const el = $('#toast');
   el.textContent = msg;
+  el.classList.toggle('act', !!action);
+  if (action){
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'toastact'; b.textContent = action.label;
+    b.addEventListener('click', () => { clearTimeout(toast._tm); el.classList.remove('in', 'out'); el.classList.add('hide'); action.run(); });
+    el.appendChild(b);
+  }
+  toastPlace(el);
   el.classList.remove('hide', 'out');
   el.classList.remove('in');
   void el.offsetWidth;
