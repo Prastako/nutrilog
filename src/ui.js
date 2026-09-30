@@ -212,3 +212,10 @@ if (typeof document !== 'undefined' && document.addEventListener){
   if (typeof MutationObserver === 'function' && document.body)
     new MutationObserver(() => cometSettle()).observe(document.body, {childList: true, subtree: true, attributes: true, attributeFilter: ['aria-pressed']});
 }
+
+/* brief nutrilog-260930-date-once: a date field shows one date in the app's form ("Today" or 4.10.2026). The browser's
+   date input stays under the text with its own date text hidden, so a tap still opens the picker. */
+function dateFieldText(v){ return !v ? '' : v === localDateKey() ? t('today') : numDate(v, true); }
+function dateField(id, v){
+  return '<span class="datefield"><input id="'+id+'" type="date" value="'+esc(v || '')+'"><span class="dfv num" data-dv-for="'+id+'" aria-hidden="true">'+esc(dateFieldText(v))+'</span></span>';
+}

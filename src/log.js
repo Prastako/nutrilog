@@ -244,7 +244,7 @@ function amountStep(food, grams){
     ['100 g'].concat(portions.map(p => p.label)).map((lab, i) =>
       '<button class="chip" type="button" data-g="'+(i === 0 ? 100 : portions[i-1].g)+'" aria-pressed="'+(Math.round(i === 0 ? 100 : portions[i-1].g) === Math.round(g))+'">'+esc(lab)+(i ? ' · '+fmtNum(portions[i-1].g)+' g' : '')+'</button>').join('') + '</div>';
   h += '<div class="inline"><div class="field"><label for="amG">'+esc(t('am_grams'))+'</label><input id="amG" type="number" inputmode="decimal" step="1" min="1" value="'+esc(Math.round(g))+'"></div>' +
-    '<div class="field"><label for="amDate">'+esc(t('lg_date'))+'</label><input id="amDate" type="date" value="'+esc(ADD.date)+'"><span class="fhint" data-hint-for="amDate">'+esc((ADD.date) ? numDate(ADD.date, true) : '')+'</span></div></div>';
+    '<div class="field"><label for="amDate">'+esc(t('lg_date'))+'</label>'+dateField('amDate', ADD.date)+'</div></div>';
   h += '<div class="field"><span class="flabel">'+esc(t('lg_slot'))+'</span>'+slotChips(ADD.slot)+'</div>';
   h += '<div class="card flat" id="amPrev"></div>';
   h += '<div class="btnrow" style="margin:12px 0"><button class="btn" type="button" id="amSave">'+esc(t('save'))+'</button>' +
@@ -422,7 +422,7 @@ async function editEntry(id){
   let b = '<p class="muted">'+esc(entryName(e))+'</p>';
   if (hasGrams) b += '<div class="field"><label for="eg">'+esc(t('am_grams'))+'</label><input id="eg" type="number" inputmode="decimal" value="'+esc(e.amount.grams)+'"></div>';
   else if (isRecipe) b += '<div class="field"><label for="es">'+esc(t('rc_servings_eaten'))+'</label><input id="es" type="number" inputmode="decimal" step="0.25" value="'+esc(e.amount.qty)+'"></div>';
-  b += '<div class="field"><label for="ed">'+esc(t('lg_date'))+'</label><input id="ed" type="date" value="'+esc(e.date)+'"><span class="fhint" data-hint-for="ed">'+esc((e.date) ? numDate(e.date, true) : '')+'</span></div>';
+  b += '<div class="field"><label for="ed">'+esc(t('lg_date'))+'</label>'+dateField('ed', e.date)+'</div>';
   b += '<div class="field"><span class="flabel">'+esc(t('lg_slot'))+'</span>'+slotChips(slot)+'</div>';
   b += '<details><summary class="linkbtn">'+esc(t('lg_all_nutrients'))+'</summary>'+nutrientTable(e.nutrients)+'</details>';
   if (e.basis === 'estimate') b += '<p class="tiny" style="margin-top:8px">'+esc(t('lg_est_note'))+'</p>';
@@ -598,7 +598,7 @@ function suppForm(s){
       [1,2,3,4,5,6,0].map(d => '<button class="chip" type="button" data-day="'+d+'" aria-pressed="'+((s.schedule.days||[]).indexOf(d)>=0)+'">'+dayNames[d]+'</button>').join('') + '</div></div>' +
     '</div>' +
     '<div id="sstartrow"'+(isAltSaved ? '' : ' style="display:none"')+'>' +
-    '<div class="field"><label for="sstart">'+esc(t('sp_rep_start'))+'</label><input id="sstart" type="date" value="'+esc(s.schedule.start || localDateKey())+'"><span class="fhint" data-hint-for="sstart">'+esc((s.schedule.start || localDateKey()) ? numDate(s.schedule.start || localDateKey(), true) : '')+'</span></div>' +
+    '<div class="field"><label for="sstart">'+esc(t('sp_rep_start'))+'</label>'+dateField('sstart', s.schedule.start || localDateKey())+'</div>' +
     '</div>' +
     '<div class="field"><span class="flabel">'+esc(t('sp_time'))+'</span><div class="chips" id="stime">' +
       ['morning','noon','evening','any'].map(x => '<button class="chip" type="button" data-time="'+x+'" aria-pressed="'+((s.schedule.time||'any')===x)+'">'+esc(t('sp_time_'+x))+'</button>').join('') + '</div></div>' +
