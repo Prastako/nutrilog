@@ -1032,3 +1032,6 @@ Object.assign(STR.en, { p_equipment_free_ph:'Other equipment, e.g. slow cooker, 
 /* brief nutrilog-260930-week-detail-finetune */
 Object.assign(STR.cs, { ad_in_finetune:'Týden máte popsaný podrobně v části Doladit; jednoduché úrovně se nepoužívají.', ad_note:'Jednoduché úrovně v části Aktivita zahrnují trénink; tady se běžný den a trénink počítají zvlášť, takže vyberte úroveň běžného dne bez tréninku.' });
 Object.assign(STR.en, { ad_in_finetune:'Your week is described in detail under Fine-tune; the simple levels are not used.', ad_note:'The simple levels in Activity include training; here daily life and training are counted separately, so pick the daily life level without training.' });
+/* brief nutrilog-260930-storage-blocked */
+Object.assign(STR.cs, { boot_nostore:'NutriLog v tomto prohlížeči nemůže nic uložit. Úložiště je zablokované, což se stává v anonymním okně nebo při vypnutém ukládání dat webu. Otevřete aplikaci v běžném okně nebo této stránce ukládání dat povolte a načtěte ji znovu.', boot_reload:'Načíst znovu' });
+Object.assign(STR.en, { boot_nostore:'NutriLog cannot save anything in this browser. Storage is blocked, which happens in private windows or when site data is turned off. Open the app in a normal window or allow site data for this page, then reload.', boot_reload:'Reload' });
